@@ -19,14 +19,8 @@ __pycache__/
 .venv/
 venv/
 
-# Build artifacts
-dist/
-build/
-
-# Manim intermediate files (keep final renders)
-media/texts/
-media/Tex/
-media/videos/**/partial_movie_files/
+# Manim intermediate build files
+media/
 
 # Logs
 *.log
