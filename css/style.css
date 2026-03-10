@@ -127,6 +127,51 @@ a:hover { color: var(--gold); }
   white-space: nowrap;
 }
 
+/* ===== Chapter video ===== */
+.chapter-video {
+  padding: 0 1.1rem .85rem;
+  border-top: 1px solid var(--border);
+}
+
+.video-toggle {
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent-hi);
+  font-size: .85rem;
+  font-weight: 600;
+  padding: .4rem .9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: .6rem;
+  transition: background .15s, color .15s;
+}
+
+.video-toggle:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.video-toggle.open {
+  background: var(--accent);
+  color: #fff;
+}
+
+.video-wrapper {
+  display: none;
+  margin-top: .6rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+.video-wrapper.visible { display: block; }
+
+.video-wrapper video {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+}
+
 /* Appendix styling */
 .chapter-item.appendix { margin-left: 1.5rem; }
 .chapter-item.appendix .ch-num { font-size: .65rem; background: transparent; border-color: var(--gold); color: var(--gold); }
