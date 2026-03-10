@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 5: Scientific Tarot — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part II &mdash; Chapter 5</span>
+    <h1>Scientific Tarot: Reading Hands and Strategies</h1>
+    <p class="chapter-subtitle">Replacing mysticism with Bayesian inference &mdash; how to think about what your opponent holds</p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>The Myth of the Mystic Read</h2>
+    <p>Popular poker culture treats "hand reading" as an almost supernatural talent &mdash; a gift that some players have and others don't. Chen and Ankenman disagree sharply with this view. They argue that <strong>reading opponents is largely a process of Bayesian inference</strong> applied to betting patterns, with small adjustments for physical tells.</p>
+    <p>This reframing is powerful because it means hand reading is a <em>learnable, systematic skill</em> rather than an innate talent. It transforms "I had a feeling he had it" into a structured probabilistic analysis that any disciplined player can perform.</p>
+  </div>
+
+  <!-- ===== POINT READS ===== -->
+  <div class="chapter-section">
+    <h2>The Danger of Point Reads</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Point Read</div>
+      <p>A point read assigns a <strong>single hand</strong> to an opponent: "I put him on AK." While tempting in its simplicity, this approach is fundamentally flawed.</p>
+    </div>
+
+    <p>Consider a situation where you hold a small pair (say 5&hearts;5&diams;) facing a reraise. You think to yourself, "I put him on AK." Even if AK is the single most likely hand in your opponent's range, the problem is that <strong>the rest of the distribution matters enormously</strong>.</p>
+
+    <div class="example-box">
+      <div class="example-title">The Small Pair Trap</div>
+      <p>You hold 5&hearts;5&diams; and face a reraise. You "put your opponent on AK" and shove, thinking you're a small favorite (~53% vs 47%).</p>
+      <p>But your opponent's actual distribution might be:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>AA, KK, QQ &mdash; 18 combos (you are ~19% to win)</li>
+        <li>JJ, TT &mdash; 12 combos (you are ~19% to win)</li>
+        <li>AKs, AKo &mdash; 16 combos (you are ~53% to win)</li>
+        <li>AQs &mdash; 4 combos (you are ~54% to win)</li>
+      </ul>
+      <p>Against this full distribution (50 combos), you're actually an <strong>underdog</strong> overall, even though AK alone is the most common single hand. The 30 combos of overpairs crush you. Sacrificing equity by focusing on only one hand in the distribution is a costly error.</p>
+    </div>
+
+    <p>The authors emphasize: every time a player says "I put him on AK" and acts accordingly, they are ignoring a huge chunk of probability mass. Good decision-making requires evaluating against the <strong>entire distribution</strong>.</p>
+  </div>
+
+  <!-- ===== DISTRIBUTION-BASED THINKING ===== -->
+  <div class="chapter-section">
+    <h2>Distribution-Based Thinking</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Hand Distribution (Range)</div>
+      <p>Instead of guessing a single hand, assign a <strong>probability distribution</strong> over all possible hands your opponent could hold. Then evaluate the EV of each action against that entire distribution.</p>
+      <div class="math-block">
+        <span class="math-label">Equation 5.1 &mdash; EV Against a Distribution</span>
+        EV(action) = &Sigma;<sub>h &isin; Range</sub> p(h) &times; EV(action | opponent has h)
+      </div>
+      <p>This is the correct way to make decisions: weight the EV against each possible hand by the probability of that hand being held.</p>
+    </div>
+
+    <p>Distribution-based thinking is both more accurate and more robust than point reads. Even if your range estimate is slightly off, acting against a distribution will produce better decisions than acting against a single hand guess &mdash; because the distribution captures your <strong>uncertainty</strong> about the opponent's holdings.</p>
+  </div>
+
+  <!-- ===== UPDATING DISTRIBUTIONS ===== -->
+  <div class="chapter-section">
+    <h2>Updating Distributions Through Actions</h2>
+
+    <p>Hand reading is a <strong>dynamic, sequential process</strong>. You start with a prior distribution and update it as the hand progresses. Each action your opponent takes narrows (or reshapes) the distribution of hands they could hold.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Bayesian Updating in Poker</div>
+      <p>At each decision point, apply Bayes' theorem to update the probability of each hand in your opponent's range:</p>
+      <div class="math-block">
+        <span class="math-label">Equation 5.2 &mdash; Bayesian Range Update</span>
+        P(hand | action) = P(action | hand) &times; P(hand) / P(action)
+      </div>
+      <p>Where P(action | hand) is how likely the opponent would take that action with that specific hand, P(hand) is the prior probability, and P(action) normalizes across all hands.</p>
+    </div>
+
+    <h3>The Practical Hand Reading Process</h3>
+
+    <div class="example-box">
+      <div class="example-title">Street-by-Street Range Narrowing</div>
+      <p><strong>Preflop:</strong> Assign an initial range based on position and action. A tight player opens from UTG &rarr; {AA, KK, QQ, JJ, TT, AKs, AKo, AQs}. A loose player opens from the button &rarr; top 40-50% of hands.</p>
+      <p><strong>Flop (A&spades; 7&diams; 2&clubs;):</strong> Opponent c-bets. Hands with an ace become more likely (they have a reason to bet). Small pairs without an ace become less likely (would they bet?). Range narrows.</p>
+      <p><strong>Turn (5&hearts;):</strong> Opponent bets again, this time larger. Range narrows further &mdash; they likely have a strong ace (AK, AQ) or are bluffing. Medium-strength hands (AT, A9) might check here.</p>
+      <p><strong>River (J&clubs;):</strong> Opponent makes a large bet. Final assessment: are they value-betting a strong hand or bluffing? The accumulated evidence from every prior action informs this decision.</p>
+    </div>
+
+    <p>The key insight: <strong>the tighter and more predictable the player, the more information each action conveys</strong>. A raise from a rock means something very different from a raise from a maniac.</p>
+  </div>
+
+  <!-- ===== PLAYER TYPES ===== -->
+  <div class="chapter-section">
+    <h2>Categorizing Player Types</h2>
+
+    <p>Each player type provides different amounts of information through their actions. Understanding player types is essential for constructing accurate range estimates.</p>
+
+    <table class="data-table">
+      <tr><th>Player Type</th><th>Range Width</th><th>Aggression</th><th>Information per Action</th><th>Key Traits</th></tr>
+      <tr>
+        <td><strong>Tight-Aggressive (TAG)</strong></td>
+        <td>Narrow</td>
+        <td>High</td>
+        <td>High</td>
+        <td>Plays few hands but bets/raises with them. Their raises carry strong information &mdash; the range is narrow and defined.</td>
+      </tr>
+      <tr>
+        <td><strong>Loose-Aggressive (LAG)</strong></td>
+        <td>Wide</td>
+        <td>High</td>
+        <td>Low</td>
+        <td>Plays many hands aggressively. Hard to read because a raise could mean anything. Less information per action.</td>
+      </tr>
+      <tr>
+        <td><strong>Tight-Passive</strong></td>
+        <td>Narrow</td>
+        <td>Low</td>
+        <td>Very High (when they bet)</td>
+        <td>Rarely bets without the goods. A bet or raise from this player screams strength. Checks are less informative.</td>
+      </tr>
+      <tr>
+        <td><strong>Loose-Passive (Calling Station)</strong></td>
+        <td>Wide</td>
+        <td>Low</td>
+        <td>Low</td>
+        <td>Calls with a huge range, rarely raises. Their calls carry almost no information. Bluffing them is futile.</td>
+      </tr>
+    </table>
+
+    <p>From a Bayesian standpoint, a tight-passive player's bet provides the most information (the likelihood ratio P(bet | strong hand) / P(bet | weak hand) is extreme), while a loose-aggressive player's bet provides the least.</p>
+  </div>
+
+  <!-- ===== TELLS ===== -->
+  <div class="chapter-section">
+    <h2>Tells and Physical Information</h2>
+
+    <p>While the book's framework focuses primarily on betting patterns, Chen and Ankenman acknowledge that <strong>physical tells</strong> can provide additional adjustments to the Bayesian posterior. These include:</p>
+
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Timing tells:</strong> How long a player takes to act (instant calls often indicate draws or medium hands; long tanks followed by raises often indicate strength)</li>
+      <li><strong>Bet sizing tells:</strong> Some players unconsciously size their bets differently with strong vs. weak hands</li>
+      <li><strong>Physical behavior:</strong> Trembling hands, eye contact, chip handling, posture changes</li>
+    </ul>
+
+    <p>However, the authors emphasize that these adjustments are typically <strong>small</strong> compared to the information gleaned from betting patterns and position. A player who masters distribution-based thinking about actions will be far ahead of one who relies primarily on tells but neglects the mathematical framework.</p>
+  </div>
+
+  <!-- ===== FUNDAMENTAL THEOREM ===== -->
+  <div class="chapter-section">
+    <h2>Connection to the Fundamental Theorem of Poker</h2>
+
+    <div class="definition-box">
+      <div class="def-term">The Fundamental Theorem of Poker (Sklansky)</div>
+      <p>Every time you play a hand differently from the way you would if you could see your opponent's cards, they gain. Every time you play your hand the same way you would if you could see their cards, they lose.</p>
+    </div>
+
+    <p>Hand reading, then, is the art and science of <strong>approximating perfect-information play</strong>. The better your range estimates, the closer your decisions are to what you would do if you could see the opponent's hole cards. Distribution-based thinking is the most systematic path toward this goal.</p>
+
+    <div class="math-block">
+      <span class="math-label">Equation 5.3 &mdash; Decision Quality</span>
+      EV<sub>loss</sub> = EV(perfect info decision) &minus; EV(actual decision)
+    </div>
+
+    <p>Better hand reading minimizes this gap. The ideal is EV<sub>loss</sub> = 0, which would mean you play exactly as you would with full knowledge of the opponent's cards.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Range Narrowing Simulator ===== -->
+  <div class="interactive-widget">
+    <h3>Range Narrowing Simulator</h3>
+    <p>Watch how a hand distribution narrows through a sequence of actions. Click each button to step through the hand and see the range update in real time.</p>
+    <div class="widget-controls">
+      <button class="btn" id="btnStep0" onclick="rangeStep(0)">Reset: All Hands</button>
+      <button class="btn" id="btnStep1" onclick="rangeStep(1)" disabled>Step 1: UTG Open-Raise</button>
+      <button class="btn" id="btnStep2" onclick="rangeStep(2)" disabled>Step 2: C-bet on A-7-2</button>
+      <button class="btn" id="btnStep3" onclick="rangeStep(3)" disabled>Step 3: Turn Barrel (5)</button>
+      <button class="btn" id="btnStep4" onclick="rangeStep(4)" disabled>Step 4: River Shove (J)</button>
+    </div>
+    <div class="widget-result" id="rangeInfo">
+      <div class="result-label">Click "Reset: All Hands" to begin</div>
+    </div>
+    <div id="rangeGrid" style="display:grid; grid-template-columns:repeat(13, 1fr); gap:2px; margin-top:1rem; font-size:0.7rem; max-width:600px;"></div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Player Type Identifier ===== -->
+  <div class="interactive-widget">
+    <h3>Player Type Identifier</h3>
+    <p>Read the following scenario and identify the player type based on the actions described.</p>
+    <div id="playerTypeScenario" style="margin:1rem 0; padding:1rem; background:rgba(255,255,255,0.05); border-radius:8px;">
+      <p><strong>Scenario:</strong> Over 200 hands at a 6-max table, this player has voluntarily put money in the pot 18% of the time. They have raised preflop 15% of the time. When they enter the pot, they frequently bet and raise postflop. When they 3-bet preflop, they almost always follow up with a continuation bet on the flop.</p>
+      <p style="margin-top:0.5rem;"><strong>What type of player is this?</strong></p>
+    </div>
+    <div class="widget-controls">
+      <button class="quiz-option" data-correct="true" onclick="checkPlayerType(this)">Tight-Aggressive (TAG)</button>
+      <button class="quiz-option" data-correct="false" onclick="checkPlayerType(this)">Loose-Aggressive (LAG)</button>
+      <button class="quiz-option" data-correct="false" onclick="checkPlayerType(this)">Tight-Passive</button>
+      <button class="quiz-option" data-correct="false" onclick="checkPlayerType(this)">Loose-Passive (Calling Station)</button>
+    </div>
+    <div class="widget-result" id="playerTypeResult"></div>
+  </div>
+
+  <!-- ===== QUIZ 1 ===== -->
+  <div class="quiz-box">
+    <h3>Conceptual Check</h3>
+    <p>Why is "I put him on AK" an inferior approach to hand reading?</p>
+    <button class="quiz-option" data-correct="false">Because AK is never the most likely hand</button>
+    <button class="quiz-option" data-correct="true">Because it ignores the full distribution of possible hands the opponent could hold</button>
+    <button class="quiz-option" data-correct="false">Because physical tells are more reliable than hand reading</button>
+    <button class="quiz-option" data-correct="false">Because AK plays well against all ranges anyway</button>
+    <div class="quiz-feedback" data-correct="Correct! Even if AK is the single most likely hand, the opponent's full distribution contains many other hands. Acting against only one hand ignores the probability mass of all other possibilities, leading to decisions that sacrifice expected value." data-incorrect="Not quite. The key problem with point reads is that they ignore the full distribution of possible hands. Even if AK is the most likely single hand, the total probability of all other hands in the range (including overpairs like AA, KK, QQ) can dominate. Acting against the whole distribution produces better decisions."></div>
+  </div>
+
+  <!-- ===== QUIZ 2 ===== -->
+  <div class="quiz-box">
+    <h3>Range Estimation</h3>
+    <p>A player open-raises from UTG (under the gun, first to act) in a tight, full-ring game. Which distribution is most likely for this player?</p>
+    <button class="quiz-option" data-correct="false">Very wide: any two cards in the top 50%</button>
+    <button class="quiz-option" data-correct="false">Medium: top 25% of hands including suited connectors</button>
+    <button class="quiz-option" data-correct="true">Tight: big pairs (AA-TT) and big aces (AK, AQ)</button>
+    <button class="quiz-option" data-correct="false">Random: could be anything, position doesn't matter</button>
+    <div class="quiz-feedback" data-correct="Correct! UTG in a full-ring game is the tightest opening position because you must act first with many players behind you. In a tight game, this narrows the range even further to premium holdings: big pairs and strong aces. This is a textbook example of using position to inform the prior distribution." data-incorrect="In a tight, full-ring game, UTG is the most restrictive position &mdash; the player has 8 or 9 opponents still to act behind them. The expected range is narrow: big pairs (AA through TT) and big aces (AK, AQ). Position is one of the strongest signals for constructing initial range estimates."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Hand reading is Bayesian inference</strong>, not mysticism. It is a learnable, systematic process based on updating probability distributions.</li>
+      <li><strong>Point reads are dangerous.</strong> Guessing a single hand ignores the rest of the distribution and leads to decisions that sacrifice expected value.</li>
+      <li><strong>Think in distributions (ranges).</strong> Assign a probability distribution over possible hands, then evaluate actions against the entire range.</li>
+      <li><strong>Update ranges street by street.</strong> Start with a prior based on position and player type, then narrow using each observed action (bet, check, raise, fold).</li>
+      <li><strong>Player types affect information content.</strong> A bet from a tight-passive player carries far more information than a bet from a loose-aggressive player.</li>
+      <li><strong>Tells are supplementary.</strong> Physical tells provide small adjustments to the Bayesian posterior but are less important than betting-pattern analysis.</li>
+      <li>Good hand reading approximates <strong>perfect-information play</strong>, as described by the Fundamental Theorem of Poker.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-04.html">&larr; Chapter 4</a>
+    <a href="chapter-06.html">Chapter 6 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// ===== Range Narrowing Simulator =====
+const RANKS = ['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
+
+// Build the 13x13 grid labels (row = first rank, col = second rank)
+// Upper-left triangle = suited, lower-right = offsuit, diagonal = pairs
+function getGridLabel(r, c) {
+  if (r === c) return RANKS[r] + RANKS[c];
+  if (r < c) return RANKS[r] + RANKS[c] + 's';
+  return RANKS[c] + RANKS[r] + 'o';
+}
+
+// Define ranges for each step
+const rangeSteps = [
+  { // Step 0: all hands
+    name: 'All Hands (169 combos)',
+    desc: 'Before any action, every hand is possible. This is the prior distribution.',
+    combos: 1326,
+    filter: function() { return true; }
+  },
+  { // Step 1: UTG open-raise (tight ~12%)
+    name: 'UTG Open-Raise Range (~12% of hands)',
+    desc: 'A tight player raises from UTG. The range narrows dramatically to premium holdings: big pairs, big broadway hands, and strong suited aces.',
+    combos: '~160',
+    hands: ['AA','KK','QQ','JJ','TT','99','AKs','AQs','AJs','ATs','KQs','AKo','AQo','KQo','88','KJs']
+  },
+  { // Step 2: C-bet on A-7-2 flop
+    name: 'C-bet on A&spades;7&diams;2&clubs; (~8% of hands)',
+    desc: 'Opponent continuation bets on an A-7-2 rainbow flop. Hands with an ace are strongly weighted. Underpairs like 88-TT may check. The range concentrates on Ax hands and overpairs.',
+    combos: '~100',
+    hands: ['AA','KK','QQ','AKs','AQs','AJs','ATs','AKo','AQo']
+  },
+  { // Step 3: Turn barrel on 5
+    name: 'Turn Barrel on 5&hearts; (~5% of hands)',
+    desc: 'Opponent fires again on a blank turn. This eliminates most medium-strength hands that would check for pot control. Remaining: strong aces (AK, AQ) and big overpairs. Some bluffs possible.',
+    combos: '~66',
+    hands: ['AA','KK','QQ','AKs','AQs','AKo','AQo']
+  },
+  { // Step 4: River shove on J
+    name: 'River Shove on J&clubs; (~3% of hands)',
+    desc: 'Opponent shoves the river. Only the strongest value hands (sets, two pair, top pair top kicker) and polarized bluffs remain. The distribution is now extremely narrow.',
+    combos: '~40',
+    hands: ['AA','AKs','AKo']
+  }
+];
+
+let currentStep = -1;
+
+function buildGrid() {
+  const grid = document.getElementById('rangeGrid');
+  grid.innerHTML = '';
+  for (let r = 0; r < 13; r++) {
+    for (let c = 0; c < 13; c++) {
+      const cell = document.createElement('div');
+      const label = getGridLabel(r, c);
+      cell.textContent = label;
+      cell.id = 'cell-' + label;
+      cell.style.cssText = 'padding:4px 2px; text-align:center; border-radius:3px; background:rgba(255,255,255,0.08); color:var(--muted); transition:all 0.3s;';
+      grid.appendChild(cell);
+    }
+  }
+}
+
+function rangeStep(step) {
+  if (step === 0) buildGrid();
+  currentStep = step;
+
+  // Enable next button, disable future ones
+  for (let i = 0; i <= 4; i++) {
+    const btn = document.getElementById('btnStep' + i);
+    if (i <= step + 1) btn.disabled = false;
+    if (i === step) btn.style.outline = '2px solid var(--green)';
+    else btn.style.outline = 'none';
+  }
+
+  const data = rangeSteps[step];
+
+  // Update info
+  document.getElementById('rangeInfo').innerHTML = `
+    <div><span class="result-label">Range:</span> <span class="result-value">${data.name}</span></div>
+    <div style="margin-top:0.4rem">${data.desc}</div>
+    <div style="margin-top:0.4rem"><span class="result-label">Approximate combos:</span> ${data.combos}</div>
+  `;
+
+  // Update grid colors
+  for (let r = 0; r < 13; r++) {
+    for (let c = 0; c < 13; c++) {
+      const label = getGridLabel(r, c);
+      const cell = document.getElementById('cell-' + label);
+      if (!cell) continue;
+
+      if (step === 0) {
+        // All hands highlighted
+        cell.style.background = 'rgba(76, 175, 80, 0.3)';
+        cell.style.color = 'var(--text)';
+      } else {
+        const inRange = data.hands.includes(label);
+        if (inRange) {
+          cell.style.background = 'rgba(76, 175, 80, 0.5)';
+          cell.style.color = '#fff';
+          cell.style.fontWeight = 'bold';
+        } else {
+          cell.style.background = 'rgba(255,255,255,0.05)';
+          cell.style.color = 'var(--muted)';
+          cell.style.fontWeight = 'normal';
+        }
+      }
+    }
+  }
+}
+
+// ===== Player Type Identifier =====
+function checkPlayerType(btn) {
+  const isCorrect = btn.getAttribute('data-correct') === 'true';
+  const result = document.getElementById('playerTypeResult');
+
+  // Disable all buttons
+  const buttons = btn.parentElement.querySelectorAll('.quiz-option');
+  buttons.forEach(b => {
+    b.disabled = true;
+    if (b.getAttribute('data-correct') === 'true') {
+      b.style.borderColor = 'var(--green)';
+      b.style.background = 'rgba(76, 175, 80, 0.2)';
+    } else if (b === btn && !isCorrect) {
+      b.style.borderColor = 'var(--accent)';
+      b.style.background = 'rgba(231, 76, 60, 0.2)';
+    }
+  });
+
+  if (isCorrect) {
+    result.innerHTML = '<div style="color:var(--green); margin-top:0.5rem;"><strong>Correct!</strong> VPIP of 18% indicates a tight range, while a PFR of 15% (close to VPIP) and frequent postflop aggression indicate an aggressive style. This is the classic TAG (Tight-Aggressive) profile &mdash; narrow range, played aggressively. Their actions carry high information content because when they enter a pot, you know they have something.</div>';
+  } else {
+    result.innerHTML = '<div style="color:var(--accent); margin-top:0.5rem;"><strong>Not quite.</strong> Look at the stats: VPIP 18% (tight &mdash; not loose), PFR 15% (aggressive &mdash; not passive). A VPIP under ~22% at 6-max is tight. A PFR close to VPIP means they are raising, not limping. Frequent postflop betting confirms aggression. This is a TAG (Tight-Aggressive) player.</div>';
+  }
+}
+</script>
+</body>
+</html>

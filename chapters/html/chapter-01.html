@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 1: Decisions Under Risk — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part I &mdash; Chapter 1</span>
+    <h1>Decisions Under Risk: Probability and Expectation</h1>
+    <p class="chapter-subtitle">The mathematical foundation of every poker decision you'll ever make</p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>Why Mathematics?</h2>
+    <p>People play poker for many reasons &mdash; social connection, competition, the thrill of gambling. But if our goal is to <em>win</em>, we need a framework for evaluating decisions under uncertainty. That framework is <strong>probability</strong> and <strong>expected value</strong>.</p>
+    <p>Chen and Ankenman acknowledge that utility theory (which accounts for non-financial preferences) is the truly comprehensive framework. However, because each individual has unique utility curves, general analysis becomes extraordinarily difficult. Instead, this book uses <strong>money won inside the game</strong> as a proxy for utility, with the assumption that players are adequately bankrolled for the game they are playing.</p>
+    <p>This simplification allows us to use a single, powerful metric: <strong>expected value (EV)</strong>. A mathematical approach to poker is concerned primarily with the maximization of expected value.</p>
+  </div>
+
+  <!-- ===== PROBABILITY ===== -->
+  <div class="chapter-section">
+    <h2>Probability: The Language of Uncertainty</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Probability</div>
+      <p>If <em>n</em> trials of an experiment produce <em>n<sub>x</sub></em> occurrences of event <em>x</em>, the probability <em>p(x)</em> is defined as:</p>
+      <div class="math-block">
+        <span class="math-label">Equation 1.1</span>
+        p(x) = lim(n&rarr;&infin;) n<sub>x</sub> / n
+      </div>
+      <p>In plain English: the probability of an outcome is the fraction of times it occurs over an arbitrarily large number of trials.</p>
+    </div>
+
+    <h3>Counting: The Pocket Aces Example</h3>
+    <p>What is the probability of being dealt pocket aces in Texas Hold'em? We break this down step by step:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>There are 52 cards in a standard deck, each equally likely</li>
+      <li>Probability of any specific card (e.g., A&spades;): <strong>1/52</strong></li>
+      <li>Probability the first card is <em>any</em> ace: <strong>4/52 = 1/13</strong> (four aces, mutually exclusive)</li>
+      <li>Given the first card is an ace, probability the second is also an ace: <strong>3/51 = 1/17</strong> (dependent event)</li>
+      <li>Joint probability: <strong>(1/13) &times; (1/17) = 1/221 &approx; 0.45%</strong></li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">Flopping a Flush</div>
+      <p>You hold two suited cards. What is the probability the flop comes all in your suit?</p>
+      <p>There are 11 remaining cards of your suit in a 50-card deck:</p>
+      <div class="math-block">
+        p(flush flop) = (11/50) &times; (10/49) &times; (9/48) = 990/117,600 = 33/3,920 &approx; <strong>0.84%</strong>
+      </div>
+      <p>This uses the dependent events formula (Equation 1.5) applied three times, since each card dealt removes one from the deck.</p>
+    </div>
+  </div>
+
+  <!-- ===== RULES OF PROBABILITY ===== -->
+  <div class="chapter-section">
+    <h2>The Rules of Probability</h2>
+
+    <h3>Mutually Exclusive Events</h3>
+    <p>Events that cannot both occur simultaneously. If events A and B are mutually exclusive:</p>
+    <div class="math-block">
+      <span class="math-label">Equation 1.2 &mdash; Addition Rule (Mutually Exclusive)</span>
+      p(A &cup; B) = p(A) + p(B)
+    </div>
+    <p>Example: The probability of being dealt AA, KK, or QQ is simply 1/221 + 1/221 + 1/221 = 3/221.</p>
+
+    <h3>Independent Events</h3>
+    <p>Events where one does not affect the other (e.g., two separate dice rolls):</p>
+    <div class="math-block">
+      <span class="math-label">Equation 1.3 &mdash; Multiplication Rule (Independent)</span>
+      p(A &cap; B) = p(A) &times; p(B)
+    </div>
+    <p>Example: Probability of rolling double sixes = (1/6) &times; (1/6) = 1/36.</p>
+
+    <h3>Dependent Events</h3>
+    <p>Events where one affects the probability of the other (like cards dealt from one deck):</p>
+    <div class="math-block">
+      <span class="math-label">Equation 1.5 &mdash; Conditional Probability</span>
+      p(A &cap; B) = p(A) &times; p(B|A)
+    </div>
+    <p>where p(B|A) is the probability of B <em>given that</em> A has occurred.</p>
+
+    <h3>General Union (Non-Exclusive Events)</h3>
+    <div class="math-block">
+      <span class="math-label">Equation 1.4 &mdash; General Addition Rule</span>
+      p(A &cup; B) = p(A) + p(B) &minus; p(A &cap; B)
+    </div>
+    <p>Example: Probability a card is a heart OR an ace = 13/52 + 4/52 &minus; 1/52 = 16/52 = 4/13. We subtract the ace of hearts to avoid double-counting.</p>
+
+    <h3>Complements</h3>
+    <div class="math-block">
+      <span class="math-label">Equations 1.6&ndash;1.9</span>
+      0 &le; p(A) &le; 1  &nbsp;&nbsp;|&nbsp;&nbsp;  p(certain) = 1  &nbsp;&nbsp;|&nbsp;&nbsp;  p(impossible) = 0  &nbsp;&nbsp;|&nbsp;&nbsp;  p(not A) = 1 &minus; p(A)
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Probability Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Poker Probability Calculator</h3>
+    <p>Calculate the probability of being dealt a specific pocket pair:</p>
+    <div class="widget-controls">
+      <label>
+        Pair Rank:
+        <select id="pairRank">
+          <option value="A">Aces</option>
+          <option value="K">Kings</option>
+          <option value="Q">Queens</option>
+          <option value="J">Jacks</option>
+          <option value="T">Tens</option>
+          <option value="9">Nines</option>
+          <option value="any">Any Pair</option>
+        </select>
+      </label>
+      <label>
+        Over how many hands:
+        <input type="number" id="numHands" value="100" min="1" max="100000">
+      </label>
+      <button class="btn" onclick="calcPairProb()">Calculate</button>
+    </div>
+    <div class="widget-result" id="pairResult">
+      <div class="result-label">Select a pair and click Calculate</div>
+    </div>
+  </div>
+
+  <!-- ===== PROBABILITY DISTRIBUTIONS ===== -->
+  <div class="chapter-section">
+    <h2>Probability Distributions</h2>
+    <p>A <strong>probability distribution</strong> is a complete, mutually exclusive pairing of all possible outcomes of an event with their corresponding probabilities.</p>
+
+    <div class="example-box">
+      <div class="example-title">Coin Flip Distribution</div>
+      <p>C = {(heads, 1/2), (tails, 1/2)}</p>
+      <p>Die Roll: D = {(1, 1/6), (2, 1/6), (3, 1/6), (4, 1/6), (5, 1/6), (6, 1/6)}</p>
+    </div>
+
+    <p>In poker, we represent an opponent's possible holdings as a probability distribution. At the start of a hand, each player's distribution is identical (all possible two-card combos). As the hand progresses, we incorporate new information &mdash; betting patterns, board cards, our own hand &mdash; to refine the probability estimate for each possible hand.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Hand Distribution Notation</div>
+      <p>When probabilities are omitted from a distribution, it implies the relative probabilities are unchanged from the deal. For example, a tight player who raises only with premium hands:</p>
+      <div class="math-block">H = {AA, KK, QQ, AKs, AKo}</div>
+      <p>The relative frequency of each hand is as it was when cards were dealt.</p>
+    </div>
+  </div>
+
+  <!-- ===== EXPECTED VALUE ===== -->
+  <div class="chapter-section">
+    <h2>Expected Value: The Core of Poker Strategy</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Expected Value (EV)</div>
+      <p>For a probability distribution P where each of the <em>n</em> outcomes has a value v<sub>i</sub> and a probability p<sub>i</sub>:</p>
+      <div class="math-block">
+        <span class="math-label">Equation 1.11</span>
+        &lt;P&gt; = &Sigma; p<sub>i</sub> &times; v<sub>i</sub> &nbsp;&nbsp;(summed over all outcomes i=1 to n)
+      </div>
+      <p>The expected value is the sum of each outcome's value multiplied by its probability. It represents the <strong>long-run average</strong> result.</p>
+    </div>
+
+    <h3>Example: The Fair Coin Flip</h3>
+    <p>Your friend offers a $10 coin flip. Win $10 or lose $10 with equal probability:</p>
+    <div class="math-block">
+      B = {(+$10, 1/2), (-$10, 1/2)}<br>
+      &lt;B&gt; = (1/2)(+$10) + (1/2)(-$10) = $5 - $5 = <strong>$0</strong>
+    </div>
+    <p>This is a fair bet &mdash; you break even on average.</p>
+
+    <h3>Example: The Favorable Flip</h3>
+    <p>Now your friend offers $11 when you win, but you pay $10 when you lose:</p>
+    <div class="math-block">
+      &lt;B<sub>n</sub>&gt; = (1/2)(+$11) + (1/2)(-$10) = $5.50 - $5.00 = <strong>+$0.50 per flip</strong>
+    </div>
+    <p>You can't win exactly 50 cents on any single flip, but over many flips, you'll average +$0.50 per flip.</p>
+
+    <h3>Example: The Dice Roll Gamble</h3>
+    <p>Win $30 on double sixes, lose $1 otherwise:</p>
+    <div class="math-block">
+      &lt;B<sub>d</sub>&gt; = (+$30)(1/36) + (-$1)(35/36) = $0.833 - $0.972 = <strong>-$0.139</strong>
+    </div>
+    <p>This is a negative EV proposition &mdash; you lose about 14 cents per roll on average.</p>
+
+    <h3>The Additive Property</h3>
+    <p>Perhaps the most important property: <strong>expected value is additive</strong>. The EV of six bets in a row is the sum of each individual bet's EV. This is the engine of profitable poker &mdash; a skilled player accumulates positive EV over thousands of small decisions.</p>
+    <p>As Chen writes: <em>"The free drinks and neon lights of Las Vegas are financed by the summation of millions of little coin flips, on each of which the house has a tiny edge."</em></p>
+  </div>
+
+  <!-- ===== INTERACTIVE: EV Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Expected Value Calculator</h3>
+    <p>Set up a simple bet and see the EV:</p>
+    <div class="widget-controls">
+      <label>
+        Win Amount ($):
+        <input type="number" id="evWin" value="11" min="0" step="1">
+      </label>
+      <label>
+        Lose Amount ($):
+        <input type="number" id="evLose" value="10" min="0" step="1">
+      </label>
+      <label>
+        Win Probability (%):
+        <input type="range" id="evProb" value="50" min="1" max="99">
+        <span id="evProbLabel">50%</span>
+      </label>
+      <button class="btn" onclick="calcEV()">Calculate EV</button>
+    </div>
+    <div class="widget-result" id="evResult">
+      <div class="result-label">Adjust the values and click Calculate EV</div>
+    </div>
+  </div>
+
+  <!-- ===== ODDS NOTATION ===== -->
+  <div class="chapter-section">
+    <h2>Odds vs. Probability</h2>
+    <p>Poker players often express likelihood as <strong>odds</strong> rather than probabilities. The relationship:</p>
+    <div class="math-block">
+      If probability = p, then odds against = (1-p) : p<br>
+      If odds against = X : Y, then probability = Y / (X + Y)
+    </div>
+    <p>For example, pocket aces have a probability of 1/221. The odds against being dealt aces are <strong>220:1</strong>. The authors prefer probabilities because they convert directly to expected value calculations.</p>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>You hold <span class="poker-card red">J&hearts;</span><span class="poker-card red">T&hearts;</span> and the board shows <span class="poker-card red">9&hearts;</span><span class="poker-card black">8&clubs;</span><span class="poker-card red">2&hearts;</span>. You have a flush draw and an open-ended straight draw. Approximately how many outs do you have?</p>
+    <button class="quiz-option" data-correct="false">8 (flush outs only)</button>
+    <button class="quiz-option" data-correct="false">6 (straight outs only)</button>
+    <button class="quiz-option" data-correct="true">15 (9 flush outs + 6 non-heart straight outs)</button>
+    <button class="quiz-option" data-correct="false">17 (9 + 8, counting overlap)</button>
+    <div class="quiz-feedback" data-correct="Correct! You have 9 hearts for the flush, plus the Q&clubs;, Q&diams;, Q&spades;, 7&clubs;, 7&diams;, 7&spades; for the straight (excluding hearts already counted). The Qh and 7h are already counted in flush outs, so 9 + 6 = 15 total." data-incorrect="Not quite. With a flush draw you have 9 outs (remaining hearts). With an open-ended straight draw, you have 8 outs (four Queens and four Sevens). But the Q&hearts; and 7&hearts; are already counted as flush outs, so the total unique outs are 9 + 6 = 15."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>EV Problem</h3>
+    <p>You can enter a $100 pot by calling a $20 bet. You estimate you'll win the pot 30% of the time. What is the EV of calling?</p>
+    <button class="quiz-option" data-correct="false">-$20 (you lose your call)</button>
+    <button class="quiz-option" data-correct="true">+$16 (you profit on average)</button>
+    <button class="quiz-option" data-correct="false">+$30 (30% of the pot)</button>
+    <button class="quiz-option" data-correct="false">$0 (it's a break-even call)</button>
+    <div class="quiz-feedback" data-correct="Correct! EV = (0.30)($100 + $20) - $20 = $36 - $20 = +$16. You win the full pot (including your call) 30% of the time, but you always pay $20 to play." data-incorrect="The EV of calling = (0.30)($120) - $20 = $36 - $20 = +$16. When you win (30%), you gain the $100 pot plus your $20 back = $120. You always pay $20 to play."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>The <strong>probability</strong> of an outcome is the ratio of that outcome's occurrence over an arbitrarily large number of trials.</li>
+      <li>A <strong>probability distribution</strong> pairs a complete, mutually exclusive list of outcomes with their corresponding probabilities.</li>
+      <li>The <strong>expected value</strong> of a valued probability distribution is the sum of each outcome's value multiplied by its probability.</li>
+      <li><strong>Expected value is additive</strong> &mdash; the EV of multiple independent bets is the sum of the individual EVs.</li>
+      <li>A mathematical approach to poker is concerned primarily with the <strong>maximization of expected value</strong>.</li>
+      <li>In poker, we represent opponents' hands as <strong>probability distributions</strong> that we refine as new information becomes available.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="../../index.html">&larr; Table of Contents</a>
+    <a href="chapter-02.html">Chapter 2: Variance &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcPairProb() {
+  const rank = document.getElementById('pairRank').value;
+  const hands = parseInt(document.getElementById('numHands').value) || 100;
+  const pOnePair = 1/221;  // ~0.004525
+  const pAnyPair = 13/221; // ~0.05882
+
+  const p = rank === 'any' ? pAnyPair : pOnePair;
+  const label = rank === 'any' ? 'any pocket pair' : 'pocket ' + rank + rank;
+
+  const evCount = p * hands;
+  const pAtLeastOne = 1 - Math.pow(1 - p, hands);
+
+  document.getElementById('pairResult').innerHTML = `
+    <div><span class="result-label">Probability per hand:</span> <span class="result-value">${(p*100).toFixed(3)}%</span> (${rank === 'any' ? '13/221' : '1/221'})</div>
+    <div style="margin-top:0.5rem"><span class="result-label">Expected times in ${hands} hands:</span> <span class="result-value">${evCount.toFixed(2)}</span></div>
+    <div style="margin-top:0.5rem"><span class="result-label">Probability of seeing it at least once in ${hands} hands:</span> <span class="result-value">${(pAtLeastOne*100).toFixed(2)}%</span></div>
+  `;
+}
+
+function calcEV() {
+  const win = parseFloat(document.getElementById('evWin').value);
+  const lose = parseFloat(document.getElementById('evLose').value);
+  const prob = parseInt(document.getElementById('evProb').value) / 100;
+
+  const ev = prob * win - (1-prob) * lose;
+  const color = ev >= 0 ? 'var(--green)' : 'var(--accent)';
+
+  document.getElementById('evResult').innerHTML = `
+    <div><span class="result-label">Distribution:</span> Win $${win} with prob ${(prob*100).toFixed(0)}%, Lose $${lose} with prob ${((1-prob)*100).toFixed(0)}%</div>
+    <div style="margin-top:0.5rem"><span class="result-label">Expected Value:</span> <span class="result-value" style="color:${color}">${ev >= 0 ? '+' : ''}$${ev.toFixed(2)}</span> per trial</div>
+    <div style="margin-top:0.5rem; color: var(--muted); font-size:0.85rem;">
+      = (${(prob*100).toFixed(0)}%)(+$${win}) + (${((1-prob)*100).toFixed(0)}%)(-$${lose})
+      = $${(prob*win).toFixed(2)} - $${((1-prob)*lose).toFixed(2)}
+    </div>
+  `;
+}
+
+document.getElementById('evProb').addEventListener('input', function() {
+  document.getElementById('evProbLabel').textContent = this.value + '%';
+});
+</script>
+</body>
+</html>

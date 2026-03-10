@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 6: The Tells are in the Data — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part II &mdash; Chapter 6</span>
+    <h1>The Tells are in the Data: Topics in Online Poker</h1>
+    <p class="chapter-subtitle">How data mining, statistical patterns, and sample sizes replace physical reads in the digital game</p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>Online Poker Data Mining</h2>
+    <p>Online poker provides a fundamentally different information environment than live poker. Every hand played online generates a <strong>hand history</strong> &mdash; a complete, machine-readable record of every action taken by every player. These histories can be downloaded, stored, and analyzed at scale.</p>
+    <p>Software tools such as tracking programs automate the collection process, aggregating thousands or even millions of hands into searchable databases. This gives players access to detailed statistics on their opponents &mdash; far more data than any human could gather through observation alone at a live table.</p>
+    <p>Chen and Ankenman highlight that this data abundance transforms the nature of "reading" opponents. In live poker, reads are qualitative and subjective. Online, they become <strong>quantitative and statistical</strong>.</p>
+  </div>
+
+  <!-- ===== STATISTICAL TELLS ===== -->
+  <div class="chapter-section">
+    <h2>Statistical Tells</h2>
+    <p>In live poker, tells are physical &mdash; a trembling hand, a change in breathing, eye contact or avoidance. Online, tells come from <strong>data patterns</strong>. The key statistics that serve as proxies for reading opponent tendencies include:</p>
+
+    <div class="definition-box">
+      <div class="def-term">VPIP &mdash; Voluntarily Put Money in Pot</div>
+      <p>The percentage of hands in which a player voluntarily puts money into the pot (excluding posting blinds). A high VPIP indicates a <strong>loose</strong> player who plays many hands; a low VPIP indicates a <strong>tight</strong> player.</p>
+      <div class="math-block">
+        VPIP = (Hands voluntarily entered / Total hands dealt) &times; 100%
+      </div>
+      <p>Typical range: 15&ndash;25% for solid players; 35%+ for loose players; under 12% for very tight players.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">PFR &mdash; Pre-Flop Raise Percentage</div>
+      <p>How often a player raises before the flop. The gap between VPIP and PFR reveals passivity: a player with VPIP=40% and PFR=8% is <strong>loose-passive</strong> (calling station), while VPIP=22% and PFR=18% is <strong>tight-aggressive</strong>.</p>
+      <div class="math-block">
+        PFR = (Hands raised preflop / Total hands dealt) &times; 100%
+      </div>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Aggression Factor (AF)</div>
+      <p>The ratio of aggressive actions (bets + raises) to passive actions (calls). An AF of 1.0 means the player bets/raises as often as they call; above 2.0 is aggressive; below 1.0 is passive.</p>
+      <div class="math-block">
+        AF = (Bets + Raises) / Calls
+      </div>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Went to Showdown % (WTSD)</div>
+      <p>How often a player who sees the flop goes all the way to showdown. A high WTSD (above 30%) suggests a player who is difficult to bluff; a low WTSD (below 22%) suggests a player who folds to pressure on later streets.</p>
+    </div>
+
+    <p>These statistics are <strong>mathematical proxies</strong> for the qualitative reads that experienced live players develop through observation. Together, they form a statistical profile that can classify opponents into archetypes and guide strategic adjustments.</p>
+  </div>
+
+  <!-- ===== TIMING TELLS ===== -->
+  <div class="chapter-section">
+    <h2>Timing Tells</h2>
+    <p>Even without physical presence, the <strong>speed of an opponent's actions</strong> can provide information in online poker:</p>
+
+    <table class="data-table">
+      <tr><th>Timing Pattern</th><th>Common Interpretation</th><th>Reliability</th></tr>
+      <tr><td>Quick call</td><td>Drawing hand or medium-strength hand (no decision to make)</td><td>Moderate</td></tr>
+      <tr><td>Long pause before betting</td><td>Strong hand (thinking about bet sizing, not whether to bet)</td><td>Low&ndash;Moderate</td></tr>
+      <tr><td>Instant check</td><td>Weakness (used auto-check or gave up quickly)</td><td>Moderate</td></tr>
+      <tr><td>Long pause then check</td><td>Considered betting but decided against (medium strength)</td><td>Low</td></tr>
+    </table>
+
+    <p>Timing tells are <strong>less reliable</strong> than pattern-based statistical tells. Players may be multi-tabling, distracted, or deliberately varying their timing. Use them as supplementary information, not primary reads.</p>
+  </div>
+
+  <!-- ===== BET SIZING TELLS ===== -->
+  <div class="chapter-section">
+    <h2>Bet Sizing Tells</h2>
+    <p>In online poker, players often develop <strong>unconscious bet sizing patterns</strong> that correlate with hand strength:</p>
+
+    <div class="example-box">
+      <div class="example-title">Common Bet Sizing Patterns</div>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Larger bets (75&ndash;100%+ pot)</strong> &mdash; Often correlated with strong hands or polarized ranges</li>
+        <li><strong>Min-bets or small bets (25&ndash;33% pot)</strong> &mdash; Frequently used as blocking bets with medium-strength hands</li>
+        <li><strong>Specific recurring sizes</strong> &mdash; A player who always bets exactly $12 with strong hands and $6 with bluffs reveals exploitable information</li>
+      </ul>
+      <p>With a large enough sample, you can identify whether a specific opponent's bet sizing is <strong>informative</strong> (correlated with hand strength) or <strong>balanced</strong> (uncorrelated).</p>
+    </div>
+  </div>
+
+  <!-- ===== MULTI-TABLING ===== -->
+  <div class="chapter-section">
+    <h2>Multi-Tabling and Volume</h2>
+    <p>Online play enables much higher volume than live poker. A live player might see 25&ndash;35 hands per hour; an online player can play 60&ndash;80 hands per hour per table, and many players run 4&ndash;16 tables simultaneously.</p>
+    <p>This has important statistical implications:</p>
+
+    <div class="example-box">
+      <div class="example-title">The Volume vs. Quality Trade-off</div>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>More hands = tighter confidence intervals</strong> on your win rate. Playing 100,000 hands gives a much more reliable estimate of your true edge than 10,000 hands.</li>
+        <li><strong>Multi-tabling may reduce decision quality.</strong> Complex spots requiring deep analysis may be handled suboptimally when attention is divided across many tables.</li>
+        <li><strong>The optimal number of tables</strong> balances total EV: if your win rate per table drops from 3 BB/100 (1 table) to 2 BB/100 (4 tables), your total hourly EV still increases &mdash; but only up to a point.</li>
+      </ul>
+    </div>
+
+    <div class="math-block">
+      <span class="math-label">Total Hourly EV</span>
+      EV<sub>total</sub> = (Tables) &times; (Hands/hr/table) &times; (Win rate per hand)
+    </div>
+    <p>The key question: does adding another table reduce your per-table win rate enough to offset the added volume?</p>
+  </div>
+
+  <!-- ===== SAMPLE SIZE ===== -->
+  <div class="chapter-section">
+    <h2>Sample Size and Data Reliability</h2>
+    <p>This section connects directly to the variance and confidence interval concepts from <strong>Chapters 2 and 3</strong>. The central problem: how much data do you need on an opponent before their statistics are reliable?</p>
+
+    <div class="example-box">
+      <div class="example-title">VPIP Confidence Interval</div>
+      <p>If you observe a player with VPIP = 30% over <em>n</em> hands, the 95% confidence interval for their true VPIP is approximately:</p>
+      <div class="math-block">
+        CI<sub>95</sub> = VPIP &plusmn; 1.96 &times; &radic;(VPIP &times; (1 &minus; VPIP) / n)
+      </div>
+      <p>With 50 hands: 30% &plusmn; 12.7% &rarr; true VPIP could be anywhere from 17.3% to 42.7%</p>
+      <p>With 500 hands: 30% &plusmn; 4.0% &rarr; true VPIP is likely between 26.0% and 34.0%</p>
+      <p>With 5,000 hands: 30% &plusmn; 1.3% &rarr; true VPIP is very likely between 28.7% and 31.3%</p>
+    </div>
+
+    <p>The takeaway: <strong>small samples on individual opponents may be wildly unreliable</strong>. You need large samples before adjusting significantly based on observed statistics.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Bayesian Approach to Opponent Reads</div>
+      <p>Rather than relying solely on observed data, the optimal approach is <strong>Bayesian</strong>: combine your <em>prior beliefs</em> (based on population tendencies, game type, and stakes) with the <em>observed data</em> to form a posterior estimate.</p>
+      <p>With few hands, lean heavily on priors. As your sample grows, let the data dominate. This mirrors the Bayesian framework introduced in Chapter 3.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Player Stats Dashboard ===== -->
+  <div class="interactive-widget">
+    <h3>Player Stats Dashboard</h3>
+    <p>Enter an opponent's key statistics to classify their player type and see suggested adjustments:</p>
+    <div class="widget-controls">
+      <label>
+        VPIP (%):
+        <input type="number" id="dashVpip" value="25" min="0" max="100" step="1">
+      </label>
+      <label>
+        PFR (%):
+        <input type="number" id="dashPfr" value="18" min="0" max="100" step="1">
+      </label>
+      <label>
+        Aggression Factor:
+        <input type="number" id="dashAf" value="2.0" min="0" max="10" step="0.1">
+      </label>
+      <button class="btn" onclick="classifyPlayer()">Classify Player</button>
+    </div>
+    <div class="widget-result" id="dashResult">
+      <div class="result-label">Enter stats and click Classify Player</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="playerGrid" width="400" height="400"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Sample Size Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Sample Size Reliability Calculator</h3>
+    <p>How many hands do you need before an opponent's VPIP is reliable? Uses the confidence interval formula from Chapters 2&ndash;3.</p>
+    <div class="widget-controls">
+      <label>
+        Observed VPIP (%):
+        <input type="number" id="ssVpip" value="30" min="1" max="99" step="1">
+      </label>
+      <label>
+        Desired margin of error (%):
+        <input type="number" id="ssMargin" value="5" min="0.5" max="20" step="0.5">
+      </label>
+      <label>
+        Confidence level:
+        <select id="ssConf">
+          <option value="1.645">90%</option>
+          <option value="1.96" selected>95%</option>
+          <option value="2.576">99%</option>
+        </select>
+      </label>
+      <button class="btn" onclick="calcSampleSize()">Calculate</button>
+    </div>
+    <div class="widget-result" id="ssResult">
+      <div class="result-label">Enter parameters and click Calculate</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Player Classification</h3>
+    <p>A player has VPIP = 45% and PFR = 8%. What player type is this?</p>
+    <button class="quiz-option" data-correct="false">Tight-aggressive (TAG)</button>
+    <button class="quiz-option" data-correct="true">Loose-passive (calling station)</button>
+    <button class="quiz-option" data-correct="false">Loose-aggressive (LAG)</button>
+    <button class="quiz-option" data-correct="false">Tight-passive (rock)</button>
+    <div class="quiz-feedback" data-correct="Correct! A VPIP of 45% is very loose &mdash; this player enters nearly half of all pots. But a PFR of only 8% means they rarely raise, preferring to call. The large gap between VPIP and PFR (37 percentage points) is the hallmark of a calling station. Exploit them by value betting relentlessly and rarely bluffing." data-incorrect="Look at the two statistics: VPIP = 45% means this player enters nearly half of all pots (very loose). PFR = 8% means they rarely raise preflop (very passive). The combination of high VPIP and low PFR defines a loose-passive player, commonly called a calling station."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Sample Size Confidence</h3>
+    <p>You have 50 hands on a player showing VPIP = 30%. How confident should you be in this number?</p>
+    <button class="quiz-option" data-correct="false">Very confident &mdash; 50 hands is a solid sample</button>
+    <button class="quiz-option" data-correct="false">Moderately confident &mdash; the true VPIP is likely within 5%</button>
+    <button class="quiz-option" data-correct="true">Not very confident &mdash; the 95% CI is roughly 30% &plusmn; 13%, so their true VPIP could be anywhere from 17% to 43%</button>
+    <button class="quiz-option" data-correct="false">Completely useless &mdash; you need at least 1,000 hands for any information</button>
+    <div class="quiz-feedback" data-correct="Correct! With only 50 hands, the 95% confidence interval is 30% &plusmn; 1.96 &times; &radic;(0.30 &times; 0.70 / 50) &approx; 30% &plusmn; 12.7%. The true VPIP could be anywhere from about 17% to 43% &mdash; that spans the range from tight to very loose. You should rely mostly on population-level priors at this sample size." data-incorrect="With 50 hands, the 95% CI for a 30% VPIP is approximately 30% &plusmn; 12.7%. That means the true VPIP could be anywhere from 17.3% to 42.7%. This is a very wide range, making the statistic unreliable. You need hundreds of hands for a reasonably tight confidence interval."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Online hand histories</strong> provide far more data than live observation, transforming opponent reads from qualitative to quantitative.</li>
+      <li><strong>VPIP, PFR, Aggression Factor, and WTSD</strong> are the core statistical tells that classify opponents into player types (tight/loose, passive/aggressive).</li>
+      <li><strong>Timing tells</strong> (speed of actions) and <strong>bet sizing tells</strong> (patterns in bet amounts) provide supplementary but less reliable information.</li>
+      <li><strong>Multi-tabling</strong> increases volume but may decrease per-table decision quality &mdash; the optimal number of tables maximizes total hourly EV.</li>
+      <li><strong>Small sample sizes produce unreliable statistics</strong> &mdash; use confidence intervals to assess how much to trust observed data on an opponent.</li>
+      <li>A <strong>Bayesian approach</strong> combines prior beliefs with observed data, leaning on priors when samples are small and letting data dominate as samples grow.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-05.html">&larr; Chapter 5</a>
+    <a href="chapter-07.html">Chapter 7 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function classifyPlayer() {
+  const vpip = parseFloat(document.getElementById('dashVpip').value);
+  const pfr = parseFloat(document.getElementById('dashPfr').value);
+  const af = parseFloat(document.getElementById('dashAf').value);
+
+  if (pfr > vpip) {
+    document.getElementById('dashResult').innerHTML =
+      '<div class="result-label" style="color:var(--accent)">Error: PFR cannot be higher than VPIP (you can\'t raise without entering the pot).</div>';
+    return;
+  }
+
+  const loose = vpip > 25;
+  const aggressive = af > 1.5 || pfr > vpip * 0.6;
+  const gap = vpip - pfr;
+
+  let type, description, adjustment;
+
+  if (loose && aggressive) {
+    type = 'Loose-Aggressive (LAG)';
+    description = 'Plays many hands and plays them aggressively. Can be dangerous and unpredictable.';
+    adjustment = 'Tighten your opening range, but widen your calling range against their raises. Look for spots to trap with strong hands. Avoid fancy bluffs &mdash; they are less likely to fold.';
+  } else if (loose && !aggressive) {
+    type = 'Loose-Passive (Calling Station)';
+    description = 'Plays many hands but rarely raises. Loves to call and see showdowns.';
+    adjustment = 'Value bet relentlessly with any decent hand. Rarely bluff &mdash; they will call. Increase bet sizing with strong hands. Do not try to push them off pots.';
+  } else if (!loose && aggressive) {
+    type = 'Tight-Aggressive (TAG)';
+    description = 'Plays few hands but plays them strongly. The most common winning style.';
+    adjustment = 'Respect their raises &mdash; they usually have strong hands. Look for opportunities to steal their blinds. 3-bet light occasionally to exploit their tight range.';
+  } else {
+    type = 'Tight-Passive (Nit/Rock)';
+    description = 'Plays very few hands and rarely raises. Waits for premium holdings.';
+    adjustment = 'Steal their blinds frequently. Fold to their raises unless you have a strong hand. They are very predictable &mdash; when they bet big, they have it.';
+  }
+
+  document.getElementById('dashResult').innerHTML = `
+    <div style="margin-bottom:0.6rem"><span class="result-label">Player Type:</span> <span class="result-value">${type}</span></div>
+    <div style="margin-bottom:0.6rem"><span class="result-label">Profile:</span> ${description}</div>
+    <div style="margin-bottom:0.6rem"><span class="result-label">VPIP/PFR Gap:</span> <span class="result-value">${gap.toFixed(0)}%</span> ${gap > 15 ? '(wide gap = passive preflop)' : gap < 5 ? '(narrow gap = aggressive preflop)' : '(moderate gap)'}</div>
+    <div><span class="result-label">Suggested Adjustment:</span> ${adjustment}</div>
+  `;
+
+  // Draw player type grid
+  drawPlayerGrid(vpip, pfr);
+}
+
+function drawPlayerGrid(vpip, pfr) {
+  const canvas = document.getElementById('playerGrid');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  const pad = 50;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Background
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 0, w, h);
+
+  // Grid area
+  const gw = w - 2 * pad;
+  const gh = h - 2 * pad;
+
+  // Quadrant colors
+  // Top-left: tight-aggressive, Top-right: loose-aggressive
+  // Bottom-left: tight-passive, Bottom-right: loose-passive
+  ctx.globalAlpha = 0.15;
+  ctx.fillStyle = '#4CAF50'; ctx.fillRect(pad, pad, gw/2, gh/2);           // TAG
+  ctx.fillStyle = '#FF9800'; ctx.fillRect(pad + gw/2, pad, gw/2, gh/2);    // LAG
+  ctx.fillStyle = '#2196F3'; ctx.fillRect(pad, pad + gh/2, gw/2, gh/2);    // Tight-passive
+  ctx.fillStyle = '#f44336'; ctx.fillRect(pad + gw/2, pad + gh/2, gw/2, gh/2); // Loose-passive
+  ctx.globalAlpha = 1.0;
+
+  // Quadrant labels
+  ctx.font = '11px monospace';
+  ctx.fillStyle = '#4CAF50'; ctx.fillText('TAG', pad + 10, pad + 20);
+  ctx.fillStyle = '#FF9800'; ctx.fillText('LAG', pad + gw/2 + 10, pad + 20);
+  ctx.fillStyle = '#2196F3'; ctx.fillText('Nit', pad + 10, pad + gh/2 + 20);
+  ctx.fillStyle = '#f44336'; ctx.fillText('Calling Station', pad + gw/2 + 10, pad + gh/2 + 20);
+
+  // Axes
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad);
+  ctx.lineTo(w - pad, h - pad);
+  ctx.stroke();
+
+  // Dividing lines at 25% VPIP and midpoint aggression
+  ctx.strokeStyle = '#444';
+  ctx.setLineDash([4, 4]);
+  const midX = pad + gw / 2;
+  const midY = pad + gh / 2;
+  ctx.beginPath();
+  ctx.moveTo(midX, pad); ctx.lineTo(midX, h - pad);
+  ctx.moveTo(pad, midY); ctx.lineTo(w - pad, midY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Axis labels
+  ctx.fillStyle = '#aaa';
+  ctx.font = '12px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('VPIP %', w / 2, h - 10);
+  ctx.fillText('0', pad, h - pad + 15);
+  ctx.fillText('50', pad + gw/2, h - pad + 15);
+  ctx.fillText('100', w - pad, h - pad + 15);
+
+  ctx.save();
+  ctx.translate(12, h / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('PFR %', 0, 0);
+  ctx.restore();
+
+  ctx.textAlign = 'right';
+  ctx.fillText('0', pad - 5, h - pad + 4);
+  ctx.fillText('50', pad - 5, pad + gh/2 + 4);
+  ctx.fillText('100', pad - 5, pad + 4);
+
+  // Plot the player point
+  const px = pad + (vpip / 100) * gw;
+  const py = h - pad - (pfr / 100) * gh;
+
+  ctx.beginPath();
+  ctx.arc(px, py, 8, 0, 2 * Math.PI);
+  ctx.fillStyle = '#FFD700';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = '#FFD700';
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 11px monospace';
+  ctx.fillText(`(${vpip}, ${pfr})`, px + 12, py + 4);
+}
+
+function calcSampleSize() {
+  const vpip = parseFloat(document.getElementById('ssVpip').value) / 100;
+  const margin = parseFloat(document.getElementById('ssMargin').value) / 100;
+  const z = parseFloat(document.getElementById('ssConf').value);
+
+  const n = Math.ceil((z * z * vpip * (1 - vpip)) / (margin * margin));
+
+  // Also show CI for common sample sizes
+  const samples = [30, 50, 100, 200, 500, 1000, 2000, 5000];
+  let tableHtml = '<table class="data-table" style="margin-top:0.8rem">';
+  tableHtml += '<tr><th>Hands</th><th>95% CI</th><th>Range</th><th>Reliability</th></tr>';
+  samples.forEach(s => {
+    const me = 1.96 * Math.sqrt(vpip * (1 - vpip) / s);
+    const lo = Math.max(0, vpip - me);
+    const hi = Math.min(1, vpip + me);
+    const mePct = (me * 100).toFixed(1);
+    let reliability;
+    if (me > 0.10) reliability = '<span style="color:var(--accent)">Unreliable</span>';
+    else if (me > 0.05) reliability = '<span style="color:#FF9800">Rough estimate</span>';
+    else if (me > 0.02) reliability = '<span style="color:#FFD700">Moderate</span>';
+    else reliability = '<span style="color:var(--green)">Reliable</span>';
+
+    tableHtml += `<tr>
+      <td>${s.toLocaleString()}</td>
+      <td>&plusmn;${mePct}%</td>
+      <td>${(lo*100).toFixed(1)}% &ndash; ${(hi*100).toFixed(1)}%</td>
+      <td>${reliability}</td>
+    </tr>`;
+  });
+  tableHtml += '</table>';
+
+  document.getElementById('ssResult').innerHTML = `
+    <div><span class="result-label">Hands needed for &plusmn;${(margin*100).toFixed(1)}% precision:</span> <span class="result-value">${n.toLocaleString()} hands</span></div>
+    <div style="margin-top:0.4rem; color:var(--muted); font-size:0.85rem;">
+      n = (${z}&sup2; &times; ${(vpip).toFixed(2)} &times; ${(1-vpip).toFixed(2)}) / ${margin}&sup2;
+    </div>
+    <div style="margin-top:0.8rem"><span class="result-label">CI at various sample sizes (95% confidence):</span></div>
+    ${tableHtml}
+  `;
+}
+</script>
+</body>
+</html>
