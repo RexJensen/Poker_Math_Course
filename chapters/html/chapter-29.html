@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 29: Three's a Crowd: Multiplayer Games — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part V &mdash; Chapter 29</span>
+    <h1>Three's a Crowd: Multiplayer Games</h1>
+    <p class="chapter-subtitle">Why adding more players transforms poker from a solved problem into a strategic wilderness</p>
+  </div>
+
+  <!-- ===== BEYOND HEADS-UP ===== -->
+  <div class="chapter-section">
+    <h2>Beyond Heads-Up</h2>
+    <p>Throughout most of this book, we have focused on <strong>two-player (heads-up) poker</strong>. This is not an accident &mdash; heads-up poker is the setting where game theory gives us the cleanest, most powerful results. The minimax theorem guarantees a unique game value, Nash equilibrium strategies are interchangeable, and playing GTO guarantees you at least break even.</p>
+    <p>But real poker is rarely heads-up. Cash games typically seat 6 to 10 players. Tournaments routinely feature tables of 9. The strategic landscape changes <strong>fundamentally</strong> when you move beyond two players.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Multiplayer Game</div>
+      <p>A strategic interaction with <strong>three or more</strong> decision-makers. Unlike two-player zero-sum games, multiplayer games lack many of the clean theoretical guarantees that make heads-up analysis tractable. Multiple equilibria may exist, and equilibrium strategies are not necessarily interchangeable or uniquely "optimal."</p>
+    </div>
+  </div>
+
+  <!-- ===== WHY MULTIPLAYER IS HARDER ===== -->
+  <div class="chapter-section">
+    <h2>Why Multiplayer Is Harder</h2>
+    <p>The jump from two players to three or more is not merely quantitative &mdash; it is <strong>qualitative</strong>. Several mathematical properties that hold in heads-up games break down entirely:</p>
+
+    <table class="data-table">
+      <tr><th>Property</th><th>Heads-Up (2 Players)</th><th>Multiplayer (3+ Players)</th></tr>
+      <tr>
+        <td><strong>Nash Equilibrium</strong></td>
+        <td>Guaranteed to exist; unique game value</td>
+        <td>Exists but may not be unique; multiple equilibria possible</td>
+      </tr>
+      <tr>
+        <td><strong>Optimal Strategy</strong></td>
+        <td>Clear: play the minimax strategy</td>
+        <td>No single "optimal" strategy; depends on what others do</td>
+      </tr>
+      <tr>
+        <td><strong>Zero-Sum Property</strong></td>
+        <td>Strictly zero-sum (one player's gain = other's loss)</td>
+        <td>Locally non-zero-sum &mdash; two players can both gain at a third's expense</td>
+      </tr>
+      <tr>
+        <td><strong>Coalition Dynamics</strong></td>
+        <td>Irrelevant (only two players)</td>
+        <td>Central concern &mdash; implicit and explicit alliances affect outcomes</td>
+      </tr>
+      <tr>
+        <td><strong>Computational Complexity</strong></td>
+        <td>Solvable for simplified games</td>
+        <td>Exponentially harder; full solutions intractable for real poker</td>
+      </tr>
+    </table>
+
+    <div class="example-box">
+      <div class="example-title">The Fundamental Difference</div>
+      <p>In heads-up poker, when you take a chip from your opponent, that chip comes to you. The game is <strong>strictly zero-sum</strong>. But in a 3-player game, your action against Player B might inadvertently help Player C. If you eliminate Player B from a tournament, Player C benefits &mdash; even though you did all the work. Your actions have <strong>externalities</strong> that don't exist in heads-up play.</p>
+    </div>
+  </div>
+
+  <!-- ===== THE COALITION PROBLEM ===== -->
+  <div class="chapter-section">
+    <h2>The "Coalition" Problem</h2>
+    <p>Perhaps the most distinctive feature of multiplayer poker is the possibility of <strong>coalitions</strong> &mdash; situations where two or more players can benefit by coordinating their strategies against the others.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Implicit Collusion</div>
+      <p>A situation in multiplayer games where rational, independent play by two or more players naturally results in coordinated action against another player &mdash; <strong>without any explicit agreement</strong>. This arises from the structure of the game itself, not from unethical behavior.</p>
+    </div>
+
+    <p>Consider a simple example: in a 3-player pot, Players A and B both have medium-strength hands, while Player C is the aggressor. It is in both A's and B's interest for at least one of them to call C's bet &mdash; if they both fold, C wins the pot uncontested. Their interests are <em>aligned against C</em> in this spot, even though they are also competing against each other.</p>
+
+    <h3>Why Coalitions Undermine Simple Game Theory</h3>
+    <p>In a two-player game, you only need to worry about one opponent's response to your strategy. In multiplayer games, you must consider:</p>
+    <ul style="margin-left:1.5rem; margin-bottom:1rem; line-height:1.8">
+      <li>How each individual opponent responds to your strategy</li>
+      <li>How pairs of opponents might jointly exploit your strategy</li>
+      <li>How your actions against one player affect your position relative to all others</li>
+      <li>Whether the "equilibrium" you're playing is stable against coordinated deviations</li>
+    </ul>
+  </div>
+
+  <!-- ===== NASH EQUILIBRIUM IN MULTIPLAYER ===== -->
+  <div class="chapter-section">
+    <h2>Nash Equilibrium in Multiplayer Games</h2>
+    <p>Nash equilibrium still exists in multiplayer games (Nash's theorem guarantees this for any finite game), but it loses several properties that make it so useful in the two-player case:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Nash Equilibrium (Multiplayer)</div>
+      <p>A strategy profile where <strong>no single player</strong> can improve their expected value by unilaterally changing their strategy. Note the emphasis: only <em>unilateral</em> deviations are considered. Two players deviating <em>simultaneously</em> might both benefit.</p>
+    </div>
+
+    <h3>Key Differences from Heads-Up Equilibrium</h3>
+    <ul style="margin-left:1.5rem; margin-bottom:1rem; line-height:1.8">
+      <li><strong>Non-uniqueness:</strong> Multiple Nash equilibria may exist, and they can yield very different payoffs for the players. There is no guarantee that "the" equilibrium is the right one to play.</li>
+      <li><strong>No guaranteed EV floor:</strong> In heads-up, playing GTO guarantees you at least the game value. In multiplayer games, playing your part of a Nash equilibrium does <em>not</em> guarantee this &mdash; other players might be at a different equilibrium, or might coordinate against you.</li>
+      <li><strong>Coordination problems:</strong> Even if all players want to reach equilibrium, they may disagree on <em>which</em> equilibrium to coordinate on.</li>
+    </ul>
+
+    <div class="math-block">
+      <span class="math-label">Multiplayer Nash Equilibrium Condition</span>
+      For each player i: EV<sub>i</sub>(s<sub>i</sub>*, s<sub>-i</sub>*) &ge; EV<sub>i</sub>(s<sub>i</sub>, s<sub>-i</sub>*) for all strategies s<sub>i</sub>
+      <br><br>
+      Where s<sub>i</sub>* is player i's equilibrium strategy and s<sub>-i</sub>* represents all other players' equilibrium strategies.
+      <br>No <em>single</em> player can profitably deviate &mdash; but joint deviations may be profitable.
+    </div>
+  </div>
+
+  <!-- ===== ADJUSTMENTS FOR MULTIPLAYER ===== -->
+  <div class="chapter-section">
+    <h2>Strategic Adjustments for Multiplayer</h2>
+    <p>While exact game-theoretic solutions for multiplayer poker remain out of reach, the mathematical framework provides important <strong>directional guidance</strong>. Here are the key adjustments:</p>
+
+    <h3>1. Tighter Preflop Ranges</h3>
+    <p>With more players at the table, the probability that <em>at least one</em> opponent holds a strong hand increases dramatically.</p>
+
+    <div class="math-block">
+      <span class="math-label">Probability at Least One Opponent Has a Premium Hand</span>
+      P(at least one premium) = 1 &minus; (1 &minus; p)<sup>n</sup>
+      <br><br>
+      Where p = probability a single player has a premium hand, n = number of opponents.
+      <br><br>
+      Example: If "premium" = top 5% of hands (p = 0.05):
+      <br>&bull; 1 opponent: 1 &minus; 0.95<sup>1</sup> = 5.0%
+      <br>&bull; 4 opponents: 1 &minus; 0.95<sup>4</sup> = 18.5%
+      <br>&bull; 8 opponents: 1 &minus; 0.95<sup>8</sup> = 33.7%
+    </div>
+
+    <p>With 8 opponents, there is roughly a <strong>one-in-three chance</strong> someone holds a top-5% hand. This means marginal hands that are profitable heads-up become unprofitable in full ring games.</p>
+
+    <h3>2. Position Becomes More Valuable</h3>
+    <p>In heads-up, you act last on half the hands. In a 9-player game, you act last on only about 11% of hands. Having position &mdash; acting after your opponents &mdash; provides even more of an informational advantage when there are more players whose actions you can observe before deciding.</p>
+
+    <h3>3. Bluffing Is Harder</h3>
+    <p>This is perhaps the most important adjustment. Bluffing against multiple opponents is fundamentally different from bluffing heads-up because <strong>each opponent represents an independent chance to get called</strong>.</p>
+
+    <h3>4. Value Betting Standards Rise</h3>
+    <p>In a multi-way pot, your value bets must beat not just one opponent's calling range, but potentially <em>several</em> ranges simultaneously. This means you need a stronger hand to value bet profitably when multiple opponents are likely to continue.</p>
+  </div>
+
+  <!-- ===== MULTI-WAY POT DYNAMICS ===== -->
+  <div class="chapter-section">
+    <h2>Multi-Way Pot Dynamics</h2>
+
+    <h3>Bluffing Against Multiple Opponents</h3>
+    <p>When you bluff into a multi-way pot, you need <strong>all</strong> opponents to fold for the bluff to succeed. Each opponent makes an independent decision, so:</p>
+
+    <div class="math-block">
+      <span class="math-label">Multi-Way Fold Equity</span>
+      P(all fold) = P(Opp 1 folds) &times; P(Opp 2 folds) &times; ... &times; P(Opp n folds)
+      <br><br>
+      With n opponents each folding with probability f:
+      <br>P(all fold) = f<sup>n</sup>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Multi-Way Bluff Math</div>
+      <p>Suppose each of your opponents folds to a bet 60% of the time. Your fold equity depends dramatically on the number of opponents:</p>
+      <table class="data-table">
+        <tr><th>Opponents</th><th>Fold Equity (each folds 60%)</th><th>Fold Equity (each folds 70%)</th></tr>
+        <tr><td>1</td><td>60.0%</td><td>70.0%</td></tr>
+        <tr><td>2</td><td>36.0%</td><td>49.0%</td></tr>
+        <tr><td>3</td><td>21.6%</td><td>34.3%</td></tr>
+        <tr><td>4</td><td>13.0%</td><td>24.0%</td></tr>
+        <tr><td>5</td><td>7.8%</td><td>16.8%</td></tr>
+      </table>
+      <p>Even with opponents who fold 60% individually, your fold equity against 3 opponents is only <strong>21.6%</strong>. Against 5 opponents, it drops to under 8%. This is why pure bluffs into multi-way pots are rarely profitable.</p>
+    </div>
+
+    <h3>Bluff Profitability in Multi-Way Pots</h3>
+    <p>For a bluff to be profitable, the fold equity must compensate for the bet size relative to the pot:</p>
+
+    <div class="math-block">
+      <span class="math-label">Multi-Way Bluff EV</span>
+      EV(bluff) = P(all fold) &times; Pot &minus; P(at least one calls) &times; Bet
+      <br><br>
+      EV(bluff) = f<sup>n</sup> &times; Pot &minus; (1 &minus; f<sup>n</sup>) &times; Bet
+      <br><br>
+      Break-even: f<sup>n</sup> &ge; Bet / (Pot + Bet)
+    </div>
+
+    <p>For a pot-sized bluff, you need f<sup>n</sup> &ge; 0.50. With 2 opponents, each must fold at least 70.7% of the time. With 3 opponents, each must fold at least 79.4%. These are very high individual fold rates.</p>
+  </div>
+
+  <!-- ===== PRACTICAL CONSIDERATIONS ===== -->
+  <div class="chapter-section">
+    <h2>Practical Considerations</h2>
+    <p>Given the theoretical difficulties of multiplayer games, how should a mathematically-minded player approach full ring poker?</p>
+
+    <div class="example-box">
+      <div class="example-title">The Heuristic Approach</div>
+      <p>Chen and Ankenman acknowledge that full ring poker strategy is largely <strong>heuristic-based</strong>, with game theory providing guidelines rather than exact solutions. The practical approach combines:</p>
+      <ul style="margin-left:1.5rem; line-height:1.8">
+        <li><strong>Mathematical guidelines:</strong> Use the formulas above to calibrate ranges, bluffing frequencies, and bet sizing</li>
+        <li><strong>Positional awareness:</strong> Weight your strategy heavily toward position, which becomes even more valuable with more players</li>
+        <li><strong>Heads-up fundamentals:</strong> Many multi-way pots reduce to heads-up situations by the turn or river. Apply two-player game theory once the field narrows.</li>
+        <li><strong>Exploitive adjustments:</strong> In multiplayer games, opponents' errors tend to be larger and more identifiable. Focus on exploitive play rather than GTO.</li>
+        <li><strong>Hand reading with multiple ranges:</strong> Track what each opponent's actions reveal about their hand, narrowing all ranges simultaneously.</li>
+      </ul>
+    </div>
+
+    <p>The key insight is this: while we cannot solve multiplayer poker exactly, the tools from earlier chapters &mdash; expected value, pot odds, Bayesian updating, and game-theoretic principles &mdash; still provide the <strong>right framework for thinking</strong> about these situations, even when exact solutions are unavailable.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Multi-Way Bluff Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Multi-Way Bluff Calculator</h3>
+    <p>Enter the number of opponents and each opponent's estimated folding frequency to see your total fold equity and whether a bluff is profitable.</p>
+
+    <div class="widget-controls">
+      <label>
+        Number of opponents:
+        <input type="number" id="numOpponents" value="3" min="1" max="8" step="1">
+      </label>
+      <label>
+        Pot size (units):
+        <input type="number" id="mwPot" value="100" min="10" max="1000" step="10">
+      </label>
+      <label>
+        Bet size (units):
+        <input type="number" id="mwBet" value="75" min="10" max="1000" step="10">
+      </label>
+    </div>
+
+    <div id="oppFoldInputs" style="margin:1rem 0">
+      <!-- Dynamically generated -->
+    </div>
+
+    <button class="btn" onclick="calcMultiWayBluff()">Calculate Fold Equity</button>
+
+    <div class="widget-result" id="mwResult">
+      <div class="result-label">Set parameters and click Calculate</div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="mwChart" width="600" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: Multi-Way Fold Equity</h3>
+    <p>In a 3-way pot, if each of your two opponents folds independently 60% of the time, what is your total fold equity (probability both fold)?</p>
+    <button class="quiz-option" data-correct="false">84% &mdash; calculated as 1 &minus; (0.4 &times; 0.4)</button>
+    <button class="quiz-option" data-correct="true">36% &mdash; calculated as 0.6 &times; 0.6</button>
+    <button class="quiz-option" data-correct="false">60% &mdash; each opponent folds 60%, so that's the fold equity</button>
+    <button class="quiz-option" data-correct="false">120% &mdash; add the two fold frequencies together</button>
+    <div class="quiz-feedback" data-correct="Correct! For a bluff to succeed, ALL opponents must fold. The probability of this is the product of each opponent's folding probability: 0.6 &times; 0.6 = 0.36 = 36%. The common error is computing 1 &minus; (0.4 &times; 0.4) = 84%, which gives the probability that at least one folds &mdash; but you need all of them to fold!" data-incorrect="Remember: for a bluff to succeed, ALL opponents must fold, not just one. The probability that all fold is the product of individual fold probabilities: 0.6 &times; 0.6 = 0.36 = 36%. The trap answer of 84% calculates the probability at least one folds, but that's not enough for a successful bluff."></div>
+  </div>
+
+  <!-- ===== QUIZ 2 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: Multiplayer Game Theory</h3>
+    <p>Which of the following is TRUE about Nash equilibrium in multiplayer poker (3+ players)?</p>
+    <button class="quiz-option" data-correct="false">Nash equilibrium does not exist in games with more than 2 players</button>
+    <button class="quiz-option" data-correct="false">Playing your Nash equilibrium strategy guarantees you cannot lose money in expectation</button>
+    <button class="quiz-option" data-correct="true">Multiple Nash equilibria may exist, and they may yield different payoffs for the players</button>
+    <button class="quiz-option" data-correct="false">The minimax theorem extends directly to multiplayer games without modification</button>
+    <div class="quiz-feedback" data-correct="Correct! In multiplayer games, Nash equilibria still exist (by Nash's theorem), but there may be multiple equilibria with different payoff profiles. Unlike in heads-up play, playing a Nash equilibrium strategy does not guarantee an EV floor, and the minimax theorem applies only to two-player zero-sum games." data-incorrect="Nash equilibria do exist in multiplayer games, but they lose key properties from the two-player case. Multiple equilibria may exist with different payoffs, the minimax theorem does not directly extend, and playing equilibrium does not guarantee an EV floor against coordinating opponents."></div>
+  </div>
+
+  <!-- ===== QUIZ 3 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: Multiplayer Adjustments</h3>
+    <p>In a 9-player game, approximately what is the probability that at least one opponent holds a top-5% hand?</p>
+    <button class="quiz-option" data-correct="false">5% &mdash; same as any individual player</button>
+    <button class="quiz-option" data-correct="false">40% &mdash; add 5% for each opponent</button>
+    <button class="quiz-option" data-correct="true">34% &mdash; calculated as 1 &minus; 0.95<sup>8</sup></button>
+    <button class="quiz-option" data-correct="false">95% &mdash; nearly certain with so many opponents</button>
+    <div class="quiz-feedback" data-correct="Correct! With 8 opponents, the probability that at least one holds a top-5% hand is 1 &minus; (1 &minus; 0.05)^8 = 1 &minus; 0.95^8 &asymp; 1 &minus; 0.663 = 33.7%. Roughly one in three times, someone at a full table is dealt a premium hand. This is why tighter preflop ranges are essential in full ring games." data-incorrect="The correct calculation uses the complement: P(at least one) = 1 &minus; P(none). With 8 opponents each having a 5% chance of a premium hand: 1 &minus; 0.95^8 &asymp; 33.7%. You cannot simply add probabilities (that overcounts) or use the single-player probability (that ignores the other players)."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Multiplayer poker is fundamentally different</strong> from heads-up. The clean theoretical guarantees of two-player zero-sum games do not extend to three or more players.</li>
+      <li><strong>Nash equilibrium still exists</strong> but may not be unique, does not guarantee an EV floor, and is vulnerable to coordinated deviations (coalitions).</li>
+      <li><strong>The coalition problem</strong> means that two players can implicitly team up against a third &mdash; actions that hurt one player may benefit others.</li>
+      <li><strong>Preflop ranges must tighten</strong> because the probability of facing a strong hand scales as 1 &minus; (1 &minus; p)<sup>n</sup>.</li>
+      <li><strong>Bluffing is exponentially harder</strong> in multi-way pots: fold equity = f<sup>n</sup>, which drops rapidly as opponents increase.</li>
+      <li><strong>Value betting standards rise</strong> &mdash; your hand must beat multiple calling ranges, not just one.</li>
+      <li><strong>Position becomes even more valuable</strong> with more players to act behind you and more information to gather.</li>
+      <li><strong>Full ring strategy is heuristic-based</strong>, using game theory as a directional guide rather than providing exact solutions.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-28.html">&larr; Chapter 28</a>
+    <a href="chapter-30.html">Chapter 30 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// ===== Multi-Way Bluff Calculator =====
+
+function buildOppInputs() {
+  const n = parseInt(document.getElementById('numOpponents').value) || 3;
+  const container = document.getElementById('oppFoldInputs');
+  let html = '<div class="widget-controls" style="flex-wrap:wrap">';
+  for (let i = 1; i <= n; i++) {
+    html += `<label>Opp ${i} fold % <input type="number" class="opp-fold" id="oppFold${i}" value="60" min="0" max="100" step="5"></label>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+document.getElementById('numOpponents').addEventListener('change', buildOppInputs);
+buildOppInputs();
+
+function calcMultiWayBluff() {
+  const n = parseInt(document.getElementById('numOpponents').value) || 3;
+  const pot = parseFloat(document.getElementById('mwPot').value) || 100;
+  const bet = parseFloat(document.getElementById('mwBet').value) || 75;
+
+  const foldProbs = [];
+  for (let i = 1; i <= n; i++) {
+    const el = document.getElementById('oppFold' + i);
+    foldProbs.push(el ? parseFloat(el.value) / 100 : 0.6);
+  }
+
+  // Total fold equity = product of individual fold probabilities
+  const totalFoldEq = foldProbs.reduce((acc, f) => acc * f, 1);
+
+  // Bluff EV
+  const bluffEV = totalFoldEq * pot - (1 - totalFoldEq) * bet;
+
+  // Break-even fold equity needed
+  const breakEvenFE = bet / (pot + bet);
+
+  // If all fold rates were equal, what would each need to be?
+  const requiredEachFold = Math.pow(breakEvenFE, 1 / n);
+
+  const profitable = bluffEV > 0;
+
+  const resultDiv = document.getElementById('mwResult');
+  resultDiv.innerHTML = `
+    <div><span class="result-label">Individual fold probabilities:</span> <span class="result-value">${foldProbs.map(f => (f * 100).toFixed(0) + '%').join(', ')}</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Total fold equity (all must fold):</span> <span class="result-value">${(totalFoldEq * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Break-even fold equity needed:</span> <span class="result-value">${(breakEvenFE * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Required per-opponent fold rate (if equal):</span> <span class="result-value">${(requiredEachFold * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.6rem"><span class="result-label">Bluff EV:</span> <span class="result-value" style="color:${profitable ? 'var(--green)' : 'var(--accent)'}">${bluffEV > 0 ? '+' : ''}${bluffEV.toFixed(2)} units</span></div>
+    <div style="margin-top:0.6rem;font-size:0.95rem;color:${profitable ? 'var(--green)' : 'var(--accent)'}; font-weight:600">
+      ${profitable ? 'This bluff IS profitable. Your fold equity exceeds the break-even threshold.' : 'This bluff is NOT profitable. You do not have enough fold equity to justify the bet.'}
+    </div>
+  `;
+
+  drawMWChart(n, pot, bet);
+}
+
+function drawMWChart(n, pot, bet) {
+  const canvas = document.getElementById('mwChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const margin = { top: 30, right: 20, bottom: 50, left: 60 };
+  const gw = W - margin.left - margin.right;
+  const gh = H - margin.top - margin.bottom;
+
+  function tx(v) { return margin.left + v * gw; }
+  function ty(v) { return margin.top + gh - v * gh; }
+
+  // Axes
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, margin.top + gh);
+  ctx.lineTo(margin.left + gw, margin.top + gh);
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#aaa';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Per-Opponent Fold Frequency', W / 2, H - 5);
+  for (let i = 0; i <= 10; i++) {
+    ctx.fillText((i * 10) + '%', tx(i / 10), margin.top + gh + 18);
+  }
+  ctx.save();
+  ctx.translate(15, margin.top + gh / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('Total Fold Equity', 0, 0);
+  ctx.restore();
+  for (let i = 0; i <= 5; i++) {
+    ctx.textAlign = 'right';
+    ctx.fillText((i * 20) + '%', margin.left - 5, ty(i / 5) + 4);
+  }
+
+  // Plot fold equity curves for different numbers of opponents
+  const colors = ['#d4a017', '#2ea043', '#c9382a', '#5a9fd4', '#e06c75', '#c678dd', '#56b6c2', '#98c379'];
+  const plotN = [1, 2, 3, 4, 5, 6];
+
+  for (let k = 0; k < plotN.length; k++) {
+    const opponents = plotN[k];
+    ctx.strokeStyle = opponents === n ? '#fff' : colors[k % colors.length];
+    ctx.lineWidth = opponents === n ? 3 : 1.5;
+    ctx.globalAlpha = opponents === n ? 1 : 0.6;
+    ctx.beginPath();
+    for (let i = 0; i <= 100; i++) {
+      const f = i / 100;
+      const fe = Math.pow(f, opponents);
+      if (i === 0) ctx.moveTo(tx(f), ty(fe));
+      else ctx.lineTo(tx(f), ty(fe));
+    }
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = opponents === n ? '#fff' : colors[k % colors.length];
+    ctx.font = opponents === n ? 'bold 11px sans-serif' : '10px sans-serif';
+    ctx.textAlign = 'left';
+    const labelX = 0.92;
+    const labelY = Math.pow(labelX, opponents);
+    ctx.fillText(opponents + ' opp', tx(labelX) + 3, ty(labelY));
+  }
+  ctx.globalAlpha = 1;
+
+  // Break-even line
+  const breakEven = bet / (pot + bet);
+  ctx.strokeStyle = 'rgba(201,56,42,0.7)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(tx(0), ty(breakEven));
+  ctx.lineTo(tx(1), ty(breakEven));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#c9382a';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('Break-even (' + (breakEven * 100).toFixed(0) + '%)', tx(0.98), ty(breakEven) - 6);
+
+  // Title
+  ctx.fillStyle = '#ccc';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Fold Equity vs Per-Opponent Fold Rate (your scenario highlighted)', W / 2, 18);
+}
+</script>
+</body>
+</html>
