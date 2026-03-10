@@ -21,89 +21,105 @@
   <div class="chapter-header">
     <span class="chapter-number">Part III &mdash; Chapter 18</span>
     <h1>Lessons and Values: The [0,1] Game Redux</h1>
-    <p class="chapter-subtitle">Extracting deep strategic lessons from the continuous distribution model &mdash; position, bluffing value, information, and equity denial</p>
+    <p class="chapter-subtitle">Quantifying position, bluffing value, equity denial, and the three-tier strategic framework</p>
   </div>
 
-  <!-- ===== SYNTHESIZING LESSONS ===== -->
+  <!-- ===== OVERVIEW ===== -->
   <div class="chapter-section">
-    <h2>Synthesizing [0,1] Game Lessons</h2>
-    <p>Having solved the [0,1] game in Chapter 17, we now step back and ask: what does this model <em>teach us</em>? The [0,1] game is elegant not just because it is solvable, but because the lessons it produces transfer directly to real poker. In this chapter, we quantify several of the most important strategic concepts that emerge from the model.</p>
-    <p>We will measure the <strong>value of position</strong>, the <strong>value of being able to bluff</strong>, the <strong>value of information</strong>, and the concept of <strong>equity denial</strong>. Each of these is a cornerstone of modern poker strategy, and the [0,1] framework lets us put precise numbers on ideas that are usually discussed only qualitatively.</p>
+    <h2>Extracting Strategic Lessons</h2>
+    <p>In Chapters 16 and 17 we solved the [0,1] game. Now we ask: <em>what does it teach us about real poker?</em> The beauty of the [0,1] model lies not in its mathematics alone, but in the crisp, transferable lessons it produces. This chapter puts precise numbers on five concepts that most players discuss only in vague, qualitative terms:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li>The <strong>value of position</strong> &mdash; how much does acting last really help?</li>
+      <li>The <strong>value of bluffing</strong> &mdash; what would you lose if you could never bluff?</li>
+      <li><strong>Equity denial</strong> &mdash; why betting protects your advantage</li>
+      <li><strong>Protection</strong> &mdash; charging draws and marginal hands a price</li>
+      <li>The <strong>three-tier framework</strong> &mdash; a universal action template</li>
+    </ul>
+    <p>Each of these ideas is a cornerstone of modern poker strategy. The [0,1] framework lets us move from intuition to calculation.</p>
   </div>
 
   <!-- ===== VALUE OF POSITION ===== -->
   <div class="chapter-section">
-    <h2>The Value of Position</h2>
+    <h2>The Value of Position (Quantified)</h2>
 
-    <p>Every poker player knows that position matters. But <em>how much</em> does it matter? The [0,1] game lets us compute the answer exactly.</p>
+    <p>Every poker player knows position matters. The [0,1] game lets us compute <em>exactly how much</em>.</p>
 
     <div class="definition-box">
       <div class="def-term">Positional Advantage</div>
-      <p>In the [0,1] game, the <strong>in-position player</strong> (the one who acts last) has a measurable EV advantage over the out-of-position player. This advantage arises because the in-position player gets to see the opponent's action before deciding.</p>
+      <p>In the [0,1] game, the <strong>in-position (IP) player</strong> always has higher EV than the <strong>out-of-position (OOP) player</strong>. The advantage comes from two sources:</p>
+      <ol style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Informational advantage</strong> &mdash; IP observes OOP's action before deciding. A check reveals weakness; a bet narrows the range.</li>
+        <li><strong>Strategic flexibility</strong> &mdash; IP can tailor their response to observed information. OOP must act "blind."</li>
+      </ol>
       <div class="math-block">
-        <span class="math-label">Equation 18.1 &mdash; Value of Position</span>
-        EV<sub>IP</sub> &minus; EV<sub>OOP</sub> = f(P, b) &gt; 0
+        <span class="math-label">Equation 18.1 &mdash; Positional EV Gap</span>
+        EV<sub>IP</sub> &minus; EV<sub>OOP</sub> = b&sup2; / (2(b + P)) &gt; 0 &ensp; (always positive)
       </div>
-      <p>The exact formula depends on the pot and bet sizes, but the key result is that this difference is <strong>always positive</strong>. Position is always worth something, and its value increases as the pot-to-bet ratio changes.</p>
+      <p>The gap grows with bet size and shrinks as the pot grows. Position is most valuable in small-pot, deep-stack scenarios &mdash; precisely the situations where there is more play left.</p>
     </div>
 
     <div class="example-box">
-      <div class="example-title">Why Position Matters Mathematically</div>
-      <p>The in-position player's advantage stems from two sources:</p>
-      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
-        <li><strong>Informational advantage:</strong> IP sees OOP's action (bet or check) before deciding. A check from OOP reveals weakness. A bet from OOP narrows their range.</li>
-        <li><strong>Strategic flexibility:</strong> IP can choose to bet or check after seeing OOP's action, allowing them to tailor their strategy to the situation. OOP must act "blind" &mdash; without knowing IP's intention.</li>
-      </ul>
-      <p>In the [0,1] model with P = 10 and b = 5, the in-position player's EV is typically 5-15% higher than the out-of-position player's EV. This advantage compounds across every hand played, which is why seat selection is one of the most underrated skills in poker.</p>
+      <div class="example-title">Numerical Example &mdash; Measuring the Gap</div>
+      <p>With P = 10 and b = 5:</p>
+      <div class="math-block">
+        <span class="math-label">Calculation</span>
+        EV gap = 5&sup2; / (2 &times; 15) = 25 / 30 &asymp; 0.83
+      </div>
+      <p>The IP player earns about <strong>0.83 units more per hand</strong>. Over 1,000 hands, that compounds to 830 units &mdash; a significant edge from seat selection alone.</p>
+      <p>With P = 4 and b = 8 (deep stacks, small pot):</p>
+      <div class="math-block">
+        <span class="math-label">Calculation</span>
+        EV gap = 64 / 24 &asymp; 2.67
+      </div>
+      <p>Position is worth more than three times as much! This explains why skilled players aggressively pursue position in deep-stacked games.</p>
     </div>
+
+    <h3>Implications for Real Poker</h3>
+    <p>The model tells us position is most valuable when:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li>Stacks are deep relative to the pot (high SPR)</li>
+      <li>There are many streets of action remaining</li>
+      <li>Ranges are wide (more decisions, more informational advantage)</li>
+    </ul>
+    <p>This is why seat selection &mdash; choosing tables and seats where you have position on weak players &mdash; is one of the most underrated skills in poker.</p>
   </div>
 
-  <!-- ===== VALUE OF THE BLUFF ===== -->
+  <!-- ===== VALUE OF BLUFFING ===== -->
   <div class="chapter-section">
-    <h2>The Value of the Bluff</h2>
+    <h2>The Value of Bluffing</h2>
 
-    <p>What if you could never bluff? How much would that cost you? The [0,1] game provides a precise answer.</p>
+    <p>What if you were banned from bluffing? How much would that cost you?</p>
 
     <div class="definition-box">
       <div class="def-term">A World Without Bluffing</div>
-      <p>If the bettor is restricted to only value betting (no bluffs allowed), the opponent can adopt a trivially simple counter-strategy: <strong>always fold</strong> when bet into. Since the bettor only bets with strong hands, calling is a losing proposition. The bettor's value bets never get paid off.</p>
+      <p>If the bettor can only bet with strong hands (no bluffs), the opponent adopts a trivially simple strategy: <strong>always fold</strong> to any bet. Since bets are always strong, calling is losing. The result: the bettor's value bets never get paid off.</p>
       <div class="math-block">
-        <span class="math-label">Equation 18.2 &mdash; No-Bluff EV</span>
-        EV<sub>no bluff</sub> = EV from winning uncontested pots only<br>
-        EV<sub>with bluff</sub> = EV<sub>no bluff</sub> + Value from getting calls on value bets
+        <span class="math-label">Equation 18.2 &mdash; Bluffing Value</span>
+        Value of bluffing = EV<sub>with bluffs</sub> &minus; EV<sub>no bluffs</sub><br>
+        &ensp;&ensp;= (Profit from getting calls on value bets)
       </div>
     </div>
 
-    <p>This reveals a profound truth: <strong>bluffing is not just about winning pots with bad hands</strong>. The primary value of bluffing is that it <em>makes your value bets profitable</em>. If opponents know you never bluff, they never call, and your strong hands earn nothing beyond the existing pot. Bluffing creates uncertainty, which forces opponents to call, which allows your value bets to extract additional money.</p>
+    <p>This reveals a profound truth: <strong>the primary value of bluffing is not winning pots with bad hands</strong>. Bluffs are often -EV in isolation. Their real value is creating <em>uncertainty</em> that forces opponents to call, which makes your value bets profitable.</p>
 
     <div class="example-box">
       <div class="example-title">The Symbiosis of Bluffs and Value Bets</div>
-      <p>Think of bluffs and value bets as symbiotic partners:</p>
       <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
-        <li><strong>Bluffs need value bets:</strong> If you only bluffed, opponents would always call, and your bluffs would lose money.</li>
-        <li><strong>Value bets need bluffs:</strong> If you only value bet, opponents would always fold, and your value bets would earn no extra money.</li>
-        <li><strong>Together:</strong> Bluffs force opponents to call, making value bets profitable. Value bets force opponents to be cautious, making bluffs profitable. The equilibrium balances these forces exactly.</li>
+        <li><strong>Bluffs need value bets:</strong> If you only bluffed, opponents would always call, and your bluffs would hemorrhage money.</li>
+        <li><strong>Value bets need bluffs:</strong> If you only value bet, opponents would always fold, and your strong hands earn nothing extra.</li>
+        <li><strong>Together:</strong> Bluffs force opponents to call, making value bets profitable. Value bets force opponents to respect your aggression, making bluffs viable. The equilibrium balances these forces exactly.</li>
       </ul>
-    </div>
-  </div>
-
-  <!-- ===== VALUE OF INFORMATION ===== -->
-  <div class="chapter-section">
-    <h2>The Value of Information</h2>
-
-    <p>How much would you pay to see your opponent's hand? In the [0,1] model, this question has a concrete answer.</p>
-
-    <div class="definition-box">
-      <div class="def-term">Perfect Information Value</div>
-      <p>The value of seeing the opponent's hand is the difference between your EV with perfect information and your EV without it.</p>
-      <div class="math-block">
-        <span class="math-label">Equation 18.3 &mdash; Information Value</span>
-        V<sub>info</sub> = EV<sub>perfect</sub> &minus; EV<sub>equilibrium</sub>
-      </div>
-      <p>With perfect information, you would: bet for value only when ahead, bluff only when the opponent will fold, and call only when you are ahead. Every decision would be optimal. The gap between this ideal and equilibrium play is the <strong>price of uncertainty</strong>.</p>
+      <p>At equilibrium with b/(b+P) bluff frequency, the bettor's bluffs break even (they are indifferent about bluffing), but the <em>existence</em> of bluffs makes the value bets far more profitable than they would otherwise be.</p>
     </div>
 
-    <p>In practice, this concept explains why tracking software, hand histories, and opponent profiling have value. Each piece of information moves you closer to the "perfect information" EV, and the difference is measurable.</p>
+    <h3>Quantifying the Gain</h3>
+    <p>In the [0,1] game with P = 10 and b = 5, if bluffing were forbidden:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li>The bettor would only bet strong hands.</li>
+      <li>The defender would always fold, knowing every bet is value.</li>
+      <li>The bettor collects only the pot when betting &mdash; no additional profit from calls.</li>
+    </ul>
+    <p>With bluffing allowed, the bettor's value bets get called, adding significantly to their overall EV. The difference can be 10-20% of the pot, depending on the parameters.</p>
   </div>
 
   <!-- ===== EQUITY DENIAL ===== -->
@@ -112,22 +128,25 @@
 
     <div class="definition-box">
       <div class="def-term">Equity Denial</div>
-      <p><strong>Equity denial</strong> occurs when you bet and your opponent folds a hand that had positive equity in the pot. By betting, you prevent them from freely realizing their share of the pot at showdown. You "deny" them the equity they would have earned by seeing the hand to completion.</p>
+      <p><strong>Equity denial</strong> occurs when you bet and your opponent folds a hand that had positive equity in the pot. By folding, they surrender the share they would have earned at showdown. You "deny" them that equity.</p>
       <div class="math-block">
-        <span class="math-label">Equation 18.4 &mdash; Equity Denied</span>
-        Equity Denied = Opponent's showdown equity &times; Pot &times; P(opponent folds)
+        <span class="math-label">Equation 18.3 &mdash; Equity Denied</span>
+        Equity Denied = &sum; [Opponent's showdown equity &times; P(fold)] over folded hands
       </div>
     </div>
 
     <div class="example-box">
-      <div class="example-title">Equity Denial in Action</div>
-      <p>In a [0,1] game with pot P = 10:</p>
-      <p>You hold hand = 0.7. If you check and go to showdown, your opponent wins whenever they hold a hand above 0.7 (30% of the time). Your expected showdown value is 0.7 &times; 10 = 7.</p>
-      <p>Now suppose you bet b = 5 and your opponent folds all hands below 0.6. Those folded hands (the interval [0, 0.6]) had total equity of roughly 30% of the pot in aggregate. By betting, you <strong>denied</strong> that equity &mdash; they surrendered their claim to the pot rather than pay to see the showdown.</p>
-      <p>Importantly, some of those folded hands (in the range [0, 0.3] or so) had very little equity. But hands near 0.5 or 0.6 had significant equity that was denied. This is the essence of why betting with a good-but-vulnerable hand is valuable: it prevents the opponent from freely realizing their share.</p>
+      <div class="example-title">Equity Denial in the [0,1] Game</div>
+      <p>You hold hand = 0.70 in a pot of P = 10. If you check, opponents with hands below 0.70 get a free showdown where each hand h has showdown equity h against the field.</p>
+      <p>If you bet b = 5 and the opponent folds all hands below 0.55:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>Hands [0, 0.55] fold. Their aggregate showdown equity was (0.55)&sup2;/2 &times; 10 &asymp; 1.51.</li>
+        <li>Some of those hands (especially near 0.50-0.55) had meaningful equity.</li>
+        <li>By betting, you <strong>denied</strong> all of that equity &mdash; they surrendered their pot share rather than pay to see showdown.</li>
+      </ul>
     </div>
 
-    <p>Equity denial is closely related to the concept of <strong>protection</strong>.</p>
+    <p>Equity denial is one of the most important reasons to bet. It is not just about winning the pot right now &mdash; it is about preventing your opponent from freely realizing their share of the pot.</p>
   </div>
 
   <!-- ===== PROTECTION ===== -->
@@ -136,96 +155,137 @@
 
     <div class="definition-box">
       <div class="def-term">Protection Betting</div>
-      <p>A <strong>protection bet</strong> is a bet made with a hand that is currently ahead but vulnerable to being overtaken. The bet aims to fold out hands that could improve to beat you, or (in the [0,1] static model) hands that have some showdown equity against you.</p>
+      <p>A <strong>protection bet</strong> is made with a hand that is currently ahead but vulnerable. The bet aims to fold out hands that have equity against you. In the static [0,1] model, protection and equity denial are essentially the same concept. In real poker with community cards, protection adds the dimension of folding out <strong>draws</strong> &mdash; hands that could improve to beat you.</p>
     </div>
-
-    <p>In the [0,1] game, "protection" and "equity denial" are essentially the same concept &mdash; your hand is ahead right now, and by betting you prevent opponents from freely winning their share of the pot at showdown. In real poker with community cards, protection has the additional dimension of folding out <strong>draws</strong>: hands that could improve on future streets to beat you.</p>
 
     <div class="example-box">
       <div class="example-title">Protection in Real Poker</div>
-      <p>You hold A&spades;K&hearts; on a board of A&diams; 8&clubs; 7&clubs;. You have top pair, top kicker &mdash; currently the best hand most of the time. But there are many draws:</p>
+      <p>You hold A&spades;K&hearts; on A&diams; 8&clubs; 7&clubs;. Top pair, top kicker &mdash; currently best. But many draws exist:</p>
       <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
-        <li>Flush draws (two clubs) &mdash; ~35% to complete by the river</li>
-        <li>Straight draws (9-6, T-9, 6-5) &mdash; various percentages</li>
+        <li>Flush draws (two clubs) &mdash; ~35% to complete by river</li>
+        <li>Straight draws (9-6, T-9, 6-5) &mdash; 8-16% to complete</li>
         <li>Overcards with backdoor equity</li>
       </ul>
-      <p>By betting, you deny these draws the right to see free cards. You either collect the pot immediately (they fold) or charge them a price to continue (they call). Either way, you protect your equity advantage.</p>
+      <p>By betting, you either collect the pot immediately (equity denial) or charge these draws a price to continue (protection). Either way, you protect your equity advantage.</p>
     </div>
+
+    <h3>When Protection Is Most Valuable</h3>
+    <p>Protection matters most when:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li>Your hand is <strong>ahead but vulnerable</strong> (one pair on a draw-heavy board)</li>
+      <li>There are <strong>many hands with equity</strong> that would fold to a bet</li>
+      <li>Future streets could <strong>reverse your position</strong> (community cards change hand strengths)</li>
+    </ul>
+    <p>Protection is less important with the nuts (nothing can beat you) or with very weak hands (you are not protecting anything).</p>
   </div>
 
   <!-- ===== CONTINUUM OF HAND STRENGTH ===== -->
   <div class="chapter-section">
     <h2>The Continuum of Hand Strength</h2>
 
-    <p>One of the deepest conceptual lessons of the [0,1] game is that <strong>hand strength is a continuous spectrum</strong>, not a set of discrete categories.</p>
-
     <div class="definition-box">
       <div class="def-term">Relative Hand Strength</div>
-      <p>In the [0,1] model, your hand value (say 0.72) has no absolute meaning. Its strength is entirely defined by where it falls relative to your opponent's distribution. If the opponent's range is concentrated in [0.8, 1.0], then 0.72 is weak. If their range is spread across [0, 0.6], then 0.72 is dominant.</p>
+      <p>In the [0,1] model, your hand value (say 0.72) has no absolute meaning. Its strength is entirely relative to your opponent's distribution. If their range is concentrated in [0.8, 1.0], then 0.72 is weak. If their range spans [0, 0.6], then 0.72 is dominant.</p>
     </div>
 
-    <p>This challenges the common poker habit of thinking in rigid categories: "I have top pair, that's a medium-strength hand." In reality, top pair could be anything from a monster (against a wide range) to nearly worthless (against a tight, strong range). The [0,1] model trains you to think about hand strength as a position on a continuum, defined relative to the opponent's likely distribution.</p>
-  </div>
-
-  <!-- ===== APPLICATION TO REAL POKER ===== -->
-  <div class="chapter-section">
-    <h2>Application to Real Poker</h2>
-
-    <p>The [0,1] game distills poker into its essential structure. The strategies that emerge from this model form a practical framework applicable to almost every real poker situation.</p>
+    <p>This challenges the common habit of thinking in rigid categories: "Top pair is medium strength." In reality, top pair can range from a monster (against a wide range) to nearly worthless (against a tight range). The [0,1] model trains you to think about hand strength as a <strong>position on a continuum</strong>, defined relative to the opponent's likely holdings.</p>
 
     <div class="example-box">
-      <div class="example-title">The Three-Tier Framework</div>
+      <div class="example-title">Context-Dependent Strength</div>
+      <p>Consider top pair, top kicker (TPTK) in two different scenarios:</p>
+      <table class="data-table">
+        <tr><th>Scenario</th><th>Opponent Range</th><th>TPTK Strength</th></tr>
+        <tr>
+          <td>Loose opponent limps, calls flop bet</td>
+          <td>Many weak pairs, draws, overcards</td>
+          <td>Very strong (top 10-15% of range)</td>
+        </tr>
+        <tr>
+          <td>Tight opponent 3-bets pre, bets flop and turn</td>
+          <td>Overpairs, sets, two pair</td>
+          <td>Weak (bottom 30-40% of their range)</td>
+        </tr>
+      </table>
+      <p>Same hand, completely different strength. The [0,1] framework makes this context-dependence explicit and unavoidable.</p>
+    </div>
+  </div>
+
+  <!-- ===== THREE-TIER FRAMEWORK ===== -->
+  <div class="chapter-section">
+    <h2>The Three-Tier Strategy</h2>
+
+    <p>The most practical takeaway from the [0,1] game is the <strong>three-tier framework</strong> for action selection. This structure applies on every street, in virtually every situation.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Three Tiers</div>
+      <div class="math-block">
+        <span class="math-label">Universal Action Template</span>
+        Tier 1 (Strong hands) &rarr; Bet for value &mdash; build the pot, get called by worse<br>
+        Tier 2 (Medium hands) &rarr; Check &mdash; too good to bluff, not strong enough to value bet<br>
+        Tier 3 (Weak hands) &rarr; Bluff &mdash; no showdown value, might win through fold equity
+      </div>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Applying the Three Tiers on the River</div>
       <table class="data-table">
         <tr><th>Tier</th><th>[0,1] Model</th><th>Real Poker Analog</th><th>Action</th></tr>
         <tr>
-          <td><strong>Strong Hands</strong></td>
-          <td>Top of [0,1] range</td>
-          <td>Sets, two pair, overpairs, top pair top kicker</td>
-          <td>Bet for value &mdash; build the pot, get called by worse</td>
+          <td><strong>Strong</strong></td>
+          <td>Top of range (near 1.0)</td>
+          <td>Sets, two pair, overpairs</td>
+          <td>Bet for value</td>
         </tr>
         <tr>
-          <td><strong>Medium Hands</strong></td>
-          <td>Middle of [0,1] range</td>
-          <td>Middle pairs, weak top pairs, second pair</td>
-          <td>Check &mdash; too good to bluff, not strong enough to value bet (the "condensed range")</td>
+          <td><strong>Medium</strong></td>
+          <td>Middle of range</td>
+          <td>Second pair, weak top pair</td>
+          <td>Check (showdown value, but worse calls rarely)</td>
         </tr>
         <tr>
-          <td><strong>Weak Hands</strong></td>
-          <td>Bottom of [0,1] range</td>
-          <td>Missed draws, no pair/no draw, pure air</td>
-          <td>Bluff &mdash; no showdown value, might win the pot with a bet</td>
+          <td><strong>Weak</strong></td>
+          <td>Bottom of range (near 0.0)</td>
+          <td>Missed draws, no pair, pure air</td>
+          <td>Bluff (nothing to lose at showdown)</td>
         </tr>
       </table>
     </div>
 
-    <p>This three-tier framework &mdash; bet the top, check the middle, bluff the bottom &mdash; is the foundation of modern poker strategy. It applies on the flop, on the turn, on the river, and (with modifications) preflop as well. Whenever you are unsure what to do with a hand, ask yourself: "Where does this hand fall on the continuum? Is it a value bet, a check, or a bluff?"</p>
+    <h3>The "Condensed Range" Problem</h3>
+    <p>Tier 2 hands face a unique problem: if you bet, better hands call and worse hands fold. You only get action when behind. This is called betting into a <strong>condensed range</strong> &mdash; your bet filters out exactly the hands you beat. The solution is to check and realize your showdown equity.</p>
 
     <div class="math-block">
       <span class="math-label">The Fundamental Strategic Question</span>
-      For any hand in any situation, determine:<br>
-      1. Am I ahead of my opponent's calling range? &rarr; Value bet<br>
-      2. Am I behind their calling range but ahead of some checking range? &rarr; Check<br>
-      3. Am I behind nearly everything? &rarr; Bluff or fold
+      For any hand in any situation, ask:<br>
+      1. Am I ahead of my opponent's calling range? &rarr; Value bet (Tier 1)<br>
+      2. Am I behind the calling range but ahead of some checking range? &rarr; Check (Tier 2)<br>
+      3. Am I behind nearly everything? &rarr; Bluff or fold (Tier 3)
     </div>
   </div>
 
   <!-- ===== INTERACTIVE: Position Value Calculator ===== -->
   <div class="interactive-widget">
-    <h3>Position Value Calculator</h3>
-    <p>Compare the expected value for the in-position (IP) vs. out-of-position (OOP) player across different pot and bet sizes. See how much position is worth in the [0,1] game.</p>
+    <h3>Position Value Calculator: IP vs OOP</h3>
+    <p>Compare the expected value for in-position (IP) vs. out-of-position (OOP) players across different pot and bet sizes. See how the positional advantage changes with different game parameters.</p>
     <div class="widget-controls">
       <label>
         Pot Size (P)
-        <input type="number" id="pvPot" min="1" max="100" value="10" onchange="calcPositionValue()">
+        <input type="range" id="pvPot" min="2" max="50" value="10" step="1" oninput="calcPositionValue()">
+        <span id="pvPotVal">10</span>
       </label>
       <label>
         Bet Size (b)
-        <input type="number" id="pvBet" min="1" max="50" value="5" onchange="calcPositionValue()">
+        <input type="range" id="pvBet" min="1" max="40" value="5" step="1" oninput="calcPositionValue()">
+        <span id="pvBetVal">5</span>
+      </label>
+      <label>
+        Number of Hands
+        <input type="number" id="pvHands" min="1" max="100000" value="1000" onchange="calcPositionValue()">
       </label>
       <button class="btn" onclick="calcPositionValue()">Calculate</button>
     </div>
     <div class="widget-result" id="pvResult">
-      <div class="result-label">Enter values and click Calculate</div>
+      <div class="result-label">Adjust sliders to compare IP vs OOP</div>
     </div>
   </div>
 
@@ -254,39 +314,50 @@
     </div>
   </div>
 
-  <!-- ===== QUIZ ===== -->
+  <!-- ===== QUIZ 1 ===== -->
   <div class="quiz-box">
     <h3>Conceptual Check</h3>
-    <p>What is "equity denial" and why is it important in poker?</p>
-    <button class="quiz-option" data-correct="false">It means denying your opponent the right to see the flop by raising preflop</button>
-    <button class="quiz-option" data-correct="true">Betting to prevent opponents from freely realizing their share of the pot at showdown, forcing them to either pay or surrender their equity</button>
-    <button class="quiz-option" data-correct="false">Folding a hand to deny your opponent value when they have a strong hand</button>
-    <button class="quiz-option" data-correct="false">Refusing to show your hand at the end to deny information to your opponents</button>
-    <div class="quiz-feedback" data-correct="Correct! Equity denial occurs when your bet forces an opponent to fold a hand that had positive expected value at showdown. By folding, they surrender the equity they would have earned by seeing the hand through. This is a crucial reason to bet with good-but-vulnerable hands: you deny opponents the free chance to realize their share of the pot." data-incorrect="Not quite. Equity denial specifically means betting to prevent opponents from realizing their showdown equity for free. When you bet and they fold a hand that had, say, 30% equity in the pot, you have 'denied' that 30% — they gave up their share rather than paying to continue. This is a core reason to bet with strong-but-vulnerable hands."></div>
+    <p>What is the primary value of bluffing in poker?</p>
+    <button class="quiz-option" data-correct="false">Winning pots immediately with weak hands</button>
+    <button class="quiz-option" data-correct="true">Creating uncertainty that forces opponents to call your value bets, making strong hands more profitable</button>
+    <button class="quiz-option" data-correct="false">Intimidating opponents psychologically so they play worse</button>
+    <button class="quiz-option" data-correct="false">Building a loose image that helps you get better starting hands</button>
+    <div class="quiz-feedback" data-correct="Correct! While bluffs can win pots directly, their greatest value is indirect: by bluffing at the right frequency, you create uncertainty that forces opponents to call your bets. Without the threat of bluffs, opponents would simply fold to every bet, and your strong hands would never get paid off. Bluffs make value bets profitable." data-incorrect="Not quite. The primary value of bluffing is indirect. Bluffs create uncertainty in the opponent's mind. If you never bluffed, opponents would always fold to your bets, and your strong hands would earn nothing extra. By bluffing at the correct frequency, you force opponents to call, which makes your value bets far more profitable."></div>
   </div>
 
   <!-- ===== QUIZ 2 ===== -->
   <div class="quiz-box">
     <h3>Strategic Application</h3>
-    <p>You hold a medium-strength hand (second pair) on the river. According to the three-tier framework from the [0,1] game, what should you typically do?</p>
-    <button class="quiz-option" data-correct="false">Bet large for value — second pair is strong enough</button>
-    <button class="quiz-option" data-correct="false">Bluff all-in — if opponent folds, you win</button>
-    <button class="quiz-option" data-correct="true">Check — the hand is too good to bluff (it has showdown value) but too weak to value bet (better hands call, worse hands fold)</button>
-    <button class="quiz-option" data-correct="false">Always fold — second pair is too weak to continue</button>
-    <div class="quiz-feedback" data-correct="Correct! Medium-strength hands occupy the 'check' tier in the three-tier framework. Second pair has showdown value — it can beat bluffs and some weaker hands at showdown. But if you bet, only better hands (top pair, two pair, etc.) will call, and worse hands (missed draws) will fold. You would be 'turning your hand into a bluff' and sacrificing showdown equity. Check and try to win at showdown." data-incorrect="The three-tier framework says medium hands should check. Second pair has showdown value (it can win against missed draws and weaker hands), so bluffing with it wastes that value. But it is not strong enough to bet for value, because typically only better hands call. The optimal play is to check and try to realize your showdown equity."></div>
+    <p>You hold a medium-strength hand (second pair) on the river. According to the three-tier framework, what should you typically do?</p>
+    <button class="quiz-option" data-correct="false">Bet large for value &mdash; second pair beats bluffs</button>
+    <button class="quiz-option" data-correct="false">Bluff all-in &mdash; if opponent folds, you win</button>
+    <button class="quiz-option" data-correct="true">Check &mdash; too good to bluff (has showdown value) but too weak to value bet (only better hands call)</button>
+    <button class="quiz-option" data-correct="false">Always fold &mdash; second pair is too weak to continue</button>
+    <div class="quiz-feedback" data-correct="Correct! Medium-strength hands are Tier 2: they have showdown value (can beat bluffs and weaker hands) but are too weak to value bet (if you bet, only better hands call and worse hands fold). Checking lets you realize your showdown equity without the risk of 'turning your hand into a bluff.'" data-incorrect="The three-tier framework says medium hands should check. Second pair has showdown value and can beat bluffs, so it is too valuable to use as a bluff. But it is not strong enough to value bet because typically only better hands would call. Check and try to win at showdown."></div>
+  </div>
+
+  <!-- ===== QUIZ 3 ===== -->
+  <div class="quiz-box">
+    <h3>Position Value</h3>
+    <p>In which scenario is position MOST valuable?</p>
+    <button class="quiz-option" data-correct="false">Heads-up all-in preflop with no decisions remaining</button>
+    <button class="quiz-option" data-correct="true">Deep-stacked cash game with a small pot and many streets of play ahead</button>
+    <button class="quiz-option" data-correct="false">Short-stacked tournament where everyone is pushing or folding</button>
+    <button class="quiz-option" data-correct="false">A game where all players play the same strategy regardless of position</button>
+    <div class="quiz-feedback" data-correct="Correct! Position is most valuable when there are many decisions remaining (deep stacks, small pot, multiple streets). The informational advantage of acting last compounds with each additional decision point. In all-in situations, there are no further decisions, so position is irrelevant." data-incorrect="Position is most valuable when there are many decisions to make. Deep stacks with a small pot (high SPR) mean many streets of play where the IP player repeatedly benefits from acting last. In all-in or push/fold situations, position matters minimally because there are few or no remaining decisions."></div>
   </div>
 
   <!-- ===== KEY CONCEPTS ===== -->
   <div class="key-concepts">
     <h2>Key Concepts</h2>
     <ul>
-      <li><strong>Position has quantifiable value.</strong> The in-position player always has a higher EV in the [0,1] game. This advantage comes from acting with more information.</li>
-      <li><strong>Bluffs enable value bets.</strong> Without the threat of bluffs, opponents always fold to bets, and strong hands earn nothing extra. Bluffing creates the uncertainty that makes value bets profitable.</li>
-      <li><strong>Information has a price.</strong> The gap between perfect-information EV and equilibrium EV measures the value of seeing your opponent's hand. Every piece of information you gather (tells, patterns, history) narrows this gap.</li>
-      <li><strong>Equity denial is a core reason to bet.</strong> Betting forces opponents to fold hands that had positive showdown equity, preventing them from freely realizing their share of the pot.</li>
-      <li><strong>Protection is equity denial in action.</strong> Betting with strong-but-vulnerable hands charges draws and marginal hands a price to continue.</li>
-      <li><strong>Hand strength is a continuum.</strong> Your hand's value depends entirely on where it falls relative to the opponent's distribution &mdash; not on absolute categories.</li>
-      <li><strong>Three-tier framework:</strong> Bet the top (value), check the middle (showdown value), bluff the bottom (no showdown value). This structure applies across nearly all poker situations.</li>
+      <li><strong>Position has quantifiable value.</strong> The IP player always has higher EV. The advantage equals b&sup2;/(2(b+P)) and grows with deeper stacks relative to the pot.</li>
+      <li><strong>Bluffs enable value bets.</strong> Without bluffs, opponents always fold to bets. Bluffing creates uncertainty that forces calls, making value bets profitable. The indirect value of bluffs exceeds their direct value.</li>
+      <li><strong>Equity denial is a core reason to bet.</strong> Betting forces opponents to fold hands with positive showdown equity, preventing them from realizing their pot share for free.</li>
+      <li><strong>Protection charges draws a price.</strong> Betting with strong-but-vulnerable hands denies free cards to draws and marginal holdings that could improve to beat you.</li>
+      <li><strong>Hand strength is a continuum, not categories.</strong> The same hand can be strong or weak depending entirely on the opponent's range. Always assess strength relative to the opponent's distribution.</li>
+      <li><strong>Three-tier framework:</strong> Strong hands &rarr; value bet. Medium hands &rarr; check. Weak hands &rarr; bluff. This template applies on every street in virtually every situation.</li>
+      <li><strong>Medium hands face the condensed-range problem.</strong> If you bet, only better hands call and worse hands fold. Checking is the solution.</li>
     </ul>
   </div>
 
@@ -308,38 +379,59 @@
 function calcPositionValue() {
   const P = parseFloat(document.getElementById('pvPot').value) || 10;
   const b = parseFloat(document.getElementById('pvBet').value) || 5;
+  const hands = parseInt(document.getElementById('pvHands').value) || 1000;
 
-  // Simplified [0,1] game EV model
-  // IP advantage comes from: acting last, seeing opponent's action
-  // EV_IP ~ P/2 + adjustment for positional advantage
-  // EV_OOP ~ P/2 - adjustment
-  // The advantage is roughly proportional to b^2 / (4*(b+P))
-  const advantage = (b * b) / (4 * (b + P));
-  const evIP = P / 2 + advantage;
-  const evOOP = P / 2 - advantage;
-  const pctAdv = ((evIP - evOOP) / P * 100);
+  document.getElementById('pvPotVal').textContent = P;
+  document.getElementById('pvBetVal').textContent = b;
+
+  // [0,1] game positional advantage: b^2 / (2*(b+P))
+  const advantage = (b * b) / (2 * (b + P));
+  const evIP = P / 2 + advantage / 2;
+  const evOOP = P / 2 - advantage / 2;
+  const pctAdv = (advantage / P * 100);
+  const totalAdv = advantage * hands;
+
+  // Compare across several bet sizes
+  const betSizes = [Math.round(P * 0.33), Math.round(P * 0.5), Math.round(P * 0.75), P];
+  let comparisonRows = betSizes.map(bs => {
+    if (bs < 1) bs = 1;
+    const adv = (bs * bs) / (2 * (bs + P));
+    return `<tr>
+      <td>${bs} (${Math.round(bs/P*100)}% pot)</td>
+      <td>${adv.toFixed(3)}</td>
+      <td>${(adv/P*100).toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
 
   document.getElementById('pvResult').innerHTML = `
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
       <div>
-        <span class="result-label">IP Player EV:</span><br>
-        <span class="result-value" style="color:var(--green);">+${evIP.toFixed(2)}</span>
+        <span class="result-label">IP Player EV per hand:</span><br>
+        <span class="result-value" style="color:var(--green);">+${evIP.toFixed(3)}</span>
       </div>
       <div>
-        <span class="result-label">OOP Player EV:</span><br>
-        <span class="result-value" style="color:var(--accent);">+${evOOP.toFixed(2)}</span>
+        <span class="result-label">OOP Player EV per hand:</span><br>
+        <span class="result-value" style="color:var(--accent);">+${evOOP.toFixed(3)}</span>
       </div>
       <div>
-        <span class="result-label">Position Advantage:</span><br>
-        <span class="result-value">${(advantage * 2).toFixed(2)}</span>
+        <span class="result-label">Position Advantage per hand:</span><br>
+        <span class="result-value" style="color:var(--gold);">${advantage.toFixed(3)}</span>
       </div>
       <div>
-        <span class="result-label">Advantage as % of Pot:</span><br>
+        <span class="result-label">Advantage as % of pot:</span><br>
         <span class="result-value">${pctAdv.toFixed(1)}%</span>
       </div>
     </div>
+    <div style="margin-top:0.75rem;">
+      <span class="result-label">Over ${hands.toLocaleString()} hands:</span>
+      <span class="result-value" style="color:var(--gold);">IP earns +${totalAdv.toFixed(1)} more than OOP</span>
+    </div>
+    <table class="data-table" style="margin-top:1rem; font-size:0.85rem;">
+      <tr><th>Bet Size</th><th>Positional Advantage</th><th>% of Pot</th></tr>
+      ${comparisonRows}
+    </table>
     <div style="margin-top:0.75rem; color:var(--muted); font-size:0.85rem;">
-      The in-position player earns <strong>${(advantage * 2).toFixed(2)}</strong> more per hand than the out-of-position player. Over hundreds of hands, this edge compounds dramatically.
+      Larger bet sizes increase positional advantage. This is why deep-stacked play (where big bets are possible) rewards positional awareness most.
     </div>
   `;
 }
@@ -353,37 +445,15 @@ function calcEquityDenial() {
   document.getElementById('edHandVal').textContent = hand.toFixed(2);
   document.getElementById('edFoldVal').textContent = foldThresh.toFixed(2);
 
-  // Opponent folds all hands below foldThresh
-  // Equity denied = sum of equity of folded hands that had showdown value vs our hand
-  // Hands from 0 to min(foldThresh, hand) lose to us at showdown anyway — folding those denies them nothing real
-  // Hands from hand to foldThresh (if foldThresh > hand) actually beat us — folding those is a mistake for them
-
-  // Total equity of hands in [0, foldThresh]:
-  // Each hand h in [0, foldThresh] has equity = h (probability it beats a random hand)
-  // But against OUR specific hand, h beats us if h > our hand
-  // Equity denied = portion of pot that folded hands would have won at showdown
-
-  const foldProb = foldThresh; // uniform distribution
-  let equityDenied = 0;
-
-  // Hands below our hand that fold: they had equity = 0 vs us (they lose)
-  // Hands above our hand but below fold threshold: they had equity = 1 vs us (they win)
-  // So equity denied = number of "better" folded hands * pot
+  const foldProb = foldThresh;
   const betterHandsThatFold = Math.max(0, foldThresh - hand);
   const worseHandsThatFold = Math.min(foldThresh, hand);
 
-  // Average equity of worse folded hands vs us: 0 (they always lose)
-  // Average equity of better folded hands vs us: 1.0 (they always win)
-  // But in general [0,1] game terms, equity denied from worse hands is their general equity
-  // Let's compute: each hand h has showdown equity h (wins vs a random opponent h fraction of the time)
-  // For folded hands [0, foldThresh]:
-  // Total showdown equity = integral from 0 to foldThresh of h dh = foldThresh^2 / 2
-  // Average equity per folded hand = foldThresh / 2
+  // Total showdown equity of folded hands (general, vs random opponent)
   const totalEquityOfFolders = (foldThresh * foldThresh / 2) * pot;
   const avgEquity = (foldThresh / 2 * 100);
 
-  // Equity denied specifically vs our hand:
-  // Better hands that fold: betterHandsThatFold * pot (they would have won the whole pot)
+  // Equity denied specifically vs our hand
   const equityDeniedVsUs = betterHandsThatFold * pot;
 
   document.getElementById('edResult').innerHTML = `
@@ -403,7 +473,7 @@ function calcEquityDenial() {
       <div>
         <span class="result-label">Better Hands That Fold:</span><br>
         <span style="color:var(--green);">${(betterHandsThatFold * 100).toFixed(1)}% of hands</span>
-        ${betterHandsThatFold > 0 ? '(mistakes!)' : ''}
+        ${betterHandsThatFold > 0 ? '(opponent mistakes!)' : ''}
       </div>
       <div>
         <span class="result-label">Avg Showdown Equity of Folders:</span><br>
@@ -416,8 +486,8 @@ function calcEquityDenial() {
     </div>
     <div style="margin-top:0.75rem; color:var(--muted); font-size:0.85rem;">
       ${betterHandsThatFold > 0
-        ? `<strong style="color:var(--green);">Bonus:</strong> ${(betterHandsThatFold * 100).toFixed(1)}% of folded hands actually beat you! They are folding winning hands worth <strong>${equityDeniedVsUs.toFixed(2)}</strong> in pot equity. This is the most profitable form of equity denial.`
-        : `All folded hands are weaker than yours. You deny them their general showdown equity, but the biggest gains come when opponents fold hands that beat you.`
+        ? `<strong style="color:var(--green);">Bonus:</strong> ${(betterHandsThatFold * 100).toFixed(1)}% of folded hands actually beat you! They folded winning hands worth <strong>${equityDeniedVsUs.toFixed(2)}</strong> in equity. This is the most profitable form of equity denial.`
+        : `All folded hands are weaker than yours. You denied their general showdown equity. The biggest gains come when opponents fold hands that beat you.`
       }
     </div>
   `;
