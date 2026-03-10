@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 9: Adaptive Play: Distribution vs. Distribution — Poker Math Course</title>
+  <title>Chapter 9: Adaptive Play — Poker Math Course</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/chapter.css">
 </head>
@@ -21,115 +21,205 @@
   <div class="chapter-header">
     <span class="chapter-number">Part II &mdash; Chapter 9</span>
     <h1>Adaptive Play: Distribution vs. Distribution</h1>
-    <p class="chapter-subtitle">When both players hold ranges, strategy becomes a dynamic dance</p>
+    <p class="chapter-subtitle">When both players hold ranges, the game becomes a dynamic battle of strategy adjustments</p>
   </div>
 
-
+  <!-- ===== INTRO ===== -->
   <div class="chapter-section">
     <h2>Both Players Have Distributions</h2>
-    <p>The most realistic poker analysis has <strong>both players holding distributions</strong> rather than specific hands. This is the full complexity of poker.</p>
+    <p>In Chapter 7, we analyzed hand vs. hand (cards exposed). In Chapter 8, we advanced to hand vs. distribution &mdash; we know our cards but estimate the opponent&rsquo;s range. Now we take the final step: <strong>distribution vs. distribution</strong>, where <em>both</em> players hold ranges of possible hands.</p>
+    <p>This is the most realistic model of poker. Neither player knows the other&rsquo;s exact hand. Each player&rsquo;s strategy must account for the full range of hands the other might hold &mdash; and the other player is doing the same thing simultaneously.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Distribution vs. Distribution</div>
+      <p>A framework where both Player A and Player B hold distributions (ranges) of possible hands, and each player&rsquo;s optimal strategy depends on the other&rsquo;s distribution. This creates a <strong>strategic interdependence</strong> that is the hallmark of poker as a game of skill.</p>
+    </div>
+  </div>
+
+  <!-- ===== EV CALCULATION ===== -->
+  <div class="chapter-section">
+    <h2>EV Calculation: The Double Summation</h2>
+
+    <p>When both players hold distributions, the expected value calculation requires summing over <em>all possible matchups</em> of hands from both ranges:</p>
+
     <div class="math-block">
-      <span class="math-label">Distribution vs. Distribution EV</span>
+      <span class="math-label">Equation 9.1 &mdash; Distribution vs. Distribution EV</span>
       &lt;A<sub>dist</sub>, B<sub>dist</sub>&gt; = &Sigma;<sub>i</sub> &Sigma;<sub>j</sub> p(A<sub>i</sub>) &times; p(B<sub>j</sub>) &times; EV(A<sub>i</sub> vs B<sub>j</sub>)
     </div>
-    <p>This double summation over all hand combinations is computationally intensive but captures the true strategic complexity.</p>
-  </div>
 
-  <div class="chapter-section">
-    <h2>The Adaptation Cycle</h2>
-    <p>When both players think in distributions, strategy becomes dynamic:</p>
-    <ol style="margin: 0.5rem 0 1rem 1.5rem; line-height: 2;">
-      <li>Player A plays strategy S<sub>1</sub></li>
-      <li>Player B reads S<sub>1</sub> and plays the maximally exploitive S<sub>2</sub></li>
-      <li>Player A reads S<sub>2</sub> and adjusts to S<sub>3</sub></li>
-      <li>Player B adjusts to S<sub>4</sub>... and so on</li>
-    </ol>
-    <p>This is the core dynamic of exploitive play. <strong>The player who adapts faster gains an edge.</strong></p>
-  </div>
+    <p>This is a <strong>double summation</strong>: for every hand <em>i</em> that Player A might hold, and every hand <em>j</em> that Player B might hold, we compute the EV of the matchup and weight it by the joint probability of both hands occurring.</p>
 
-  <div class="chapter-section">
-    <h2>The Leveling War</h2>
-    <div class="definition-box">
-      <div class="def-term">Levels of Thinking</div>
-      <p><strong>Level 0:</strong> What do I have?<br>
-      <strong>Level 1:</strong> What does my opponent have?<br>
-      <strong>Level 2:</strong> What does my opponent think I have?<br>
-      <strong>Level 3:</strong> What does my opponent think I think they have?</p>
-      <p>The key is to be exactly <strong>one level above</strong> your opponent. Being two levels above is the same as being one level below!</p>
+    <div class="example-box">
+      <div class="example-title">Simplified Example</div>
+      <p>Suppose Player A&rsquo;s range is {AA (30%), KK (70%)} and Player B&rsquo;s range is {QQ (50%), AK (50%)}.</p>
+      <p>We evaluate all four matchups:</p>
+      <table class="data-table">
+        <tr><th>A&rsquo;s Hand</th><th>B&rsquo;s Hand</th><th>Joint Prob</th><th>A&rsquo;s Equity</th><th>Weighted EV</th></tr>
+        <tr><td>AA (30%)</td><td>QQ (50%)</td><td>15%</td><td>81%</td><td>0.15 &times; 0.81 = 0.122</td></tr>
+        <tr><td>AA (30%)</td><td>AK (50%)</td><td>15%</td><td>93%</td><td>0.15 &times; 0.93 = 0.140</td></tr>
+        <tr><td>KK (70%)</td><td>QQ (50%)</td><td>35%</td><td>81%</td><td>0.35 &times; 0.81 = 0.284</td></tr>
+        <tr><td>KK (70%)</td><td>AK (50%)</td><td>35%</td><td>69%</td><td>0.35 &times; 0.69 = 0.242</td></tr>
+      </table>
+      <div class="math-block">
+        A&rsquo;s total equity = 0.122 + 0.140 + 0.284 + 0.242 = <strong>78.7%</strong>
+      </div>
+      <p>Player A&rsquo;s range has 78.7% equity against Player B&rsquo;s range. Note that this is different from any single hand-vs-hand matchup.</p>
     </div>
   </div>
 
+  <!-- ===== ADAPTIVE PLAY ===== -->
   <div class="chapter-section">
-    <h2>Limitations of Pure Exploitive Play</h2>
-    <p>If your opponent also adapts, pure exploitive play creates an <strong>endless adaptation cycle</strong>. Worse, exploitive strategies are themselves exploitable &mdash; by maximizing against one strategy, you may open vulnerabilities to another.</p>
-    <p>This fundamental limitation motivates the search for <strong>unexploitable (game theory optimal) strategies</strong> covered in Part III. GTO play breaks the cycle by finding a strategy that cannot be exploited regardless of the opponent's adjustments.</p>
+    <h2>The Strategy Adaptation Cycle</h2>
+
+    <p>The most important insight of distribution vs. distribution play is that strategies are <strong>not static</strong>. When one player adjusts, the other should counter-adjust, creating a dynamic cycle:</p>
+
+    <div class="example-box">
+      <div class="example-title">The Adaptation Spiral</div>
+      <ol style="margin: 0.5rem 0 0 1.5rem; line-height: 2;">
+        <li><strong>Player A</strong> plays strategy S<sub>1</sub> (e.g., bluffs 30% of the time on the river).</li>
+        <li><strong>Player B</strong> reads S<sub>1</sub> and plays maximally exploitive S<sub>2</sub> (e.g., calls more often since A bluffs a lot).</li>
+        <li><strong>Player A</strong> reads S<sub>2</sub> and adjusts to S<sub>3</sub> (e.g., bluffs less since B is calling more).</li>
+        <li><strong>Player B</strong> reads S<sub>3</sub> and adjusts to S<sub>4</sub> (e.g., folds more since A is now bluffing less).</li>
+        <li>The cycle continues...</li>
+      </ol>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Exploitive Strategy</div>
+      <p>A strategy designed to maximally exploit a specific opponent&rsquo;s tendencies. The exploitive response to a player who bluffs too much is to call more. The exploitive response to a player who never bluffs is to fold more. The exploitive response is always the <strong>maximally profitable counter-strategy</strong> against a fixed opponent strategy.</p>
+    </div>
+
+    <h3>The Edge Goes to the Faster Adapter</h3>
+    <p>In the adaptation cycle, the player who adjusts more quickly and accurately gains an edge. <strong>Strong players</strong> constantly revise their model of the opponent&rsquo;s strategy and adjust accordingly. <strong>Weak players</strong> play a static strategy, making them easy targets for exploitation.</p>
+
+    <div class="math-block">
+      <span class="math-label">The Adaptation Advantage</span>
+      If A plays strategy S<sub>1</sub> and B plays optimal counter S<sub>2</sub>:<br>
+      EV(B) &ge; EV(B against S<sub>1</sub> with default strategy)<br><br>
+      If A then adjusts to S<sub>3</sub> but B is slow to counter:<br>
+      EV(A with S<sub>3</sub>) &gt; EV(A with S<sub>1</sub>) against the now-outdated S<sub>2</sub>
+    </div>
   </div>
 
+  <!-- ===== LIMITATIONS ===== -->
+  <div class="chapter-section">
+    <h2>Limitations of Exploitive Play</h2>
+
+    <p>Pure exploitive play has a fundamental vulnerability: <strong>if your opponent also adapts, your exploitive strategy can itself be exploited</strong>.</p>
+
+    <div class="example-box">
+      <div class="example-title">The Exploitation Trap</div>
+      <p>Suppose you notice your opponent never bluffs on the river, so you adopt the exploitive counter-strategy of always folding to river bets (since they only bet with strong hands).</p>
+      <p>But if your opponent <em>notices</em> that you always fold, they can start bluffing 100% of the time on the river &mdash; exploiting your exploitation!</p>
+      <p>Now <em>you</em> are the one being exploited, worse than if you had just played a balanced strategy from the start.</p>
+    </div>
+
+    <p>This leads to a crucial question: <strong>Is there a strategy that cannot be exploited?</strong> A strategy so balanced that no matter what the opponent does, they cannot gain an edge?</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Path to Game Theory</div>
+      <p>The search for an <strong>unexploitable strategy</strong> &mdash; one that guarantees at least break-even results regardless of the opponent&rsquo;s counter-strategy &mdash; leads directly to <strong>game theory</strong> and the concept of <strong>Nash equilibrium</strong>. This is the subject of Part III.</p>
+      <p>The Nash equilibrium strategy is the &ldquo;fixed point&rdquo; of the adaptation cycle: the strategy where neither player can improve by deviating unilaterally.</p>
+    </div>
+
+    <h3>Exploitive vs. Optimal: The Tradeoff</h3>
+    <table class="data-table">
+      <tr><th>Approach</th><th>Strength</th><th>Weakness</th></tr>
+      <tr><td>Pure Exploitive</td><td>Maximizes EV against a static opponent</td><td>Vulnerable to counter-exploitation by adapting opponents</td></tr>
+      <tr><td>Game-Theoretic (GTO)</td><td>Cannot be exploited; guarantees minimum EV</td><td>Does not maximize EV against weak opponents who have exploitable leaks</td></tr>
+      <tr><td>Mixed / Practical</td><td>Balances exploitation with protection</td><td>Requires judgment about when to exploit vs. when to stay balanced</td></tr>
+    </table>
+  </div>
+
+  <!-- ===== PRACTICAL FRAMEWORK ===== -->
   <div class="chapter-section">
     <h2>Practical Framework</h2>
-    <p>In reality, exact distribution vs. distribution calculations are <strong>computationally intractable at the table</strong>. Players approximate using:</p>
+
+    <p>In reality, perfect distribution vs. distribution calculations are <strong>computationally intractable</strong> at the poker table. Even a simplified game with 100 possible hands per player requires 10,000 matchup evaluations &mdash; and real poker has millions of possible hand combinations across multiple streets.</p>
+
+    <p>Skilled players approximate using:</p>
     <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
-      <li>Simplified ranges (3-5 hand categories instead of exact combos)</li>
-      <li>Heuristics built from off-table study</li>
-      <li>Pattern recognition from experience</li>
-      <li>Bayesian updating within a hand (Chapter 5 techniques)</li>
+      <li><strong>Range categories:</strong> Grouping hands into &ldquo;strong,&rdquo; &ldquo;medium,&rdquo; &ldquo;weak,&rdquo; and &ldquo;draw&rdquo; categories rather than evaluating each combo individually.</li>
+      <li><strong>Heuristics:</strong> Rules of thumb developed from off-table study (e.g., &ldquo;if the board is wet and the opponent checks twice, their range is capped&rdquo;).</li>
+      <li><strong>Pattern recognition:</strong> Experience builds an intuitive sense for how ranges interact, allowing near-instant approximations.</li>
+      <li><strong>Off-table study:</strong> Solvers and equity calculators allow players to study distribution vs. distribution scenarios before they arise in play.</li>
     </ul>
+
+    <p>The mathematical framework in this chapter &mdash; even if we can&rsquo;t compute it perfectly in real time &mdash; tells us <em>what we&rsquo;re trying to approximate</em>. Understanding the theory improves the approximations.</p>
   </div>
 
+  <!-- ===== INTERACTIVE: Strategy Adaptation Visualizer ===== -->
   <div class="interactive-widget">
-    <h3>Adaptation Simulator</h3>
-    <p>See how bluffing and calling frequencies adapt to each other. A bluffs, B decides whether to call.</p>
+    <h3>Strategy Adaptation Visualizer</h3>
+    <p>Watch how two players&rsquo; strategies adapt to each other over multiple rounds. Player A chooses a bluffing frequency; Player B chooses a calling frequency. Each player adjusts toward the exploitive counter-strategy.</p>
     <div class="widget-controls">
-      <label>Pot Size: <input type="number" id="potAdapt" value="6" min="1"></label>
-      <label>Bet Size: <input type="number" id="betAdapt" value="2" min="1"></label>
-      <label>A's Value Bet %: <input type="number" id="valuePct" value="20" min="1" max="50"></label>
-      <button class="btn" onclick="calcAdapt()">Show Equilibrium</button>
+      <label>
+        A&rsquo;s initial bluff frequency (%):
+        <input type="number" id="initBluff" value="50" min="0" max="100" step="5">
+      </label>
+      <label>
+        B&rsquo;s initial call frequency (%):
+        <input type="number" id="initCall" value="50" min="0" max="100" step="5">
+      </label>
+      <label>
+        Pot size (units):
+        <input type="number" id="adaptPot" value="10" min="2" max="50" step="1">
+      </label>
+      <label>
+        Bet size (units):
+        <input type="number" id="adaptBet" value="5" min="1" max="25" step="1">
+      </label>
+      <label>
+        Adaptation speed (%):
+        <input type="range" id="adaptSpeed" value="30" min="5" max="100" step="5">
+        <span id="adaptSpeedLabel">30%</span>
+      </label>
+      <button class="btn" onclick="runAdaptation()">Run 20 Rounds</button>
     </div>
     <div class="widget-result" id="adaptResult">
-      <div class="result-label">Click to see the equilibrium bluff and call frequencies</div>
+      <div class="result-label">Set initial strategies and click Run</div>
     </div>
+    <div id="adaptTable" style="margin-top:1rem;"></div>
   </div>
-  <script>
-  function calcAdapt() {
-    const pot = parseFloat(document.getElementById('potAdapt').value);
-    const bet = parseFloat(document.getElementById('betAdapt').value);
-    const valuePct = parseFloat(document.getElementById('valuePct').value) / 100;
-    const optBluffRatio = bet / (bet + pot);
-    const optBluffPct = valuePct * optBluffRatio / (1 - optBluffRatio);
-    const totalBet = valuePct + optBluffPct;
-    const optCallFreq = 1 - pot / (pot + bet);
-    document.getElementById('adaptResult').innerHTML =
-      '<div><span class="result-label">Optimal bluff ratio:</span> <span class="result-value">' + (optBluffRatio*100).toFixed(1) + '% of bets should be bluffs</span></div>' +
-      '<div style="margin-top:0.4rem"><span class="result-label">A bets:</span> ' + (totalBet*100).toFixed(1) + '% total (' + (valuePct*100).toFixed(0) + '% value + ' + (optBluffPct*100).toFixed(1) + '% bluffs)</div>' +
-      '<div style="margin-top:0.4rem"><span class="result-label">B should call:</span> <span class="result-value">' + ((1-optCallFreq)*100).toFixed(1) + '% of the time</span></div>' +
-      '<div style="margin-top:0.4rem; color: var(--muted); font-size:0.85rem;">At equilibrium, B is indifferent between calling and folding. A is indifferent between bluffing and checking weak hands.</div>';
-  }
-  </script>
 
+  <!-- ===== QUIZ 1 ===== -->
+  <div class="quiz-box">
+    <h3>Adaptive Play Dynamics</h3>
+    <p>Player A bluffs very frequently on the river. Player B notices and begins calling nearly every river bet. What should Player A do next?</p>
+    <button class="quiz-option" data-correct="false">Continue bluffing at the same frequency &mdash; variance will even things out.</button>
+    <button class="quiz-option" data-correct="false">Stop playing entirely &mdash; B has figured out A&rsquo;s strategy.</button>
+    <button class="quiz-option" data-correct="true">Reduce bluffing frequency dramatically, then profit by betting only strong hands that B will call with inferior holdings.</button>
+    <button class="quiz-option" data-correct="false">Increase bluffing frequency &mdash; B will eventually stop calling.</button>
+    <div class="quiz-feedback" data-correct="Correct! If B is calling too much (because B adapted to A's heavy bluffing), A should exploit this by value betting more and bluffing less. B's excessive calling becomes a liability when A stops bluffing. This is the next step in the adaptation cycle." data-incorrect="When B calls too often, bluffs lose money. The correct adaptation is to stop bluffing and instead bet only for value. B's over-calling then becomes A's profit source. This is the adaptation cycle in action: each adjustment creates a new vulnerability."></div>
+  </div>
 
   <div class="quiz-box">
-    <h3>Test Your Understanding</h3>
-    <p>Why is pure exploitive play insufficient against a strong, adaptive opponent?</p>
-    <button class="quiz-option" data-correct="false">Because exploitive play always loses money</button>
-    <button class="quiz-option" data-correct="true">Because exploitive strategies can themselves be exploited when the opponent adapts</button>
-    <button class="quiz-option" data-correct="false">Because you can never read a strong player's hand</button>
-    <div class="quiz-feedback" data-correct="Correct! Maximally exploiting one strategy creates predictable patterns that an adaptive opponent can counter-exploit. This arms race motivates game theory optimal play as a defensive foundation." data-incorrect="The issue is that exploitive play, by definition, is maximized against ONE specific strategy. If the opponent changes strategy, your exploit becomes a liability. This creates an adaptation cycle that GTO play resolves."></div>
+    <h3>Why Isn&rsquo;t Exploitive Play Sufficient?</h3>
+    <p>If exploitive play is the most profitable strategy against a given opponent, why do we need game theory at all?</p>
+    <button class="quiz-option" data-correct="false">Game theory is only for mathematicians, not real players.</button>
+    <button class="quiz-option" data-correct="false">Exploitive play requires perfect information, which we never have.</button>
+    <button class="quiz-option" data-correct="true">Because exploitive play is maximally profitable only against a STATIC opponent. Against an adapting opponent, pure exploitive play creates vulnerabilities that can be counter-exploited.</button>
+    <button class="quiz-option" data-correct="false">Exploitive play is always sufficient; game theory just confirms the same answers.</button>
+    <div class="quiz-feedback" data-correct="Correct! Exploitive play maximizes EV against a fixed, predictable opponent. But in the adaptation cycle, your exploitive adjustments reveal information about YOUR strategy. A skilled opponent can then counter-exploit your predictable adjustments. Game theory provides a 'safe' baseline strategy that cannot be exploited, regardless of the opponent's adaptations." data-incorrect="The core issue is that exploitive play works best against static opponents. Against opponents who also adapt, your exploitive strategy becomes predictable and creates its own vulnerabilities. Game theory provides an unexploitable foundation &mdash; a strategy that guarantees you can't lose regardless of how the opponent responds."></div>
   </div>
 
+  <!-- ===== KEY CONCEPTS ===== -->
   <div class="key-concepts">
     <h2>Key Concepts</h2>
     <ul>
-      <li><strong>Distribution vs. distribution</strong> analysis is the most complete form of poker reasoning, requiring double summation over both players' ranges.</li>
-      <li>Strategy is <strong>dynamic</strong> &mdash; players adapt to each other in an ongoing cycle.</li>
-      <li>The <strong>leveling war</strong> means you should be exactly one thinking level above your opponent.</li>
-      <li>Pure exploitive play is <strong>itself exploitable</strong>, motivating the game-theoretic approach of Part III.</li>
-      <li>In practice, players <strong>approximate</strong> distribution analysis using heuristics, simplified ranges, and experience.</li>
+      <li><strong>Distribution vs. distribution</strong> is the most realistic poker analysis: both players hold ranges, and EV is computed as a double summation over all possible hand matchups.</li>
+      <li>The <strong>strategy adaptation cycle</strong> shows how players iteratively adjust strategies to exploit each other&rsquo;s tendencies.</li>
+      <li>The player who <strong>adapts faster and more accurately</strong> gains an edge in the adaptation cycle.</li>
+      <li><strong>Pure exploitive play is vulnerable</strong> to counter-exploitation when the opponent also adapts, motivating the search for unexploitable strategies.</li>
+      <li><strong>Nash equilibrium</strong> (game theory, Part III) represents the fixed point of the adaptation cycle &mdash; a strategy no opponent can profitably counter.</li>
+      <li>In practice, players <strong>approximate</strong> distribution vs. distribution calculations using range categories, heuristics, pattern recognition, and off-table study.</li>
     </ul>
   </div>
 
+  <!-- ===== NAVIGATION ===== -->
   <nav class="chapter-nav">
-    <a href="chapter-08.html">&larr; Previous Chapter</a>
-    <a href="chapter-10.html">Next Chapter &rarr;</a>
+    <a href="chapter-08.html">&larr; Chapter 8: Hand vs. Distribution</a>
+    <a href="chapter-10.html">Chapter 10 &rarr;</a>
   </nav>
 
 </main>
@@ -139,5 +229,95 @@
 </footer>
 
 <script src="../../js/chapter.js"></script>
+<script>
+document.getElementById('adaptSpeed').addEventListener('input', function() {
+  document.getElementById('adaptSpeedLabel').textContent = this.value + '%';
+});
+
+function runAdaptation() {
+  const bluff0 = parseFloat(document.getElementById('initBluff').value) / 100;
+  const call0 = parseFloat(document.getElementById('initCall').value) / 100;
+  const pot = parseFloat(document.getElementById('adaptPot').value);
+  const bet = parseFloat(document.getElementById('adaptBet').value);
+  const speed = parseFloat(document.getElementById('adaptSpeed').value) / 100;
+
+  // GTO equilibrium values for this pot/bet size
+  // B should call with frequency: bet / (bet + pot) to make A indifferent to bluffing
+  // A should bluff with frequency: bet / (bet + pot) to make B indifferent to calling
+  const gtoCallFreq = bet / (bet + pot);
+  const gtoBluffFreq = bet / (bet + pot);
+
+  let bluff = bluff0;
+  let call = call0;
+  const rounds = [];
+
+  for (let r = 0; r <= 20; r++) {
+    // EV calculations for this round
+    // A's EV from bluffing: bluff * (call * (-bet) + (1 - call) * pot)
+    const evAbluff = call * (-bet) + (1 - call) * pot;
+    // B's EV from calling a bluff vs value
+    const evBcall = bluff * bet - (1 - bluff) * bet;
+
+    rounds.push({
+      round: r,
+      bluff: bluff,
+      call: call,
+      evAbluff: evAbluff,
+      evBcall: evBcall
+    });
+
+    if (r < 20) {
+      // Exploitive adjustments
+      // B's best response: call more if A bluffs a lot, less if A bluffs rarely
+      const targetCall = bluff > gtoBluffFreq ? Math.min(1, call + 0.5) : Math.max(0, call - 0.5);
+      // A's best response: bluff more if B folds a lot, less if B calls a lot
+      const targetBluff = call > gtoCallFreq ? Math.max(0, bluff - 0.5) : Math.min(1, bluff + 0.5);
+
+      // Gradual adaptation
+      call = call + speed * (targetCall - call);
+      bluff = bluff + speed * (targetBluff - bluff);
+
+      // Clamp
+      call = Math.max(0, Math.min(1, call));
+      bluff = Math.max(0, Math.min(1, bluff));
+    }
+  }
+
+  // Display results
+  const finalBluff = rounds[rounds.length - 1].bluff;
+  const finalCall = rounds[rounds.length - 1].call;
+
+  document.getElementById('adaptResult').innerHTML = `
+    <div><span class="result-label">GTO Equilibrium:</span>
+      A bluffs <span class="result-value">${(gtoBluffFreq * 100).toFixed(1)}%</span>,
+      B calls <span class="result-value">${(gtoCallFreq * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Starting:</span>
+      A bluffs ${(bluff0 * 100).toFixed(0)}%, B calls ${(call0 * 100).toFixed(0)}%</div>
+    <div style="margin-top:0.4rem"><span class="result-label">After 20 rounds:</span>
+      A bluffs ${(finalBluff * 100).toFixed(1)}%, B calls ${(finalCall * 100).toFixed(1)}%</div>
+    <div style="margin-top:0.6rem; color:var(--muted); font-size:0.85rem;">
+      Notice how both strategies converge toward the GTO equilibrium &mdash; the point where neither player can improve by adjusting further.
+    </div>
+  `;
+
+  // Build table
+  let html = '<table class="data-table"><tr><th>Round</th><th>A Bluff %</th><th>B Call %</th><th>A Bluff EV</th><th>B Call EV</th></tr>';
+
+  rounds.forEach(function(r) {
+    const bluffColor = r.evAbluff >= 0 ? 'var(--green)' : 'var(--accent)';
+    const callColor = r.evBcall >= 0 ? 'var(--green)' : 'var(--accent)';
+    html += '<tr>' +
+      '<td>' + r.round + '</td>' +
+      '<td>' + (r.bluff * 100).toFixed(1) + '%</td>' +
+      '<td>' + (r.call * 100).toFixed(1) + '%</td>' +
+      '<td style="color:' + bluffColor + '">' + (r.evAbluff >= 0 ? '+' : '') + r.evAbluff.toFixed(2) + '</td>' +
+      '<td style="color:' + callColor + '">' + (r.evBcall >= 0 ? '+' : '') + r.evBcall.toFixed(2) + '</td>' +
+      '</tr>';
+  });
+
+  html += '</table>';
+  document.getElementById('adaptTable').innerHTML = html;
+}
+</script>
 </body>
 </html>
