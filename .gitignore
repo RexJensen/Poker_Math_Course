@@ -23,8 +23,5 @@ venv/
 dist/
 build/
 
-# Manim rendered output
-media/
-
 # Logs
 *.log
