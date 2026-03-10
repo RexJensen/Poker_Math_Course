@@ -3,151 +3,497 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 27: Tournaments, Part II — Poker Math Course</title>
+  <title>Chapter 27: Chips Aren't Cash — Tournaments, Part II — Poker Math Course</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/chapter.css">
 </head>
 <body>
+
 <div class="progress-bar"></div>
+
 <header class="site-header">
   <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
   <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
 </header>
+
 <main class="chapter-container">
+
   <div class="chapter-header">
     <span class="chapter-number">Part V &mdash; Chapter 27</span>
-    <h1>Chips Aren't Cash: Tournaments, Part II</h1>
-    <p class="chapter-subtitle">Why maximizing chips and maximizing prize money are fundamentally different goals</p>
+    <h1>Chips Aren&rsquo;t Cash: Tournaments, Part II</h1>
+    <p class="chapter-subtitle">Adjusting push/fold strategy for tournament equity &mdash; when chip-EV and dollar-EV diverge</p>
   </div>
 
+  <!-- ===== SECTION 1: Chip Utility Functions ===== -->
   <div class="chapter-section">
-    <h2>Chip Utility Is Concave</h2>
-    <p>In cash games, chips equal money &mdash; a linear relationship. In tournaments, the relationship between chips and prize equity is <strong>concave</strong>: each additional chip is worth less than the last.</p>
-    <p>This means that gaining 1,000 chips when you have 500 is worth MORE in equity than gaining 1,000 chips when you have 10,000. The mathematical consequence is profound: <strong>risk aversion is rational in tournaments</strong>.</p>
+    <h2>Chip Utility Functions</h2>
+    <p>In Chapter 26, we established that tournament chips have diminishing marginal value. Now we formalize this concept with <strong>chip utility functions</strong> &mdash; mathematical descriptions of how chip stacks map to real-dollar equity.</p>
+
     <div class="definition-box">
-      <div class="def-term">cEV vs. $EV</div>
-      <p><strong>cEV (chip EV):</strong> Expected value measured in chips. Same as cash game EV.</p>
-      <p><strong>$EV (dollar EV):</strong> Expected value measured in tournament prize equity. What actually matters.</p>
-      <p>A play can be +cEV but -$EV! This happens when the variance of a marginally +cEV play costs more in equity than it gains.</p>
+      <div class="def-term">Chip Utility Function</div>
+      <p>A function U(s) that maps a player&rsquo;s chip stack <em>s</em> to their tournament equity in dollars. This function is <strong>concave</strong>: U&prime;&prime;(s) &lt; 0, meaning the marginal value of each additional chip decreases. U(0) = 0 (no chips = no equity) and U(T) = Prize(1st) where T is the total chips in play.</p>
     </div>
-  </div>
 
-  <div class="chapter-section">
-    <h2>The Risk Premium</h2>
-    <p>The <strong>risk premium</strong> is the extra edge needed to justify a tournament gamble beyond what you'd need in a cash game. It varies by situation:</p>
-    <table class="data-table">
-      <tr><th>Situation</th><th>Risk Premium</th><th>Explanation</th></tr>
-      <tr><td>Near the bubble, medium stack</td><td>Highest</td><td>Most to lose from busting; short stacks may bust first</td></tr>
-      <tr><td>Near the bubble, big stack</td><td>Moderate</td><td>Losing chips hurts less; can still pressure others</td></tr>
-      <tr><td>Near the bubble, short stack</td><td>Lower</td><td>Already in danger; need chips desperately</td></tr>
-      <tr><td>Early tournament, deep stacks</td><td>Low</td><td>Far from pay jumps; play closer to cash game strategy</td></tr>
-      <tr><td>Final table, big pay jump</td><td>High</td><td>Large $ differences between finishing positions</td></tr>
-    </table>
-  </div>
-
-  <div class="chapter-section">
-    <h2>Adjusting Push/Call Ranges</h2>
-    <p>ICM dramatically affects optimal pushing and calling ranges compared to chip-EV charts:</p>
-    <div class="example-box">
-      <div class="example-title">Bubble Push/Call Example</div>
-      <p>4 players remain, 3 get paid. You're in the big blind with a medium stack. The button (big stack) pushes all-in. You have AQo.</p>
-      <p><strong>Cash game (cEV):</strong> Easy call against a wide button range. +cEV by a wide margin.</p>
-      <p><strong>Tournament ($EV):</strong> Folding may be correct! If you lose, you bust before the short stack (who folds into the money). The risk premium makes this call -$EV despite being +cEV.</p>
-    </div>
-    <h3>General Adjustments</h3>
+    <p>The shape of this utility curve depends on several factors:</p>
     <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
-      <li><strong>Pushing ranges:</strong> Tighter on the bubble (especially medium stacks), wider when very short</li>
-      <li><strong>Calling ranges:</strong> Much tighter than cash game &mdash; calling risks your tournament life</li>
-      <li><strong>Aggression direction:</strong> Prefer being the aggressor (fold equity) over calling (no fold equity)</li>
+      <li><strong>Prize structure:</strong> Top-heavy structures (winner takes 50%+) create a less concave curve. Flat structures (many similar prizes) create more concavity.</li>
+      <li><strong>Number of players remaining:</strong> More players = more concavity. Heads-up play has a nearly linear utility function.</li>
+      <li><strong>Position on the pay ladder:</strong> Near bubbles and large pay jumps, the curve steepens dramatically at certain stack sizes.</li>
+    </ul>
+
+    <div class="math-block">
+      <span class="math-label">Properties of the Chip Utility Function U(s)</span>
+      1. U(0) = 0 &nbsp;&nbsp;&nbsp; (zero chips = zero equity)
+      <br>
+      2. U(T) = Prize(1st) &nbsp;&nbsp;&nbsp; (all chips = 1st place prize)
+      <br>
+      3. U&prime;(s) &gt; 0 &nbsp;&nbsp;&nbsp; (more chips = more equity, always)
+      <br>
+      4. U&prime;&prime;(s) &lt; 0 &nbsp;&nbsp;&nbsp; (each additional chip worth less)
+      <br>
+      5. U(s) &gt; (s/T) &times; PrizePool &nbsp; for &nbsp; 0 &lt; s &lt; T
+      <br>
+      &nbsp;&nbsp;&nbsp; (tournament equity exceeds &ldquo;cash game&rdquo; equity for non-extreme stacks)
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Visualizing the Utility Curve</div>
+      <p>Consider a 10-player SNG ($100 buy-in) with prizes $500/$300/$200. Total chips: 10,000.</p>
+      <table class="data-table">
+        <tr><th>Chips</th><th>Cash Value</th><th>ICM Equity (approx)</th><th>Marginal Value of Last 1,000 Chips</th></tr>
+        <tr><td>0</td><td>$0</td><td>$0</td><td>&mdash;</td></tr>
+        <tr><td>1,000</td><td>$100</td><td>$128</td><td>$128 per 1K chips</td></tr>
+        <tr><td>2,000</td><td>$200</td><td>$218</td><td>$90 per 1K chips</td></tr>
+        <tr><td>3,000</td><td>$300</td><td>$293</td><td>$75 per 1K chips</td></tr>
+        <tr><td>5,000</td><td>$500</td><td>$405</td><td>$56 per 1K chips</td></tr>
+        <tr><td>7,000</td><td>$700</td><td>$465</td><td>$30 per 1K chips</td></tr>
+        <tr><td>10,000</td><td>$1,000</td><td>$500</td><td>$12 per 1K chips</td></tr>
+      </table>
+      <p>Notice how the marginal value drops sharply. The first 1,000 chips are worth $128 in equity, but the last 3,000 (going from 7,000 to 10,000) are worth only $35 total &mdash; about $12 per thousand. This dramatic decline drives all tournament strategy adjustments.</p>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2: Adjusting Strategy for Tournaments ===== -->
+  <div class="chapter-section">
+    <h2>Adjusting Strategy for Tournaments</h2>
+    <p>The distinction between chip-EV (cEV) and dollar-EV ($EV) is the central theme of tournament poker theory. Understanding when and how they diverge is crucial.</p>
+
+    <div class="definition-box">
+      <div class="def-term">cEV vs $EV</div>
+      <p><strong>cEV (Chip Expected Value):</strong> The expected number of chips gained or lost from a decision. This is identical to cash game EV and is the only thing that matters in cash games.</p>
+      <p><strong>$EV (Dollar Expected Value):</strong> The expected change in tournament equity (real dollars) from a decision. This accounts for the concave chip utility and is what should be maximized in tournaments.</p>
+    </div>
+
+    <p>In cash games, maximizing cEV and $EV are the same thing. In tournaments, they can diverge significantly:</p>
+
+    <div class="example-box">
+      <div class="example-title">When +cEV Is &minus;$EV</div>
+      <p>Situation: 4 players remain in a tournament paying $1000/$600/$300/$100. Blinds: 500/1000.</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem;">
+        <li>You (Button): 12,000 chips</li>
+        <li>Small Blind: 15,000 chips</li>
+        <li>Big Blind: 20,000 chips</li>
+        <li>UTG (folded): 3,000 chips</li>
+      </ul>
+      <p>You have A&diams;9&hearts; on the button. UTG folds. You consider pushing all-in.</p>
+      <p><strong>cEV analysis:</strong> Against the blinds&rsquo; calling ranges, pushing is clearly +cEV. You expect to gain approximately 1,800 chips on average.</p>
+      <p><strong>$EV analysis:</strong> But UTG has only 3,000 chips (3 big blinds). They will likely bust soon, promoting everyone else up the pay ladder for free. If you push and get called, you risk:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem;">
+        <li>Busting out 4th ($100) instead of waiting for UTG to bust and guaranteeing at least $300</li>
+        <li>The equity gain from winning the pot doesn&rsquo;t compensate for the risk of missing a $200+ pay jump</li>
+      </ul>
+      <p>The +cEV push is actually <strong>&minus;$EV</strong>. Correct play: fold A9o and let the short stack bust.</p>
+    </div>
+
+    <h3>When Do cEV and $EV Align?</h3>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Early in tournaments:</strong> Far from the money, ICM distortions are minimal. Play close to cash game strategy.</li>
+      <li><strong>Heads-up:</strong> With only two players, chip utility is nearly linear. All the remaining prize money goes to 1st/2nd, and your equity is roughly proportional to your stack.</li>
+      <li><strong>Overwhelming favorite:</strong> When your edge in a spot is so large that even the ICM tax can&rsquo;t make it negative.</li>
     </ul>
   </div>
 
+  <!-- ===== SECTION 3: Risk Premium ===== -->
   <div class="chapter-section">
-    <h2>Prize Pool Equity and Pay Jumps</h2>
-    <p>At the final table, each elimination creates a "pay jump" &mdash; everyone remaining moves up at least one pay level. This creates <strong>implicit collusion</strong> incentives: it's in everyone's interest (except the biggest stack) for short stacks to bust.</p>
-    <p>Deal-making (chopping) at final tables can be understood through ICM: each player's current chip stack maps to an equity value, and deals distribute the remaining prize pool according to those equities.</p>
+    <h2>Risk Premium</h2>
+    <p>The <strong>risk premium</strong> is the extra edge you need in a tournament to justify a gamble that would be profitable in a cash game. It quantifies the &ldquo;ICM tax&rdquo; on every decision.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Risk Premium</div>
+      <p>The additional equity (above break-even) required to make a tournament gamble $EV-positive, beyond what would be needed in a cash game. If a cash game play requires 50% equity to break even, the same play in a tournament might require 55%, 60%, or even more. The extra 5&ndash;10%+ is the risk premium.</p>
+    </div>
+
+    <h3>Factors That Increase Risk Premium</h3>
+    <table class="data-table">
+      <tr><th>Factor</th><th>Effect on Risk Premium</th><th>Explanation</th></tr>
+      <tr><td>Near the bubble</td><td>Highest risk premium</td><td>Pay jump from 0 to min-cash is huge relative to stack risk</td></tr>
+      <tr><td>Large pay jumps ahead</td><td>High risk premium</td><td>Survival to the next level is very valuable</td></tr>
+      <tr><td>Medium stack (relative)</td><td>High risk premium</td><td>Most to lose from elimination, can ladder up by waiting</td></tr>
+      <tr><td>Big stack</td><td>Lower risk premium</td><td>Losing chips costs less equity (already in a strong position)</td></tr>
+      <tr><td>Short stack</td><td>Lower risk premium</td><td>Already in danger; need to gamble to survive. Less equity to lose.</td></tr>
+      <tr><td>Far from money</td><td>Minimal risk premium</td><td>ICM distortions are small when many bust-outs are needed</td></tr>
+      <tr><td>Flat prize structure</td><td>Higher risk premium</td><td>Survival matters more when many places pay similar amounts</td></tr>
+      <tr><td>Top-heavy prizes</td><td>Lower risk premium</td><td>Chip accumulation matters more when 1st place is dominant</td></tr>
+    </table>
+
+    <div class="math-block">
+      <span class="math-label">Risk Premium Formula (Simplified)</span>
+      Risk Premium = Required $EV Equity &minus; Required cEV Equity
+      <br><br>
+      Example: If you need 50% chip equity in a cash game,
+      <br>
+      but 58% to be $EV-neutral in this tournament spot,
+      <br>
+      Risk Premium = 8 percentage points
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Risk Premium by Stack Size</div>
+      <p>9-player SNG, 4 players remain. Prizes: $450/$270/$180. Blinds: 200/400. You face a push from the big stack.</p>
+      <table class="data-table">
+        <tr><th>Your Stack</th><th>Position</th><th>Cash Game Equity Needed</th><th>Tournament Equity Needed</th><th>Risk Premium</th></tr>
+        <tr><td>12,000 (big)</td><td>Chip leader</td><td>~36%</td><td>~40%</td><td>~4%</td></tr>
+        <tr><td>5,000 (medium)</td><td>3rd of 4</td><td>~36%</td><td>~48%</td><td>~12%</td></tr>
+        <tr><td>1,500 (short)</td><td>Shortest stack</td><td>~36%</td><td>~39%</td><td>~3%</td></tr>
+      </table>
+      <p>The medium stack needs the most equity to call profitably. They have the most to lose from a bad outcome (they could ladder up if the short stack busts first). The short stack, paradoxically, can call more liberally &mdash; they&rsquo;re in survival mode and need chips to compete.</p>
+    </div>
   </div>
 
+  <!-- ===== SECTION 4: Pushing and Calling Ranges ===== -->
+  <div class="chapter-section">
+    <h2>Pushing and Calling Ranges in Tournaments</h2>
+    <p>ICM dramatically alters both pushing (shoving all-in) and calling ranges compared to cash games. The adjustments are situation-dependent and can be extreme.</p>
+
+    <h3>Tournament Pushing Ranges</h3>
+    <p>Your pushing range depends on your stack size, position, and ICM context:</p>
+
+    <div class="example-box">
+      <div class="example-title">Pushing Range Adjustments</div>
+      <p><strong>Cash game baseline (10 BB stack, button vs blinds):</strong> Push approximately top 40% of hands.</p>
+      <p><strong>Tournament adjustments:</strong></p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>On the bubble with medium stack:</strong> Tighten to top 15&ndash;25%. Risk of busting before the short stack is very costly.</li>
+        <li><strong>On the bubble with big stack:</strong> Widen to top 50%+ against medium stacks. They can&rsquo;t call without premiums, making your pushes very profitable.</li>
+        <li><strong>Desperately short (2&ndash;3 BB):</strong> Push wider than cash game ranges (top 50&ndash;70%). You need chips to survive, and the blinds will eat you if you wait.</li>
+        <li><strong>At a final table with large pay jump ahead:</strong> Tighten ranges, especially with a medium stack.</li>
+      </ul>
+    </div>
+
+    <h3>Tournament Calling Ranges</h3>
+    <p>Calling all-ins is where ICM adjustments are most severe. In cash games, you need the appropriate pot odds equity. In tournaments, you need that <em>plus</em> the risk premium.</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>General rule:</strong> Calling ranges are always tighter in tournaments than in cash games.</li>
+      <li><strong>Bubble calling ranges:</strong> Can be dramatically tighter. A medium stack on the bubble might only call with the top 5% of hands (TT+, AQs+).</li>
+      <li><strong>Big stack calling a short stack:</strong> Can call wider than medium stacks because the risk premium is lower (they won&rsquo;t bust even if they lose).</li>
+      <li><strong>Short stack calling:</strong> Relatively close to cash game ranges, since their risk premium is low (they have little equity to lose).</li>
+    </ul>
+
+    <div class="math-block">
+      <span class="math-label">Calling Decision in Tournaments</span>
+      Call if: Equity(your hand vs push range) &gt; Required Equity
+      <br><br>
+      Required Equity = cEV Break-even + Risk Premium
+      <br><br>
+      where cEV Break-even = Chips to Call / (Pot + Chips to Call)
+    </div>
+  </div>
+
+  <!-- ===== SECTION 5: Prize Pool Equity Calculations ===== -->
+  <div class="chapter-section">
+    <h2>Prize Pool Equity Calculations</h2>
+    <p>To make correct tournament decisions, you need to compute the $EV of each option. This means calculating your ICM equity for each possible outcome and weighting by probability.</p>
+
+    <div class="example-box">
+      <div class="example-title">Complete $EV Calculation</div>
+      <p>3 players remain. Prizes: $500/$300/$200. Chips: You have 5,000, Villain has 3,000, Bystander has 2,000.</p>
+      <p>Villain pushes all-in. You estimate your equity vs their range at 60%. Should you call?</p>
+      <p><strong>Option 1: Fold</strong></p>
+      <p>Stacks become: You 5,000 / Villain ~4,500 / Bystander ~500 (assuming villain stole your blind).</p>
+      <p>Your ICM equity: approximately $390.</p>
+      <p><strong>Option 2: Call and Win (60% of the time)</strong></p>
+      <p>Stacks: You 8,000 / Villain 0 (bust) / Bystander 2,000.</p>
+      <p>Your ICM equity: approximately $435. You&rsquo;re guaranteed at least $300.</p>
+      <p><strong>Option 3: Call and Lose (40% of the time)</strong></p>
+      <p>Stacks: You 2,000 / Villain 6,000 / Bystander 2,000.</p>
+      <p>Your ICM equity: approximately $280.</p>
+      <p><strong>$EV of calling:</strong> 0.60 &times; $435 + 0.40 &times; $280 = $261 + $112 = <strong>$373</strong></p>
+      <p><strong>$EV of folding:</strong> <strong>$390</strong></p>
+      <p>Folding is better by $17, despite having 60% equity! The risk premium here is approximately 10% &mdash; you&rsquo;d need around 70% equity to justify calling.</p>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 6: Late-Stage Tournament Play ===== -->
+  <div class="chapter-section">
+    <h2>Late-Stage Tournament Play</h2>
+    <p>Final table play introduces unique dynamics that go beyond basic ICM calculations.</p>
+
+    <h3>Final Table Dynamics</h3>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Pay jumps create &ldquo;mini-bubbles&rdquo;:</strong> Each elimination means everyone moves up one pay spot. Large jumps between positions create ICM pressure similar to the money bubble.</li>
+      <li><strong>Stack size hierarchy matters:</strong> Short stacks are under pressure from blinds. Medium stacks must navigate between accumulation and survival. Big stacks can exert pressure on everyone below them.</li>
+      <li><strong>Heads-up is different:</strong> When only two players remain, ICM nearly disappears. The chip utility function becomes approximately linear because only 1st and 2nd place prizes are in play. Play reverts closer to cash-game strategy.</li>
+    </ul>
+
+    <h3>Deal-Making Considerations</h3>
+    <p>ICM provides a mathematical basis for deal-making at final tables:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>ICM chop:</strong> Each player receives their current ICM equity. This is the most common and mathematically fair deal.</li>
+      <li><strong>Chip chop:</strong> Prizes distributed proportional to chip stacks. This <em>overvalues</em> big stacks (ignoring concavity) and should be rejected by smaller stacks.</li>
+      <li><strong>Leaving money on the table:</strong> Players can agree to lock up ICM equity and play on for the remaining difference. This reduces risk while preserving competition.</li>
+    </ul>
+
+    <div class="definition-box">
+      <div class="def-term">ICM Chop</div>
+      <p>A deal at a final table where the remaining prize pool is divided according to each player&rsquo;s current ICM equity. This is considered the fairest mathematical split because it accurately reflects each player&rsquo;s expected share based on stack sizes and remaining prizes. Compare with a &ldquo;chip chop,&rdquo; which unfairly benefits larger stacks by ignoring diminishing marginal chip value.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Tournament Push/Call Analyzer ===== -->
   <div class="interactive-widget">
-    <h3>cEV vs. $EV Analyzer</h3>
-    <p>See how ICM changes the value of a call. Simple 3-player example:</p>
-    <div class="widget-controls">
-      <label>Your Stack: <input type="number" id="myStack27" value="3000" min="100"></label>
-      <label>Opponent Stack: <input type="number" id="oppStack27" value="5000" min="100"></label>
-      <label>Third Player: <input type="number" id="thirdStack27" value="2000" min="100"></label>
-      <label>1st Prize ($): <input type="number" id="prize1" value="50"></label>
-      <label>2nd Prize ($): <input type="number" id="prize2" value="30"></label>
-      <label>3rd Prize ($): <input type="number" id="prize3" value="20"></label>
-      <button class="btn" onclick="calcICM27()">Calculate Equities</button>
+    <h3>Tournament Push/Call Analyzer</h3>
+    <p>Analyze whether pushing all-in or calling is +$EV by comparing chip-EV and ICM-adjusted dollar-EV. Set up the stacks, prizes, and your hand equity to see the difference.</p>
+    <div class="widget-controls" style="flex-direction: column; gap: 0.75rem;">
+      <div style="display:flex; flex-wrap:wrap; gap:1rem;">
+        <label>
+          Number of Players:
+          <select id="pcNumPlayers" onchange="updatePCInputs()">
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+          </select>
+        </label>
+        <label>
+          Your Position:
+          <select id="pcHero">
+            <option value="0">Player A (Hero)</option>
+          </select>
+        </label>
+        <label>
+          Villain:
+          <select id="pcVillain">
+            <option value="1">Player B</option>
+          </select>
+        </label>
+      </div>
+      <div id="pcStackInputs" style="display:flex; flex-wrap:wrap; gap:1rem;"></div>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:end;">
+        <label>
+          Your Equity vs Villain&rsquo;s Range (%):
+          <input type="number" id="pcEquity" value="55" min="0" max="100" step="1" style="width:70px;">
+        </label>
+        <label>
+          Push Amount (all-in):
+          <input type="number" id="pcPushAmt" value="0" min="0" step="500" style="width:90px;">
+          <span style="font-size:0.8rem; color:var(--muted);">(0 = hero&rsquo;s stack)</span>
+        </label>
+        <button class="btn" onclick="analyzePushCall()">Analyze</button>
+      </div>
     </div>
-    <div class="widget-result" id="icmResult27">
-      <div class="result-label">Enter stacks and prizes, then click Calculate</div>
+    <div class="widget-result" id="pcResult">
+      <div class="result-label">Configure the scenario and click Analyze</div>
     </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>On the bubble of a tournament, you have a medium stack and face an all-in from a short stack. You hold A&diams;Q&clubs; and estimate you have 62% equity against their range. You know this call is +cEV (profitable in chips). Should you call?</p>
+    <button class="quiz-option" data-correct="false">Yes &mdash; 62% equity is well above the 50% needed</button>
+    <button class="quiz-option" data-correct="false">Yes &mdash; any +cEV play should be taken in tournaments too</button>
+    <button class="quiz-option" data-correct="true">Not necessarily &mdash; the ICM tax on the bubble may make this call &minus;$EV despite being +cEV</button>
+    <button class="quiz-option" data-correct="false">Always fold on the bubble unless you have AA or KK</button>
+    <div class="quiz-feedback" data-correct="Correct! On the bubble, the risk premium is at its highest. As a medium stack, you have the most to lose from calling and losing (you could fold your way into the money if a shorter stack busts). The ICM tax might require 70%+ equity to justify calling here. Being +cEV does NOT automatically mean +$EV in tournament situations." data-incorrect="The key insight is that +cEV does not mean +$EV in tournaments. On the bubble with a medium stack, the risk premium is very high. You risk busting out and winning nothing, when waiting might lock up a cash. The ICM &ldquo;tax&rdquo; can easily turn a +cEV call into a &minus;$EV play. You may need 70%+ equity to justify this call."></div>
   </div>
 
   <div class="quiz-box">
-    <h3>Test Your Understanding</h3>
-    <p>On the bubble of a tournament (4 left, 3 paid), should a medium stack call an all-in from the big stack with AQo if the call is +cEV by a small margin?</p>
-    <button class="quiz-option" data-correct="false">Always call &mdash; +cEV decisions are always correct</button>
-    <button class="quiz-option" data-correct="true">Likely fold &mdash; the ICM risk premium makes this -$EV despite being +cEV</button>
-    <button class="quiz-option" data-correct="false">It depends only on your cards, not the tournament situation</button>
-    <div class="quiz-feedback" data-correct="Correct! The ICM 'tax' on bubble calls means you need a significantly larger cEV edge to justify calling. A small +cEV edge gets eaten up by the risk premium, making it -$EV. This is one of the most important tournament concepts." data-incorrect="In tournaments, +cEV does NOT always equal +$EV. The concavity of chip utility means bubble calls carry a risk premium. You need a larger edge to justify calling than you would in a cash game."></div>
+    <h3>Conceptual Check</h3>
+    <p>Which player has the highest risk premium (needs the biggest edge to justify gambling) at a 4-player final table just above the bubble?</p>
+    <button class="quiz-option" data-correct="false">The chip leader</button>
+    <button class="quiz-option" data-correct="true">The second-largest stack (medium stack)</button>
+    <button class="quiz-option" data-correct="false">The shortest stack</button>
+    <button class="quiz-option" data-correct="false">All players have equal risk premium</button>
+    <div class="quiz-feedback" data-correct="Correct! The medium stack has the highest risk premium because they have the most to lose relative to what they gain. They can likely fold into a higher payout if the short stack busts, but gambling and losing would be catastrophic. The chip leader has low risk premium (losing chips costs them less equity), and the short stack also has low risk premium (they&rsquo;re already in danger and have less equity at stake)." data-incorrect="The medium stack has the highest risk premium. They stand to lose the most from gambling: they could ladder up by waiting for the short stack to bust, but busting out themselves would mean missing a significant pay jump. The chip leader and short stack both have lower risk premiums, though for different reasons."></div>
   </div>
 
+  <!-- ===== KEY CONCEPTS ===== -->
   <div class="key-concepts">
     <h2>Key Concepts</h2>
     <ul>
-      <li>Tournament chip utility is <strong>concave</strong> &mdash; each additional chip is worth less in $ equity.</li>
-      <li>Maximize <strong>$EV, not cEV</strong>. A +cEV play can be -$EV in tournament context.</li>
-      <li>The <strong>risk premium</strong> is the extra edge needed to justify a tournament gamble; it's highest on the bubble for medium stacks.</li>
-      <li><strong>Calling ranges</strong> are much tighter in tournaments than cash games due to ICM pressure.</li>
-      <li>Prefer <strong>aggression over calling</strong> &mdash; being the pusher gives fold equity, calling does not.</li>
-      <li><strong>Pay jumps</strong> at final tables create implicit collusion incentives.</li>
+      <li>The <strong>chip utility function</strong> formalizes the concave (diminishing returns) relationship between chips and tournament equity.</li>
+      <li>In cash games, maximize <strong>cEV</strong>. In tournaments, maximize <strong>$EV</strong>. These can be very different &mdash; a +cEV play can be &minus;$EV.</li>
+      <li>The <strong>risk premium</strong> is the extra edge needed beyond cash-game break-even to justify a tournament gamble.</li>
+      <li>Risk premium is <strong>highest on the bubble</strong> for medium stacks, and <strong>lowest</strong> for big stacks and desperate short stacks.</li>
+      <li><strong>Pushing ranges</strong> tighten on the bubble (especially medium stacks) and widen for desperate short stacks.</li>
+      <li><strong>Calling ranges</strong> are always tighter in tournaments than cash games due to the ICM tax.</li>
+      <li>At final tables, <strong>ICM chop</strong> deals are mathematically fairer than chip chops for shorter stacks.</li>
+      <li><strong>Heads-up play</strong> is the one stage where chip utility is approximately linear and tournament strategy converges with cash game strategy.</li>
     </ul>
   </div>
 
+  <!-- ===== NAVIGATION ===== -->
   <nav class="chapter-nav">
-    <a href="chapter-26.html">&larr; Chapter 26: Tournaments I</a>
-    <a href="chapter-28.html">Chapter 28: Tournaments III &rarr;</a>
+    <a href="chapter-26.html">&larr; Chapter 26: Doubling Up</a>
+    <a href="chapter-28.html">Chapter 28: Poker&rsquo;s Still Poker &rarr;</a>
   </nav>
+
 </main>
+
 <footer class="site-footer">
   <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
 </footer>
+
 <script src="../../js/chapter.js"></script>
 <script>
-function calcICM27() {
-  const stacks = [
-    parseFloat(document.getElementById('myStack27').value),
-    parseFloat(document.getElementById('oppStack27').value),
-    parseFloat(document.getElementById('thirdStack27').value)
-  ];
-  const prizes = [
-    parseFloat(document.getElementById('prize1').value),
-    parseFloat(document.getElementById('prize2').value),
-    parseFloat(document.getElementById('prize3').value)
-  ];
-  const total = stacks.reduce((a,b) => a+b, 0);
-  // Simple ICM approximation
-  const equities = stacks.map((s, i) => {
-    const p1 = s / total; // prob of finishing 1st
-    let p2 = 0;
-    for (let j = 0; j < 3; j++) {
-      if (j === i) continue;
-      const pj1 = stacks[j] / total;
-      p2 += pj1 * (s / (total - stacks[j]));
+function icmEquity(stacks, prizes) {
+  const n = stacks.length;
+  const equities = new Array(n).fill(0);
+  const paidPlaces = prizes.filter(p => p > 0).length;
+
+  function permuteICM(indices, remaining, depth) {
+    if (depth >= paidPlaces) return;
+    const remTotal = indices.reduce((s, idx) => s + remaining[idx], 0);
+    if (remTotal <= 0) return;
+    for (let j = 0; j < indices.length; j++) {
+      const idx = indices[j];
+      const prob = remaining[idx] / remTotal;
+      equities[idx] += prob * prizes[depth];
+      const newIndices = indices.filter((_, k) => k !== j);
+      const savedStack = remaining[idx];
+      remaining[idx] = 0;
+      permuteICM(newIndices, remaining, depth + 1);
+      remaining[idx] = savedStack;
     }
-    return p1 * prizes[0] + p2 * prizes[1] + (1 - p1 - p2) * prizes[2];
-  });
-  const labels = ['You', 'Opponent', 'Third Player'];
-  let html = '<table class="data-table"><tr><th>Player</th><th>Chips</th><th>Chip %</th><th>$EV (ICM)</th><th>$/Chip</th></tr>';
-  for (let i = 0; i < 3; i++) {
-    html += '<tr><td>' + labels[i] + '</td><td>' + stacks[i] + '</td><td>' + (stacks[i]/total*100).toFixed(1) + '%</td><td>$' + equities[i].toFixed(2) + '</td><td>$' + (equities[i]/stacks[i]*1000).toFixed(4) + '/1k</td></tr>';
   }
-  html += '</table>';
-  html += '<div style="margin-top:0.5rem; color: var(--muted); font-size:0.85rem;">Notice: the player with fewer chips has a higher $/chip ratio &mdash; their chips are worth more per unit. This is the concavity of tournament chip utility.</div>';
-  document.getElementById('icmResult27').innerHTML = html;
+
+  const allIndices = [];
+  for (let i = 0; i < n; i++) if (stacks[i] > 0) allIndices.push(i);
+  permuteICM(allIndices, stacks.slice(), 0);
+  return equities;
 }
+
+function updatePCInputs() {
+  const n = parseInt(document.getElementById('pcNumPlayers').value);
+  const defaultStacks = { 3: [5000, 3000, 2000], 4: [6000, 4000, 2500, 1500] };
+  const defaultPrizes = { 3: [500, 300, 200], 4: [450, 270, 180, 100] };
+  const stacks = defaultStacks[n];
+  const prizes = defaultPrizes[n];
+
+  let html = '';
+  for (let i = 0; i < n; i++) {
+    html += `<div style="display:flex; flex-direction:column; gap:0.25rem;">
+      <strong>Player ${String.fromCharCode(65 + i)}</strong>
+      <label style="font-size:0.85rem;">Chips: <input type="number" id="pcStack${i}" value="${stacks[i]}" min="0" step="500" style="width:80px;"></label>
+      <label style="font-size:0.85rem;">Prize $: <input type="number" id="pcPrize${i}" value="${prizes[i]}" min="0" step="10" style="width:80px;"></label>
+    </div>`;
+  }
+  document.getElementById('pcStackInputs').innerHTML = html;
+
+  let heroOpts = '', villainOpts = '';
+  for (let i = 0; i < n; i++) {
+    heroOpts += `<option value="${i}">Player ${String.fromCharCode(65 + i)}${i === 0 ? ' (Hero)' : ''}</option>`;
+    villainOpts += `<option value="${i}" ${i === 1 ? 'selected' : ''}>Player ${String.fromCharCode(65 + i)}</option>`;
+  }
+  document.getElementById('pcHero').innerHTML = heroOpts;
+  document.getElementById('pcVillain').innerHTML = villainOpts;
+}
+
+function analyzePushCall() {
+  const n = parseInt(document.getElementById('pcNumPlayers').value);
+  const hero = parseInt(document.getElementById('pcHero').value);
+  const villain = parseInt(document.getElementById('pcVillain').value);
+  const equity = parseFloat(document.getElementById('pcEquity').value) / 100;
+  let pushAmt = parseFloat(document.getElementById('pcPushAmt').value);
+
+  if (hero === villain) {
+    document.getElementById('pcResult').innerHTML = '<div class="result-label" style="color:var(--accent);">Hero and Villain must be different players.</div>';
+    return;
+  }
+
+  const stacks = [], prizes = [];
+  for (let i = 0; i < n; i++) {
+    stacks.push(parseFloat(document.getElementById('pcStack' + i).value) || 0);
+    prizes.push(parseFloat(document.getElementById('pcPrize' + i).value) || 0);
+  }
+
+  if (pushAmt <= 0) pushAmt = stacks[hero];
+  const effectiveAmt = Math.min(pushAmt, stacks[hero], stacks[villain]);
+
+  const eqNow = icmEquity(stacks, prizes);
+
+  const winStacks = stacks.slice();
+  winStacks[hero] += effectiveAmt;
+  winStacks[villain] -= effectiveAmt;
+  const eqWin = icmEquity(winStacks, prizes);
+
+  const loseStacks = stacks.slice();
+  loseStacks[hero] -= effectiveAmt;
+  loseStacks[villain] += effectiveAmt;
+  const eqLose = icmEquity(loseStacks, prizes);
+
+  const cevGain = equity * effectiveAmt - (1 - equity) * effectiveAmt;
+
+  const dollarEV = equity * eqWin[hero] + (1 - equity) * eqLose[hero];
+  const dollarDelta = dollarEV - eqNow[hero];
+
+  const breakEvenEquity = (eqNow[hero] - eqLose[hero]) / (eqWin[hero] - eqLose[hero]);
+  const riskPremium = breakEvenEquity - 0.5;
+
+  const heroName = String.fromCharCode(65 + hero);
+  const villainName = String.fromCharCode(65 + villain);
+
+  let html = `<div><strong>Scenario: Player ${heroName} calls/pushes ${effectiveAmt.toLocaleString()} chips vs Player ${villainName}</strong></div>`;
+  html += `<div style="margin-top:0.5rem;"><span class="result-label">Hand equity vs range:</span> <span class="result-value">${(equity * 100).toFixed(0)}%</span></div>`;
+
+  html += `<table class="data-table" style="margin-top:1rem;">
+    <tr><th>Outcome</th><th>Hero Chips</th><th>Hero ICM Equity</th><th>&Delta; from Current</th></tr>
+    <tr><td>Current (fold)</td><td>${stacks[hero].toLocaleString()}</td><td>$${eqNow[hero].toFixed(2)}</td><td>&mdash;</td></tr>
+    <tr><td>Win (${(equity*100).toFixed(0)}%)</td><td>${winStacks[hero].toLocaleString()}</td><td>$${eqWin[hero].toFixed(2)}</td>
+      <td style="color:var(--green);">+$${(eqWin[hero]-eqNow[hero]).toFixed(2)}</td></tr>
+    <tr><td>Lose (${((1-equity)*100).toFixed(0)}%)</td><td>${loseStacks[hero].toLocaleString()}</td><td>$${eqLose[hero].toFixed(2)}</td>
+      <td style="color:var(--accent);">&minus;$${(eqNow[hero]-eqLose[hero]).toFixed(2)}</td></tr>
+  </table>`;
+
+  html += `<div style="margin-top:1rem; display:flex; gap:2rem; flex-wrap:wrap;">
+    <div style="padding:0.75rem; background:rgba(0,0,0,0.2); border-radius:8px; flex:1; min-width:200px;">
+      <strong>Chip EV (cEV):</strong><br>
+      <span style="color:${cevGain >= 0 ? 'var(--green)' : 'var(--accent)'}; font-size:1.2rem; font-weight:700;">
+        ${cevGain >= 0 ? '+' : ''}${cevGain.toFixed(0)} chips
+      </span><br>
+      <span style="font-size:0.85rem; color:var(--muted);">This play is ${cevGain >= 0 ? '+cEV' : '-cEV'}</span>
+    </div>
+    <div style="padding:0.75rem; background:rgba(0,0,0,0.2); border-radius:8px; flex:1; min-width:200px;">
+      <strong>Dollar EV ($EV):</strong><br>
+      <span style="color:${dollarDelta >= 0 ? 'var(--green)' : 'var(--accent)'}; font-size:1.2rem; font-weight:700;">
+        ${dollarDelta >= 0 ? '+' : ''}$${dollarDelta.toFixed(2)}
+      </span><br>
+      <span style="font-size:0.85rem; color:var(--muted);">This play is ${dollarDelta >= 0 ? '+$EV' : '-$EV'}</span>
+    </div>
+  </div>`;
+
+  html += `<div style="margin-top:1rem; padding:0.75rem; background:rgba(0,0,0,0.2); border-radius:8px;">
+    <strong>Break-even equity ($EV):</strong> <span class="result-value">${(breakEvenEquity * 100).toFixed(1)}%</span>
+    <span style="color:var(--muted); font-size:0.85rem;"> (cash game break-even: 50%)</span><br>
+    <strong>Risk Premium (ICM tax):</strong> <span class="result-value">${(riskPremium * 100).toFixed(1)} percentage points</span>
+  </div>`;
+
+  if (cevGain >= 0 && dollarDelta < 0) {
+    html += `<div style="margin-top:0.75rem; padding:0.5rem; border-left:3px solid var(--accent); color:var(--accent);">
+      <strong>Key Insight:</strong> This play is +cEV but &minus;$EV! The ICM tax makes this a LOSING play in tournament equity despite being profitable in chips.
+    </div>`;
+  } else if (cevGain < 0 && dollarDelta < 0) {
+    html += `<div style="margin-top:0.75rem; padding:0.5rem; border-left:3px solid var(--accent); color:var(--accent);">
+      This play is both &minus;cEV and &minus;$EV. Clear fold.
+    </div>`;
+  } else if (dollarDelta >= 0) {
+    html += `<div style="margin-top:0.75rem; padding:0.5rem; border-left:3px solid var(--green); color:var(--green);">
+      This play is +$EV. The edge is large enough to overcome the ICM tax. Profitable call/push.
+    </div>`;
+  }
+
+  document.getElementById('pcResult').innerHTML = html;
+}
+
+updatePCInputs();
 </script>
 </body>
 </html>
