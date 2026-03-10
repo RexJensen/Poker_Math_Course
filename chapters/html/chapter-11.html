@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 11: Half-Street Games — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 11</span>
+    <h1>One Side of the Street: Half-Street Games</h1>
+    <p class="chapter-subtitle">The simplest poker model that still captures the essence of betting, bluffing, and calling</p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>What Is a Half-Street Game?</h2>
+    <p>A <strong>half-street game</strong> is the simplest meaningful model of poker. It strips the game down to a single decision point: one player acts, the other responds, and then the hand is over. Despite this simplicity, half-street games reveal deep truths about optimal bluffing, value betting, and calling strategy.</p>
+    <p>In a half-street game, there are exactly two players:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Player Y</strong> (the bettor) &mdash; acts first. Can <em>bet</em> or <em>check</em>.</li>
+      <li><strong>Player X</strong> (the caller) &mdash; responds if Y bets. Can <em>call</em> or <em>fold</em>.</li>
+    </ul>
+    <p>If Y checks, or if Y bets and X calls, there is a <strong>showdown</strong> &mdash; the best hand wins. There are no further streets of action. This &ldquo;one side of the street&rdquo; structure is what gives the model its name.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Half-Street Game</div>
+      <p>A two-player poker game where each player holds a hand drawn from some distribution. There is money already in the pot (the <strong>ante</strong>). Player Y may bet a fixed amount <em>b</em> or check. If Y bets, Player X may call <em>b</em> or fold. After this single action, the hand ends.</p>
+    </div>
+  </div>
+
+  <!-- ===== GAME STRUCTURE ===== -->
+  <div class="chapter-section">
+    <h2>Game Structure</h2>
+    <p>The basic setup for any half-street game:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Both players contribute an <strong>ante</strong> to the pot, creating a pot of size <em>P</em>.</li>
+      <li>Each player receives a hand drawn from some distribution (could be a single card from a deck, a number from [0,1], etc.).</li>
+      <li>Y decides: <strong>bet <em>b</em></strong> or <strong>check</strong>.</li>
+      <li>If Y checks &rarr; showdown. Best hand wins the pot.</li>
+      <li>If Y bets &rarr; X decides: <strong>call <em>b</em></strong> or <strong>fold</strong>.</li>
+      <li>If X folds &rarr; Y wins the pot <em>P</em> (without showdown).</li>
+      <li>If X calls &rarr; showdown for pot of <em>P + 2b</em>.</li>
+    </ul>
+    <p>The key insight is that Y has a <strong>positional advantage</strong> &mdash; Y gets to decide whether to put more money into the pot. This advantage turns out to be quantifiable.</p>
+  </div>
+
+  <!-- ===== THREE KEY GAMES ===== -->
+  <div class="chapter-section">
+    <h2>Three Key Half-Street Games</h2>
+
+    <h3>Game 1: The Clairvoyance Game</h3>
+    <p><strong>X knows Y&rsquo;s hand, but Y does not know X&rsquo;s hand.</strong></p>
+    <p>This gives X a massive informational advantage. X can make perfect decisions &mdash; calling when ahead and folding when behind. You might think Y should never bet in this scenario, since X will always make the right choice.</p>
+
+    <div class="example-box">
+      <div class="example-title">The Clairvoyance Game Lesson</div>
+      <p>Surprisingly, <strong>Y should still bet some hands</strong>. Even though X plays perfectly, Y can profit by betting strong hands because X must still pay to see if Y is bluffing. The key insight: X&rsquo;s perfect information about Y&rsquo;s hand doesn&rsquo;t eliminate the value of betting &mdash; it just constrains it.</p>
+      <p>Y&rsquo;s strategy: bet all hands that X cannot profitably call against (value betting), and check everything else. Y cannot bluff profitably in this game because X would always catch the bluffs.</p>
+    </div>
+
+    <h3>Game 2: The Reverse Clairvoyance Game</h3>
+    <p><strong>Y knows X&rsquo;s hand, but X does not know Y&rsquo;s hand.</strong></p>
+    <p>Now Y has both the positional <em>and</em> informational advantage. Y can construct a devastating strategy:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Value bet</strong> when Y&rsquo;s hand beats X&rsquo;s hand</li>
+      <li><strong>Bluff optimally</strong> when Y&rsquo;s hand is weak, choosing the right frequency</li>
+      <li><strong>Check</strong> when Y&rsquo;s hand is moderate and showdown value is preferable</li>
+    </ul>
+    <p>X, lacking information, is at a severe disadvantage. This game demonstrates the enormous value of information in poker.</p>
+
+    <h3>Game 3: The Symmetric Information Game</h3>
+    <p><strong>Neither player sees the other&rsquo;s cards.</strong></p>
+    <p>This is the standard half-street game &mdash; the most relevant model for real poker. Neither player has extra information, and the optimal strategies for both sides emerge from the mathematics of the game itself.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Symmetric Half-Street Game</div>
+      <p>Both players draw hands from identical distributions without knowledge of the other&rsquo;s hand. This is where the <strong>optimal bluffing ratio</strong> emerges &mdash; the most celebrated result of half-street game theory.</p>
+    </div>
+  </div>
+
+  <!-- ===== OPTIMAL BLUFFING RATIO ===== -->
+  <div class="chapter-section">
+    <h2>The Optimal Bluffing Ratio</h2>
+    <p>This is the central result of Chapter 11 and one of the most important formulas in the entire book. In a half-street game with pot size <em>P</em> and bet size <em>b</em>:</p>
+
+    <div class="math-block">
+      <span class="math-label">Optimal Bluff-to-Value Ratio</span>
+      Bluffs / Value Bets = b / (b + P)
+    </div>
+
+    <p>This formula tells us exactly how often to bluff relative to our value bets to make our opponent <strong>indifferent between calling and folding</strong>.</p>
+
+    <h3>Deriving the Intuition</h3>
+    <p>When X faces a bet of <em>b</em> into a pot of <em>P</em>, X must call <em>b</em> to win <em>P + b</em>. X needs to win at least:</p>
+    <div class="math-block">
+      <span class="math-label">Minimum Win Frequency for a Profitable Call</span>
+      b / (P + 2b)
+    </div>
+    <p>If Y bluffs at exactly the right frequency, X&rsquo;s EV from calling equals X&rsquo;s EV from folding (both zero against the bluffing component). This is the <strong>indifference principle</strong> at work.</p>
+
+    <h3>Common Bet Sizes</h3>
+    <table class="data-table">
+      <tr><th>Bet Size (relative to pot)</th><th>Bluff : Value Ratio</th><th>Bluff Frequency</th></tr>
+      <tr><td>1/4 pot (b = P/4)</td><td>1 : 5</td><td>Bluff once per 5 value bets</td></tr>
+      <tr><td>1/2 pot (b = P/2)</td><td>1 : 3</td><td>Bluff once per 3 value bets</td></tr>
+      <tr><td>3/4 pot (b = 3P/4)</td><td>3 : 7</td><td>Bluff 3 times per 7 value bets</td></tr>
+      <tr><td>Pot-size (b = P)</td><td>1 : 2</td><td>Bluff once per 2 value bets</td></tr>
+      <tr><td>2x pot (b = 2P)</td><td>2 : 3</td><td>Bluff 2 times per 3 value bets</td></tr>
+    </table>
+
+    <div class="example-box">
+      <div class="example-title">Pot-Size Bet Example</div>
+      <p>With a pot-size bet (b = P), the optimal bluff ratio is:</p>
+      <div class="math-block">
+        b / (b + P) = P / (P + P) = P / 2P = <strong>1/2</strong>
+      </div>
+      <p>This means for every two value bets, you should include one bluff. Your betting range should be <strong>2/3 value bets and 1/3 bluffs</strong>.</p>
+      <p>At this ratio, your opponent&rsquo;s calling and folding both have the same EV. They literally cannot exploit you regardless of how they respond to your bets.</p>
+    </div>
+  </div>
+
+  <!-- ===== VALUE OF POSITION ===== -->
+  <div class="chapter-section">
+    <h2>The Value of Position</h2>
+    <p>The half-street model reveals why position matters in poker. Player Y (the bettor) has a structural advantage because:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Y <strong>chooses</strong> when to put money in the pot &mdash; betting strong hands and checking weak ones</li>
+      <li>Y can <strong>bluff</strong>, forcing X to make difficult decisions</li>
+      <li>X is <strong>reactive</strong>, limited to calling or folding when Y bets</li>
+      <li>When Y checks, the hand goes to showdown with no further risk</li>
+    </ul>
+    <p>Even in the clairvoyance game where X has perfect information, Y still captures value from the positional advantage. In the symmetric game, the positional player&rsquo;s edge is even more pronounced.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Positional Advantage</div>
+      <p>In half-street games, the bettor&rsquo;s ability to choose between betting and checking creates an inherent edge. This edge exists independent of card advantage and is a pure product of the game&rsquo;s structure. It is quantifiable and grows with bet size relative to the pot.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Half-Street Simulator ===== -->
+  <div class="interactive-widget">
+    <h3>Half-Street Game Simulator</h3>
+    <p>Set the pot size and bet size to see the optimal bluffing strategy and caller&rsquo;s response:</p>
+    <div class="widget-controls">
+      <label>
+        Pot Size (P):
+        <input type="number" id="hsPot" value="6" min="1" max="100" step="1">
+      </label>
+      <label>
+        Bet Size (b):
+        <input type="number" id="hsBet" value="3" min="1" max="100" step="1">
+      </label>
+      <button class="btn" onclick="calcHalfStreet()">Calculate</button>
+    </div>
+    <div class="widget-result" id="hsResult">
+      <div class="result-label">Set pot and bet size, then click Calculate</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>In a half-street game with a pot of 6 units and a bet of 2 units, what is the optimal bluff-to-value bet ratio?</p>
+    <button class="quiz-option" data-correct="false">1/3 (bluff once per 3 value bets)</button>
+    <button class="quiz-option" data-correct="true">1/4 (bluff once per 4 value bets, which is b/(b+P) = 2/8 = 1/4)</button>
+    <button class="quiz-option" data-correct="false">1/2 (bluff once per 2 value bets)</button>
+    <button class="quiz-option" data-correct="false">2/3 (bluff twice per 3 value bets)</button>
+    <div class="quiz-feedback" data-correct="Correct! The optimal bluff-to-value ratio is b/(b+P) = 2/(2+6) = 2/8 = 1/4. For every 4 value bets, you should include 1 bluff. Equivalently, your betting range should be 80% value and 20% bluffs. This makes the caller indifferent between calling and folding." data-incorrect="Not quite. The formula is b/(b+P). With b=2 and P=6: 2/(2+6) = 2/8 = 1/4. You should bluff once for every 4 value bets."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Conceptual Check</h3>
+    <p>In the Clairvoyance Game (X sees Y&rsquo;s hand), should Y ever bet?</p>
+    <button class="quiz-option" data-correct="false">No &mdash; X will always make the correct decision, so betting is pointless</button>
+    <button class="quiz-option" data-correct="true">Yes &mdash; Y should still value bet strong hands, even though X plays perfectly</button>
+    <button class="quiz-option" data-correct="false">Yes &mdash; Y should bluff frequently since X might fold anyway</button>
+    <button class="quiz-option" data-correct="false">It depends entirely on the pot size</button>
+    <div class="quiz-feedback" data-correct="Correct! Even though X knows Y's hand, Y should still bet strong value hands. X must decide whether to call or fold based on X's own hand. Y cannot bluff profitably (X would always catch it), but value betting is still worthwhile." data-incorrect="Y should still bet strong hands for value! Even though X knows Y's hand, X's calling decision depends on X's own hand relative to Y's. However, Y cannot bluff since X would always detect it."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>A <strong>half-street game</strong> is the simplest poker model: one player bets or checks, the other calls or folds, then showdown.</li>
+      <li>The <strong>optimal bluff-to-value ratio</strong> is b/(b+P), where b is the bet size and P is the pot size.</li>
+      <li>With a <strong>pot-size bet</strong>, you should bluff once for every two value bets (1/3 of your bets are bluffs).</li>
+      <li>Optimal bluffing makes the opponent <strong>indifferent</strong> between calling and folding &mdash; they cannot exploit you.</li>
+      <li>The <strong>bettor has a positional advantage</strong> that exists even when the caller has informational advantages.</li>
+      <li>Three variants (Clairvoyance, Reverse Clairvoyance, Symmetric) reveal different aspects of the interplay between <strong>information and position</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-10.html">&larr; Chapter 10</a>
+    <a href="chapter-12.html">Chapter 12: Jam-or-Fold &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcHalfStreet() {
+  const P = parseFloat(document.getElementById('hsPot').value);
+  const b = parseFloat(document.getElementById('hsBet').value);
+
+  if (P <= 0 || b <= 0) {
+    document.getElementById('hsResult').innerHTML = '<div class="result-label" style="color:var(--accent)">Pot and bet must be positive numbers.</div>';
+    return;
+  }
+
+  const bluffRatio = b / (b + P);
+  const bluffPct = bluffRatio * 100;
+  const valuePct = 100 - bluffPct;
+  const potOdds = b / (P + 2 * b);
+  const potOddsPct = potOdds * 100;
+  const callerBreakeven = (b / (P + b)) * 100;
+
+  // Find a simple fraction approximation
+  function simplify(num, den) {
+    function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+    const g = gcd(Math.round(num), Math.round(den));
+    return { n: Math.round(num) / g, d: Math.round(den) / g };
+  }
+  const frac = simplify(b, b + P);
+
+  document.getElementById('hsResult').innerHTML = `
+    <div><span class="result-label">Pot Size:</span> <span class="result-value">${P}</span> &nbsp; | &nbsp; <span class="result-label">Bet Size:</span> <span class="result-value">${b}</span> &nbsp; (${(b/P*100).toFixed(0)}% pot)</div>
+    <div style="margin-top:0.75rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+      <span class="result-label">Optimal Bluff-to-Value Ratio:</span>
+      <span class="result-value">${frac.n}/${frac.d}</span>
+      <span style="color:var(--muted); font-size:0.85rem;"> = b/(b+P) = ${b}/(${b}+${P}) = ${bluffPct.toFixed(1)}%</span>
+    </div>
+    <div style="margin-top:0.5rem">
+      <span class="result-label">Betting Range Composition:</span>
+      <span style="color:var(--green); font-weight:600;">${valuePct.toFixed(1)}% value bets</span> +
+      <span style="color:var(--accent); font-weight:600;">${bluffPct.toFixed(1)}% bluffs</span>
+    </div>
+    <div style="margin-top:0.5rem">
+      <span class="result-label">Bluff once for every</span>
+      <span class="result-value">${(1/bluffRatio).toFixed(1)}</span>
+      <span class="result-label">value bets</span>
+    </div>
+    <div style="margin-top:0.75rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+      <span class="result-label">Caller&rsquo;s Pot Odds:</span>
+      <span class="result-value">${potOddsPct.toFixed(1)}%</span>
+      <span style="color:var(--muted); font-size:0.85rem;"> &mdash; must call ${b} to win ${P + b} (risk ${b} to gain ${P + b})</span>
+    </div>
+    <div style="margin-top:0.5rem">
+      <span class="result-label">Caller&rsquo;s Response:</span>
+      <span style="color:var(--muted); font-size:0.9rem;">At the optimal bluff ratio, calling and folding have equal EV. The caller is <strong>indifferent</strong>.</span>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>

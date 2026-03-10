@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 3: Estimating Parameters &amp; Bayes' Theorem — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part I &mdash; Chapter 3</span>
+    <h1>Using All the Information: Estimating Parameters and Bayes' Theorem</h1>
+    <p class="chapter-subtitle">From sample data to informed reads &mdash; how to update beliefs like a mathematician</p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>The Problem of Incomplete Information</h2>
+    <p>In Chapter 2 we learned to quantify uncertainty with variance and the normal distribution. But those tools assumed we <em>knew</em> the true parameters &mdash; the win rate, the standard deviation. In practice, we never know these values exactly. We observe <strong>samples</strong> and must <em>estimate</em> the underlying truth.</p>
+    <p>This chapter introduces the statistical machinery for making inferences from data: point estimation, confidence intervals, hypothesis testing, and &mdash; most powerfully &mdash; <strong>Bayes' theorem</strong>, which gives us a principled way to update our beliefs as new information arrives. For poker players, this is the formal framework behind "reading" opponents.</p>
+  </div>
+
+  <!-- ===== POPULATION VS SAMPLE ===== -->
+  <div class="chapter-section">
+    <h2>Population vs. Sample</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Population</div>
+      <p>The complete set of all possible outcomes. In poker, the population is every hand you could ever play under given conditions. Your "true" win rate is a <strong>parameter</strong> of this population distribution &mdash; a fixed but unknown value.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Sample</div>
+      <p>A finite subset of the population that we actually observe. Your database of 50,000 hands is a sample. The sample mean is a <strong>statistic</strong> &mdash; a value computed from the sample that we use to estimate the population parameter.</p>
+    </div>
+
+    <p>The distinction matters enormously. When a player says "I win at 5 BB/100," they are reporting a <em>sample statistic</em>, not their true win rate. The true win rate might be 2 BB/100, 5 BB/100, or even negative &mdash; the sample is just one realization from the population, subject to all the variance we studied in Chapter 2.</p>
+  </div>
+
+  <!-- ===== POINT ESTIMATION ===== -->
+  <div class="chapter-section">
+    <h2>Estimating Win Rates: Point Estimation</h2>
+
+    <p>The simplest approach to estimating a parameter is <strong>point estimation</strong> &mdash; producing a single "best guess" value.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Sample Mean as Estimator</div>
+      <p>Given a sample of <em>n</em> observations x<sub>1</sub>, x<sub>2</sub>, &hellip;, x<sub>n</sub>, the sample mean is:</p>
+      <div class="math-block">
+        <span class="math-label">Equation 3.1 &mdash; Sample Mean</span>
+        x&#772; = (1/n) &times; &Sigma; x<sub>i</sub>
+      </div>
+      <p>The sample mean is the <strong>best single estimate</strong> of the true mean. It is unbiased (its expected value equals the population mean) and has the smallest variance among all unbiased linear estimators.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Estimating a Poker Win Rate</div>
+      <p>A player has logged 30,000 hands of $2/$5 NL Hold'em and earned $9,000.</p>
+      <p>Win rate estimate: x&#772; = $9,000 / 30,000 = <strong>$0.30/hand</strong> (or equivalently, <strong>3 BB/100 hands</strong>).</p>
+      <p>This is our best single guess &mdash; but how confident should we be? That's where confidence intervals come in.</p>
+    </div>
+  </div>
+
+  <!-- ===== CONFIDENCE INTERVALS ===== -->
+  <div class="chapter-section">
+    <h2>Confidence Intervals</h2>
+
+    <p>A point estimate tells us nothing about precision. A confidence interval quantifies how much our estimate might vary from the truth.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Confidence Interval</div>
+      <p>A <strong>95% confidence interval</strong> means: if we repeated this sampling procedure many times, 95% of the constructed intervals would contain the true parameter value.</p>
+      <div class="math-block">
+        <span class="math-label">Equation 3.2 &mdash; Confidence Interval</span>
+        CI = x&#772; &plusmn; z<sub>&alpha;/2</sub> &times; (&sigma; / &radic;n)
+      </div>
+      <p>Where z<sub>&alpha;/2</sub> = 1.96 for a 95% interval and &sigma; is the standard deviation per observation.</p>
+    </div>
+
+    <p>The key insight: the interval width is proportional to <strong>&sigma; / &radic;n</strong>. This means:</p>
+    <ul>
+      <li>Higher variance (&sigma;) makes the interval wider &mdash; noisier games require more data.</li>
+      <li>More hands (&radic;n) makes the interval narrower &mdash; but only as the square root, so you need <em>four times</em> the hands to cut the interval in half.</li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">How Many Hands Do You Need?</div>
+      <p>Typical live NL Hold'em: &sigma; &approx; 100 BB/100 hands (or &sigma; = 1 BB/hand).</p>
+      <table class="data-table">
+        <tr><th>Hands (n)</th><th>&sigma;/&radic;n (BB/hand)</th><th>95% CI Width (BB/100)</th></tr>
+        <tr><td>1,000</td><td>0.0316</td><td>&plusmn; 6.20</td></tr>
+        <tr><td>10,000</td><td>0.0100</td><td>&plusmn; 1.96</td></tr>
+        <tr><td>50,000</td><td>0.0045</td><td>&plusmn; 0.88</td></tr>
+        <tr><td>100,000</td><td>0.0032</td><td>&plusmn; 0.62</td></tr>
+      </table>
+      <p>At 1,000 hands, the 95% CI is &plusmn;6.20 BB/100 &mdash; a player running at 5 BB/100 could easily be a loser! You need <strong>many tens of thousands of hands</strong> before win rate estimates become reliable.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Confidence Interval Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Confidence Interval Calculator</h3>
+    <p>Enter your sample results to construct a confidence interval for your true win rate. Watch how the interval narrows as you add more hands.</p>
+    <div class="widget-controls">
+      <label>
+        Win rate (BB/100):
+        <input type="number" id="ciWinRate" value="3" step="0.5" min="-20" max="30">
+      </label>
+      <label>
+        Std dev (BB/100):
+        <input type="number" id="ciStdDev" value="80" step="5" min="10" max="200">
+      </label>
+      <label>
+        Hands played:
+        <input type="number" id="ciHands" value="20000" step="1000" min="100" max="1000000">
+      </label>
+      <label>
+        Confidence level:
+        <select id="ciLevel">
+          <option value="1.645">90%</option>
+          <option value="1.96" selected>95%</option>
+          <option value="2.576">99%</option>
+        </select>
+      </label>
+      <button class="btn" onclick="calcConfInterval()">Calculate</button>
+    </div>
+    <div class="widget-result" id="ciResult">
+      <div class="result-label">Enter your parameters and click Calculate</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="ciChart" width="600" height="280"></canvas>
+    </div>
+    <p style="margin-top:0.75rem; font-size:0.85rem; color:var(--muted)"><strong>Try it:</strong> Keep the win rate and std dev fixed and increase the hands from 5,000 to 100,000. Watch the interval shrink.</p>
+  </div>
+
+  <!-- ===== HYPOTHESIS TESTING ===== -->
+  <div class="chapter-section">
+    <h2>Hypothesis Testing: Am I a Winner?</h2>
+
+    <p>A related question: given our results, can we <em>conclude</em> that we are a winning player? This is a hypothesis test.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Z-Test for Win Rate</div>
+      <p>Null hypothesis H<sub>0</sub>: true win rate = 0 (the player is break-even).</p>
+      <p>Alternative hypothesis H<sub>A</sub>: true win rate &gt; 0 (the player is a winner).</p>
+      <div class="math-block">
+        <span class="math-label">Equation 3.3 &mdash; Test Statistic</span>
+        z = x&#772; / (&sigma; / &radic;n)
+      </div>
+      <p>If z &gt; 1.96, we reject H<sub>0</sub> at the 5% significance level and conclude the player is likely a winner.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Testing a Win Rate Claim</div>
+      <p>A player has played 20,000 hands at 3 BB/100 with &sigma; = 15 BB/100 hands.</p>
+      <p>Converting: x&#772; = 0.03 BB/hand, &sigma; = 0.15 BB/hand, n = 20,000.</p>
+      <p>z = 0.03 / (0.15 / &radic;20,000) = 0.03 / 0.001061 = <strong>2.83</strong></p>
+      <p>Since 2.83 &gt; 1.96, we reject H<sub>0</sub> at the 95% confidence level. We can be statistically confident this player is a winner.</p>
+      <p>Note: if the same results came from only 5,000 hands, z = 0.03 / (0.15 / &radic;5,000) = 1.41 &mdash; <strong>not</strong> significant. Same win rate, not enough data.</p>
+    </div>
+  </div>
+
+  <!-- ===== BAYES' THEOREM ===== -->
+  <div class="chapter-section">
+    <h2>Bayes' Theorem: The Crown Jewel</h2>
+
+    <p>Everything above treats probability as a <em>frequency</em> &mdash; how often events occur in repeated trials. <strong>Bayes' theorem</strong> gives us a different, arguably more powerful perspective: probability as <em>degree of belief</em>, updated with evidence.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Bayes' Theorem</div>
+      <div class="math-block">
+        <span class="math-label">Equation 3.4 &mdash; Bayes' Theorem</span>
+        P(A | B) = P(B | A) &times; P(A) / P(B)
+      </div>
+      <p>Where:</p>
+      <ul>
+        <li><strong>P(A)</strong> = <em>Prior probability</em> &mdash; our belief about A before observing B</li>
+        <li><strong>P(B | A)</strong> = <em>Likelihood</em> &mdash; how probable the evidence B is, assuming A is true</li>
+        <li><strong>P(B)</strong> = <em>Marginal likelihood</em> &mdash; the total probability of observing B under all hypotheses</li>
+        <li><strong>P(A | B)</strong> = <em>Posterior probability</em> &mdash; our updated belief about A after observing B</li>
+      </ul>
+    </div>
+
+    <h3>The Bayesian Update Cycle</h3>
+    <p>Bayes' theorem describes a cycle of learning:</p>
+    <ol>
+      <li><strong>Start with a prior</strong> &mdash; your initial belief before seeing data.</li>
+      <li><strong>Observe evidence</strong> &mdash; something happens (an opponent raises, a card falls).</li>
+      <li><strong>Compute the posterior</strong> &mdash; use Bayes' theorem to update your belief.</li>
+      <li><strong>The posterior becomes the new prior</strong> for the next piece of evidence.</li>
+    </ol>
+
+    <div class="example-box">
+      <div class="example-title">The Tight Player's Raise</div>
+      <p>You know a tight player raises preflop about 8% of the time. You want to estimate the probability they hold
+        <span class="card-display"><span class="poker-card red">A&hearts;</span><span class="poker-card black">A&spades;</span></span>
+        given that they raised.</p>
+      <p><strong>Prior:</strong> P(AA) = 6/1326 &approx; 0.45% (the chance of being dealt pocket aces).</p>
+      <p><strong>Likelihood:</strong> P(raise | AA) = 1.0 (this player always raises AA).</p>
+      <p><strong>Marginal:</strong> P(raise) = 0.08 (they raise 8% of hands overall).</p>
+      <div class="math-block">
+        <span class="math-label">Applying Bayes' Theorem</span>
+        P(AA | raise) = P(raise | AA) &times; P(AA) / P(raise)
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 1.0 &times; 0.0045 / 0.08
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = <strong>5.6%</strong>
+      </div>
+      <p>The prior probability of AA was 0.45%. After observing a raise from this tight player, it jumps to <strong>5.6%</strong> &mdash; a 12x increase. The raise is strong evidence, but AA is still unlikely because most of the 8% raising range consists of other hands.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Sequential Bayesian Updating</div>
+      <p>Now suppose the tight player not only raises preflop but also 4-bets after facing a 3-bet. Assume:</p>
+      <ul>
+        <li>P(4-bet | AA) = 0.95 (almost always 4-bets with AA)</li>
+        <li>P(4-bet | raised, not AA) = 0.15 (only 4-bets 15% of non-AA raising hands)</li>
+      </ul>
+      <p>Our prior is now the posterior from step 1: P(AA) = 0.056.</p>
+      <p>P(4-bet) = P(4-bet | AA) &times; P(AA) + P(4-bet | not AA) &times; P(not AA)</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 0.95 &times; 0.056 + 0.15 &times; 0.944 = 0.0532 + 0.1416 = 0.1948</p>
+      <div class="math-block">
+        <span class="math-label">Second Update</span>
+        P(AA | raise, 4-bet) = P(4-bet | AA) &times; P(AA after raise) / P(4-bet)
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 0.95 &times; 0.056 / 0.1948
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = <strong>27.3%</strong>
+      </div>
+      <p>From 0.45% &rarr; 5.6% &rarr; <strong>27.3%</strong>. Each action provides new information, and Bayes' theorem tells us exactly how much to update.</p>
+    </div>
+  </div>
+
+  <!-- ===== BAYESIAN UPDATING IN PRACTICE ===== -->
+  <div class="chapter-section">
+    <h2>Bayesian Updating in Practice</h2>
+
+    <p>At the poker table, you are constantly performing informal Bayesian updates. Every time an opponent checks, bets, raises, or folds, you revise your estimate of their likely holdings. The formal framework makes this process explicit:</p>
+
+    <ol>
+      <li><strong>Assign a prior range</strong> based on position, player type, and preflop action. A UTG open from a tight regular might be {AA, KK, QQ, JJ, TT, AKs, AKo, AQs}.</li>
+      <li><strong>Weight each hand</strong> by its combination count. AA has 6 combos, AKs has 4, AKo has 12, etc.</li>
+      <li><strong>Observe an action</strong> and estimate the likelihood of that action for each hand in the range.</li>
+      <li><strong>Multiply and normalize</strong> to get the posterior distribution over hands.</li>
+    </ol>
+
+    <p>This is precisely what strong players do intuitively. The math ensures consistency and prevents cognitive biases like anchoring on a single hand or ignoring base rates.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Bayesian Hand Reading ===== -->
+  <div class="interactive-widget">
+    <h3>Bayesian Hand Reading Widget</h3>
+    <p>Start with an opponent's estimated range, then simulate an action to see how probabilities update via Bayes' theorem.</p>
+    <div class="widget-controls">
+      <label>
+        Opponent type:
+        <select id="bayesOpponent" onchange="resetBayes()">
+          <option value="tight">Tight (raises ~8%)</option>
+          <option value="tag">TAG (raises ~15%)</option>
+          <option value="lag">LAG (raises ~25%)</option>
+        </select>
+      </label>
+      <label>
+        Observed action:
+        <select id="bayesAction">
+          <option value="3bet">Opponent 3-bets</option>
+          <option value="4bet">Opponent 4-bets</option>
+          <option value="cbetFold">Opponent checks flop</option>
+        </select>
+      </label>
+      <button class="btn" onclick="updateBayes()">Update Probabilities</button>
+      <button class="btn btn-secondary" onclick="resetBayes()">Reset</button>
+    </div>
+    <div class="widget-result" id="bayesResult">
+      <div class="result-label">Select an opponent type and action, then click Update</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="bayesChart" width="600" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== MAXIMUM LIKELIHOOD ===== -->
+  <div class="chapter-section">
+    <h2>Maximum Likelihood Estimation</h2>
+
+    <p>Bayes' theorem requires a prior, which introduces subjectivity. An alternative approach is <strong>Maximum Likelihood Estimation (MLE)</strong>, which asks: what parameter value makes the observed data most probable?</p>
+
+    <div class="definition-box">
+      <div class="def-term">Maximum Likelihood Estimator</div>
+      <p>Given observed data D, the MLE is the parameter value &theta; that maximizes the likelihood function:</p>
+      <div class="math-block">
+        <span class="math-label">Equation 3.5 &mdash; Maximum Likelihood</span>
+        &theta;&#770;<sub>MLE</sub> = argmax<sub>&theta;</sub> P(D | &theta;)
+      </div>
+      <p>For the simple case of estimating a mean, the MLE equals the sample mean &mdash; the same estimator we started with. MLE becomes more interesting for complex models (e.g., estimating an opponent's bluffing frequency from observed showdowns).</p>
+    </div>
+
+    <p>In practice, Bayesian and frequentist approaches often agree when sample sizes are large. The Bayesian approach shines when data is scarce and prior knowledge is valuable &mdash; exactly the situation at a poker table where you may have only a handful of observations on a new opponent.</p>
+  </div>
+
+  <!-- ===== QUIZ 1 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: Confidence Intervals &amp; Hypothesis Testing</h3>
+    <p>A player has played 20,000 hands with a win rate of 3 BB/100 and a standard deviation of 15 BB/100. Can we be 95% confident that this player is a long-term winner?</p>
+    <button class="quiz-option" data-correct="false">No &mdash; 20,000 hands is never enough to draw conclusions</button>
+    <button class="quiz-option" data-correct="true">Yes &mdash; the z-score is 2.83, which exceeds the 1.96 threshold</button>
+    <button class="quiz-option" data-correct="false">No &mdash; the z-score is 1.41, which does not reach 1.96</button>
+    <button class="quiz-option" data-correct="false">Yes &mdash; any positive win rate over 10,000+ hands proves the player is a winner</button>
+    <div class="quiz-feedback" data-correct="Correct! z = (3 BB/100) / (15 BB/100 / &radic;200) = 3 / 1.061 = 2.83. Since 2.83 > 1.96, we reject the null hypothesis that the player is break-even at the 95% confidence level. Note that 200 = 20,000/100 is the number of 100-hand blocks." data-incorrect="Calculate: z = (win rate) / (std dev / &radic;n). With n = 200 blocks of 100 hands, z = 3 / (15/&radic;200) = 3 / 1.061 = 2.83. Since 2.83 > 1.96, we CAN reject the null at 95% confidence."></div>
+  </div>
+
+  <!-- ===== QUIZ 2 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: Bayes' Theorem Application</h3>
+    <p>A player raises 12% of hands preflop. You know they always raise with AK (16 combos out of 1326 total = 1.21% of hands). After seeing them raise, what is the approximate posterior probability they hold AK?</p>
+    <button class="quiz-option" data-correct="false">1.2% &mdash; the raise doesn't change anything</button>
+    <button class="quiz-option" data-correct="false">12% &mdash; they raise 12% of the time so AK is 12%</button>
+    <button class="quiz-option" data-correct="true">~10% &mdash; P(AK|raise) = 1.0 &times; 0.0121 / 0.12 &approx; 10.1%</button>
+    <button class="quiz-option" data-correct="false">~50% &mdash; AK is the most likely hand when someone raises</button>
+    <div class="quiz-feedback" data-correct="Correct! P(AK|raise) = P(raise|AK) &times; P(AK) / P(raise) = 1.0 &times; 0.0121 / 0.12 = 10.1%. The raise increases the probability of AK from 1.2% to about 10%, an 8x increase. But AK is still just one part of a 12% raising range that includes many other hands." data-incorrect="Apply Bayes: P(AK|raise) = P(raise|AK) &times; P(AK) / P(raise) = 1.0 &times; 0.0121 / 0.12 &approx; 10.1%. The raise makes AK ~8x more likely than its unconditional probability, but it is still only about 10% of the raising range."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Population vs. sample</strong>: Your "true" win rate is an unknown population parameter; your observed results are a sample statistic used to estimate it.</li>
+      <li><strong>Sample mean</strong> is the best single (point) estimate of the true mean &mdash; unbiased and minimum-variance.</li>
+      <li><strong>Confidence intervals</strong> (CI = x&#772; &plusmn; z &times; &sigma;/&radic;n) quantify estimation precision. Poker win rates require tens of thousands of hands for narrow intervals.</li>
+      <li><strong>Hypothesis testing</strong> with z-scores lets us formally test whether observed results are statistically significant.</li>
+      <li><strong>Bayes' theorem</strong> &mdash; P(A|B) = P(B|A) &times; P(A) / P(B) &mdash; is the principled way to update beliefs with new evidence.</li>
+      <li>The <strong>Bayesian update cycle</strong>: prior &rarr; observe evidence &rarr; compute posterior &rarr; posterior becomes new prior. This is exactly how hand reading works at the table.</li>
+      <li><strong>Maximum likelihood estimation</strong> provides an alternative that finds the parameter value making observed data most probable, without requiring a prior.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-02.html">&larr; Chapter 2: Variance &amp; Sample Outcomes</a>
+    <a href="chapter-04.html">Chapter 4: Next Chapter &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// ===== Confidence Interval Calculator =====
+function calcConfInterval() {
+  const wr = parseFloat(document.getElementById('ciWinRate').value);
+  const sd = parseFloat(document.getElementById('ciStdDev').value);
+  const n = parseInt(document.getElementById('ciHands').value);
+  const z = parseFloat(document.getElementById('ciLevel').value);
+
+  // Convert BB/100 to BB/hand for calculation
+  const wrPerHand = wr / 100;
+  const sdPerHand = sd / 100;
+
+  const se = sdPerHand / Math.sqrt(n);
+  const ciLow = wrPerHand - z * se;
+  const ciHigh = wrPerHand + z * se;
+
+  // Convert back to BB/100 for display
+  const ciLow100 = ciLow * 100;
+  const ciHigh100 = ciHigh * 100;
+  const se100 = se * 100;
+
+  const confLabel = z === 1.645 ? '90%' : z === 1.96 ? '95%' : '99%';
+
+  const zTest = wrPerHand / se;
+  const pValue = 1 - normalCDF(zTest);
+
+  document.getElementById('ciResult').innerHTML = `
+    <div><span class="result-label">Sample win rate:</span> <span class="result-value">${wr.toFixed(1)} BB/100</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Standard error:</span> <span class="result-value">${se100.toFixed(2)} BB/100</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">${confLabel} Confidence interval:</span>
+      <span class="result-value" style="color:${ciLow100 < 0 ? 'var(--accent)' : 'var(--green)'}">${ciLow100.toFixed(2)}</span>
+      <span style="color:var(--muted)"> to </span>
+      <span class="result-value" style="color:var(--green)">${ciHigh100.toFixed(2)}</span>
+      <span style="color:var(--muted)"> BB/100</span>
+    </div>
+    <div style="margin-top:0.6rem"><span class="result-label">z-test (H₀: win rate = 0):</span> z = ${zTest.toFixed(2)}, p-value = ${pValue.toFixed(4)}</div>
+    <div style="margin-top:0.4rem"><span class="result-label">Verdict:</span>
+      <span style="color:${zTest > 1.96 ? 'var(--green)' : 'var(--accent)'}; font-weight:700">
+        ${zTest > 1.96 ? 'Statistically significant winner at 95% level' : 'NOT statistically significant at 95% level'}
+      </span>
+    </div>
+  `;
+
+  // Draw normal curve showing CI
+  const mu = wr;
+  const sigma = sd / Math.sqrt(n / 100);
+  drawNormalCurve('ciChart', mu, sigma, {
+    title: `Win Rate Distribution (${n.toLocaleString()} hands)`,
+    shadeFrom: ciLow100,
+    shadeTo: ciHigh100,
+    color: '#e05347'
+  });
+}
+
+// ===== Bayesian Hand Reading Widget =====
+const handRanges = {
+  tight: {
+    label: 'Tight (8%)',
+    hands: [
+      { name: 'AA', combos: 6, raise: 1.0, threeBet: 0.95, fourBet: 0.90, checkFlop: 0.05 },
+      { name: 'KK', combos: 6, raise: 1.0, threeBet: 0.90, fourBet: 0.80, checkFlop: 0.08 },
+      { name: 'QQ', combos: 6, raise: 1.0, threeBet: 0.85, fourBet: 0.50, checkFlop: 0.10 },
+      { name: 'JJ', combos: 6, raise: 1.0, threeBet: 0.70, fourBet: 0.25, checkFlop: 0.15 },
+      { name: 'TT', combos: 6, raise: 1.0, threeBet: 0.50, fourBet: 0.10, checkFlop: 0.20 },
+      { name: 'AKs', combos: 4, raise: 1.0, threeBet: 0.85, fourBet: 0.60, checkFlop: 0.30 },
+      { name: 'AKo', combos: 12, raise: 1.0, threeBet: 0.80, fourBet: 0.45, checkFlop: 0.35 },
+      { name: 'AQs', combos: 4, raise: 1.0, threeBet: 0.50, fourBet: 0.10, checkFlop: 0.25 }
+    ]
+  },
+  tag: {
+    label: 'TAG (15%)',
+    hands: [
+      { name: 'AA', combos: 6, raise: 1.0, threeBet: 0.95, fourBet: 0.90, checkFlop: 0.05 },
+      { name: 'KK', combos: 6, raise: 1.0, threeBet: 0.90, fourBet: 0.75, checkFlop: 0.08 },
+      { name: 'QQ', combos: 6, raise: 1.0, threeBet: 0.80, fourBet: 0.40, checkFlop: 0.10 },
+      { name: 'JJ', combos: 6, raise: 1.0, threeBet: 0.60, fourBet: 0.15, checkFlop: 0.15 },
+      { name: 'TT', combos: 6, raise: 1.0, threeBet: 0.40, fourBet: 0.05, checkFlop: 0.20 },
+      { name: '99', combos: 6, raise: 1.0, threeBet: 0.20, fourBet: 0.02, checkFlop: 0.30 },
+      { name: 'AKs', combos: 4, raise: 1.0, threeBet: 0.85, fourBet: 0.55, checkFlop: 0.30 },
+      { name: 'AKo', combos: 12, raise: 1.0, threeBet: 0.75, fourBet: 0.35, checkFlop: 0.35 },
+      { name: 'AQs', combos: 4, raise: 1.0, threeBet: 0.45, fourBet: 0.08, checkFlop: 0.25 },
+      { name: 'AQo', combos: 12, raise: 1.0, threeBet: 0.30, fourBet: 0.03, checkFlop: 0.40 },
+      { name: 'AJs', combos: 4, raise: 1.0, threeBet: 0.20, fourBet: 0.02, checkFlop: 0.35 },
+      { name: 'KQs', combos: 4, raise: 1.0, threeBet: 0.25, fourBet: 0.02, checkFlop: 0.30 }
+    ]
+  },
+  lag: {
+    label: 'LAG (25%)',
+    hands: [
+      { name: 'AA', combos: 6, raise: 1.0, threeBet: 0.90, fourBet: 0.85, checkFlop: 0.05 },
+      { name: 'KK', combos: 6, raise: 1.0, threeBet: 0.85, fourBet: 0.70, checkFlop: 0.08 },
+      { name: 'QQ', combos: 6, raise: 1.0, threeBet: 0.75, fourBet: 0.35, checkFlop: 0.10 },
+      { name: 'JJ', combos: 6, raise: 1.0, threeBet: 0.55, fourBet: 0.12, checkFlop: 0.15 },
+      { name: 'TT', combos: 6, raise: 1.0, threeBet: 0.35, fourBet: 0.05, checkFlop: 0.20 },
+      { name: '99-77', combos: 18, raise: 1.0, threeBet: 0.15, fourBet: 0.02, checkFlop: 0.35 },
+      { name: 'AKs', combos: 4, raise: 1.0, threeBet: 0.80, fourBet: 0.50, checkFlop: 0.25 },
+      { name: 'AKo', combos: 12, raise: 1.0, threeBet: 0.70, fourBet: 0.30, checkFlop: 0.35 },
+      { name: 'AQs', combos: 4, raise: 1.0, threeBet: 0.40, fourBet: 0.08, checkFlop: 0.25 },
+      { name: 'AQo', combos: 12, raise: 1.0, threeBet: 0.25, fourBet: 0.03, checkFlop: 0.40 },
+      { name: 'AJs-ATs', combos: 8, raise: 1.0, threeBet: 0.18, fourBet: 0.02, checkFlop: 0.35 },
+      { name: 'KQs', combos: 4, raise: 1.0, threeBet: 0.25, fourBet: 0.03, checkFlop: 0.30 },
+      { name: 'KJs-KTs', combos: 8, raise: 1.0, threeBet: 0.12, fourBet: 0.01, checkFlop: 0.35 },
+      { name: 'SCs', combos: 16, raise: 1.0, threeBet: 0.10, fourBet: 0.02, checkFlop: 0.45 },
+      { name: 'Other', combos: 20, raise: 1.0, threeBet: 0.08, fourBet: 0.01, checkFlop: 0.50 }
+    ]
+  }
+};
+
+const actionLikelihoods = {
+  '3bet': 'threeBet',
+  '4bet': 'fourBet',
+  'cbetFold': 'checkFlop'
+};
+
+const actionLabels = {
+  '3bet': '3-bets',
+  '4bet': '4-bets',
+  'cbetFold': 'checks the flop'
+};
+
+let bayesState = null;
+
+function resetBayes() {
+  const type = document.getElementById('bayesOpponent').value;
+  const range = handRanges[type];
+  const totalCombos = range.hands.reduce((s, h) => s + h.combos, 0);
+
+  bayesState = range.hands.map(h => ({
+    name: h.name,
+    combos: h.combos,
+    prior: h.combos / totalCombos,
+    ...h
+  }));
+
+  document.getElementById('bayesResult').innerHTML = `
+    <div class="result-label">Prior range for ${range.label} player &mdash; ${totalCombos} combos. Click "Update" to observe an action.</div>
+  `;
+  drawBayesChart(bayesState, 'Prior Distribution');
+}
+
+function updateBayes() {
+  if (!bayesState) resetBayes();
+
+  const action = document.getElementById('bayesAction').value;
+  const likelihoodKey = actionLikelihoods[action];
+
+  // Compute P(action) = sum of P(action|hand) * P(hand)
+  const pAction = bayesState.reduce((s, h) => s + h[likelihoodKey] * h.prior, 0);
+
+  // Bayesian update
+  bayesState = bayesState.map(h => {
+    const posterior = (h[likelihoodKey] * h.prior) / pAction;
+    return { ...h, prior: posterior };
+  });
+
+  // Sort by posterior descending
+  const sorted = [...bayesState].sort((a, b) => b.prior - a.prior);
+
+  let html = `<div style="margin-bottom:0.5rem"><span class="result-label">After opponent ${actionLabels[action]}:</span></div>`;
+  html += '<table class="data-table"><tr><th>Hand</th><th>Combos</th><th>Likelihood</th><th>Posterior</th></tr>';
+  sorted.forEach(h => {
+    const pctVal = (h.prior * 100).toFixed(1);
+    html += `<tr>
+      <td><strong>${h.name}</strong></td>
+      <td>${h.combos}</td>
+      <td>${(h[likelihoodKey] * 100).toFixed(0)}%</td>
+      <td style="color:${h.prior > 0.15 ? 'var(--gold)' : 'var(--text)'}; font-weight:${h.prior > 0.10 ? '700' : '400'}">${pctVal}%</td>
+    </tr>`;
+  });
+  html += '</table>';
+  html += `<div style="margin-top:0.5rem; font-size:0.85rem; color:var(--muted)">P(${actionLabels[action]}) = ${(pAction * 100).toFixed(1)}%. The posterior is now the prior for the next update &mdash; click again to apply another action.</div>`;
+
+  document.getElementById('bayesResult').innerHTML = html;
+  drawBayesChart(bayesState, `Posterior After "${actionLabels[action]}"`);
+}
+
+function drawBayesChart(hands, title) {
+  const labels = hands.map(h => h.name);
+  const values = hands.map(h => h.prior * 100);
+
+  const canvas = document.getElementById('bayesChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const pad = { top: 30, right: 20, bottom: 60, left: 55 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  const maxVal = Math.max(...values) * 1.2 || 10;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#161b22';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (chartH * i / 4);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    const val = maxVal - (maxVal * i / 4);
+    ctx.fillText(val.toFixed(1) + '%', pad.left - 6, y + 4);
+  }
+
+  // Bars
+  const barW = Math.min(chartW / labels.length * 0.75, 40);
+  const step = chartW / labels.length;
+
+  values.forEach((v, i) => {
+    const x = pad.left + step * i + (step - barW) / 2;
+    const barH = (v / maxVal) * chartH;
+    const y = pad.top + chartH - barH;
+
+    // Color gradient based on probability
+    const intensity = Math.min(v / maxVal, 1);
+    ctx.fillStyle = intensity > 0.5 ? '#d4a017' : intensity > 0.2 ? '#2ea043' : '#30363d';
+    ctx.fillRect(x, y, barW, barH);
+
+    // Label
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.save();
+    ctx.translate(x + barW / 2, H - pad.bottom + 12);
+    ctx.rotate(-Math.PI / 6);
+    ctx.fillText(labels[i], 0, 0);
+    ctx.restore();
+  });
+
+  // Title
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(title, W / 2, 18);
+}
+
+// Initialize on load
+resetBayes();
+</script>
+</body>
+</html>

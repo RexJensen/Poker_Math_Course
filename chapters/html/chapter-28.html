@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 28: Tournaments, Part III — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+<div class="progress-bar"></div>
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+<main class="chapter-container">
+  <div class="chapter-header">
+    <span class="chapter-number">Part V &mdash; Chapter 28</span>
+    <h1>Poker's Still Poker: Tournaments, Part III</h1>
+    <p class="chapter-subtitle">Beyond ICM &mdash; when theory meets the full complexity of tournament play</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>ICM's Limitations</h2>
+    <p>ICM is a powerful model, but it makes significant simplifying assumptions:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Assumes equal skill:</strong> ICM treats all players as equally likely to win each chip. In reality, skill differences are significant.</li>
+      <li><strong>Static model:</strong> ICM is a snapshot &mdash; it doesn't account for future play, position, or blind increases.</li>
+      <li><strong>No blind structure:</strong> Ignores the fact that blinds increase, forcing action and changing stack dynamics.</li>
+      <li><strong>Better for short stacks:</strong> ICM is most accurate for push/fold situations, less so for deep-stacked play.</li>
+    </ul>
+  </div>
+
+  <div class="chapter-section">
+    <h2>When to Deviate from ICM</h2>
+    <div class="definition-box">
+      <div class="def-term">Skill Edge Adjustment</div>
+      <p>A skilled player should sometimes deviate from pure ICM recommendations. If you have a significant skill edge, taking marginally -$EV (by ICM) gambles can be justified because the chips you win will grow faster than ICM predicts &mdash; you'll outplay opponents post-flop and in future hands.</p>
+    </div>
+    <div class="example-box">
+      <div class="example-title">When Skill Overrides ICM</div>
+      <p>Scenario: You're a strong player at a final table with mostly weak opponents. ICM says fold AJs to a short stack's all-in because the risk premium is high.</p>
+      <p><strong>Pure ICM:</strong> Fold (marginally -$EV call)</p>
+      <p><strong>Skill-adjusted:</strong> Call may be correct, because winning those chips gives you a big stack to dominate the weak field. The future edge you gain exceeds the ICM cost.</p>
+    </div>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Stack Size Strategy</h2>
+    <table class="data-table">
+      <tr><th>Stack Size</th><th>Strategy</th><th>Key Principle</th></tr>
+      <tr><td><strong>Short</strong> (&lt;10 BB)</td><td>Push/fold (Chapter 12)</td><td>Every chip is precious; maximize fold equity with all-in moves</td></tr>
+      <tr><td><strong>Medium</strong> (15-30 BB)</td><td>Most constrained</td><td>Avoid marginal spots; let short stacks bust; pick premium spots</td></tr>
+      <tr><td><strong>Big</strong> (40+ BB)</td><td>Pressure others</td><td>Use stack as weapon; put medium stacks in tough spots; ICM leverage</td></tr>
+    </table>
+    <p>The medium stack is in the most difficult position: too many chips to play push/fold optimally, but not enough to absorb the variance of marginal plays without significant ICM cost.</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Tournament Stages</h2>
+    <div class="example-box">
+      <div class="example-title">Stage-by-Stage Strategy</div>
+      <p><strong>Early (Deep Stacked):</strong> Play close to cash game strategy. ICM pressure is minimal with many players remaining. Focus on accumulating chips through skill.</p>
+      <p><strong>Middle (Approaching Bubble):</strong> ICM pressure increases. Tighten up with medium stacks. Widen aggression with big stacks. Short stacks play push/fold.</p>
+      <p><strong>Bubble:</strong> Maximum ICM distortion. Survival becomes critical for medium/short stacks. Big stacks exploit the fear of others. Single most important stage for ICM understanding.</p>
+      <p><strong>In the Money:</strong> ICM pressure decreases somewhat as guaranteed min cash is secured. Players can loosen up slightly.</p>
+      <p><strong>Final Table:</strong> New ICM pressure from large pay jumps. Every elimination is worth significant money. Play becomes extremely strategic.</p>
+    </div>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Long-Term Tournament Success</h2>
+    <p>Tournament poker has extraordinarily high variance. A player's ROI (Return on Investment) is measured over hundreds or thousands of events:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>A 20% ROI is exceptional for MTTs (multi-table tournaments)</li>
+      <li>Even the best players have long stretches without significant cashes</li>
+      <li>Field size matters: larger fields mean higher variance but potentially higher ROI for skilled players</li>
+      <li>All your tournaments are "one big session" &mdash; the tournament of life</li>
+    </ul>
+  </div>
+
+  <div class="interactive-widget">
+    <h3>Tournament Stage Advisor</h3>
+    <div class="widget-controls">
+      <label>Stage:
+        <select id="stage28">
+          <option value="early">Early (Deep Stacked)</option>
+          <option value="middle">Middle (Approaching Bubble)</option>
+          <option value="bubble" selected>Bubble</option>
+          <option value="itm">In the Money</option>
+          <option value="ft">Final Table</option>
+        </select>
+      </label>
+      <label>Your Stack:
+        <select id="stackSize28">
+          <option value="short">Short (&lt;10 BB)</option>
+          <option value="medium" selected>Medium (15-30 BB)</option>
+          <option value="big">Big (40+ BB)</option>
+        </select>
+      </label>
+      <button class="btn" onclick="advise28()">Get Advice</button>
+    </div>
+    <div class="widget-result" id="adviceResult28">
+      <div class="result-label">Select your situation</div>
+    </div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>When should a skilled player deviate from pure ICM play?</p>
+    <button class="quiz-option" data-correct="false">Never &mdash; ICM is always correct</button>
+    <button class="quiz-option" data-correct="false">Always &mdash; ICM is just an approximation</button>
+    <button class="quiz-option" data-correct="true">When they have a significant skill edge over the remaining field, making chip accumulation more valuable than ICM suggests</button>
+    <div class="quiz-feedback" data-correct="Correct! ICM assumes equal skill. When you have a significant edge, chips in your stack are worth MORE than ICM estimates because you'll use them more effectively. This justifies slightly looser play in +cEV spots." data-incorrect="ICM assumes all players are equally skilled. A player with a significant edge should value chip accumulation more highly because their skill converts chips to prize money more efficiently than ICM predicts."></div>
+  </div>
+
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>ICM has significant <strong>limitations</strong>: assumes equal skill, ignores future play and blind structure.</li>
+      <li>Skilled players should <strong>deviate from ICM</strong> when their edge makes chip accumulation more valuable than the model suggests.</li>
+      <li><strong>Stack size dictates strategy:</strong> short stacks push/fold, medium stacks avoid marginal spots, big stacks apply pressure.</li>
+      <li><strong>Tournament stages</strong> create different strategic environments: early play resembles cash, bubble play is ICM-dominated.</li>
+      <li>Tournament success requires <strong>high volume</strong> due to extreme variance; results should be evaluated over hundreds of events.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-27.html">&larr; Chapter 27: Tournaments II</a>
+    <a href="chapter-29.html">Chapter 29: Multiplayer &rarr;</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+<script src="../../js/chapter.js"></script>
+<script>
+function advise28() {
+  const stage = document.getElementById('stage28').value;
+  const stack = document.getElementById('stackSize28').value;
+  const advice = {
+    'early-short': 'Look for spots to double up early. You have time before the bubble, so take +cEV gambles freely. Push/fold when below 10BB.',
+    'early-medium': 'Play solid, fundamentally sound poker. Build your stack through skill. ICM pressure is minimal &mdash; focus on making +cEV plays.',
+    'early-big': 'Excellent position. Play your normal strong game. Accumulate chips by outplaying opponents post-flop. No need to gamble unnecessarily.',
+    'middle-short': 'Getting urgent. Push with a wider range when folded to. Look for spots against medium stacks who will fold tight. Every orbit costs you.',
+    'middle-medium': 'Dangerous zone. Avoid confrontations with big stacks. Pick on short stacks selectively. Preserve your stack for bubble leverage.',
+    'middle-big': 'Apply pressure to medium stacks. They can\'t afford to play back at you. Raise their blinds frequently. Accumulate before the bubble.',
+    'bubble-short': 'PUSH OR FOLD. Your fold equity is your most valuable asset. Shove when first in with a wide range. Don\'t wait to blind out.',
+    'bubble-medium': 'MAXIMUM CAUTION. This is the worst spot in tournament poker. Fold everything marginal. Let short stacks bust. Your patience is worth real money.',
+    'bubble-big': 'APPLY MAXIMUM PRESSURE. You are in the best position in poker. Raise relentlessly. Medium stacks must fold or risk elimination. This is where tournaments are won.',
+    'itm-short': 'You\'ve cashed &mdash; now play to win. Push aggressively. The guaranteed money lets you take shots at the bigger prizes.',
+    'itm-medium': 'Loosen up slightly now that min cash is secured. Still be aware of pay jumps. Build toward the final table.',
+    'itm-big': 'Continue pressuring. Pay jumps are your friend &mdash; every elimination is worth money to you. Stay aggressive but pick your spots.',
+    'ft-short': 'Every pay jump matters now. But don\'t just fold into a higher pay level &mdash; look for good spots to get chips. Ladder when possible.',
+    'ft-medium': 'Be aware of pay jumps but don\'t let them paralyze you. Take strong spots. Avoid flips against other medium stacks.',
+    'ft-big': 'Dominate the table. Put pressure on medium stacks near pay jumps. Your ICM leverage is enormous. Play for first place.'
+  };
+  const key = stage + '-' + stack;
+  document.getElementById('adviceResult28').innerHTML =
+    '<div style="font-size:1.05rem; line-height:1.6;">' + (advice[key] || 'Select a valid combination.') + '</div>';
+}
+</script>
+</body>
+</html>

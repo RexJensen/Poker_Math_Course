@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 9: Adaptive Play: Distribution vs. Distribution — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part II &mdash; Chapter 9</span>
+    <h1>Adaptive Play: Distribution vs. Distribution</h1>
+    <p class="chapter-subtitle">When both players hold ranges, strategy becomes a dynamic dance</p>
+  </div>
+
+
+  <div class="chapter-section">
+    <h2>Both Players Have Distributions</h2>
+    <p>The most realistic poker analysis has <strong>both players holding distributions</strong> rather than specific hands. This is the full complexity of poker.</p>
+    <div class="math-block">
+      <span class="math-label">Distribution vs. Distribution EV</span>
+      &lt;A<sub>dist</sub>, B<sub>dist</sub>&gt; = &Sigma;<sub>i</sub> &Sigma;<sub>j</sub> p(A<sub>i</sub>) &times; p(B<sub>j</sub>) &times; EV(A<sub>i</sub> vs B<sub>j</sub>)
+    </div>
+    <p>This double summation over all hand combinations is computationally intensive but captures the true strategic complexity.</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>The Adaptation Cycle</h2>
+    <p>When both players think in distributions, strategy becomes dynamic:</p>
+    <ol style="margin: 0.5rem 0 1rem 1.5rem; line-height: 2;">
+      <li>Player A plays strategy S<sub>1</sub></li>
+      <li>Player B reads S<sub>1</sub> and plays the maximally exploitive S<sub>2</sub></li>
+      <li>Player A reads S<sub>2</sub> and adjusts to S<sub>3</sub></li>
+      <li>Player B adjusts to S<sub>4</sub>... and so on</li>
+    </ol>
+    <p>This is the core dynamic of exploitive play. <strong>The player who adapts faster gains an edge.</strong></p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>The Leveling War</h2>
+    <div class="definition-box">
+      <div class="def-term">Levels of Thinking</div>
+      <p><strong>Level 0:</strong> What do I have?<br>
+      <strong>Level 1:</strong> What does my opponent have?<br>
+      <strong>Level 2:</strong> What does my opponent think I have?<br>
+      <strong>Level 3:</strong> What does my opponent think I think they have?</p>
+      <p>The key is to be exactly <strong>one level above</strong> your opponent. Being two levels above is the same as being one level below!</p>
+    </div>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Limitations of Pure Exploitive Play</h2>
+    <p>If your opponent also adapts, pure exploitive play creates an <strong>endless adaptation cycle</strong>. Worse, exploitive strategies are themselves exploitable &mdash; by maximizing against one strategy, you may open vulnerabilities to another.</p>
+    <p>This fundamental limitation motivates the search for <strong>unexploitable (game theory optimal) strategies</strong> covered in Part III. GTO play breaks the cycle by finding a strategy that cannot be exploited regardless of the opponent's adjustments.</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Practical Framework</h2>
+    <p>In reality, exact distribution vs. distribution calculations are <strong>computationally intractable at the table</strong>. Players approximate using:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Simplified ranges (3-5 hand categories instead of exact combos)</li>
+      <li>Heuristics built from off-table study</li>
+      <li>Pattern recognition from experience</li>
+      <li>Bayesian updating within a hand (Chapter 5 techniques)</li>
+    </ul>
+  </div>
+
+  <div class="interactive-widget">
+    <h3>Adaptation Simulator</h3>
+    <p>See how bluffing and calling frequencies adapt to each other. A bluffs, B decides whether to call.</p>
+    <div class="widget-controls">
+      <label>Pot Size: <input type="number" id="potAdapt" value="6" min="1"></label>
+      <label>Bet Size: <input type="number" id="betAdapt" value="2" min="1"></label>
+      <label>A's Value Bet %: <input type="number" id="valuePct" value="20" min="1" max="50"></label>
+      <button class="btn" onclick="calcAdapt()">Show Equilibrium</button>
+    </div>
+    <div class="widget-result" id="adaptResult">
+      <div class="result-label">Click to see the equilibrium bluff and call frequencies</div>
+    </div>
+  </div>
+  <script>
+  function calcAdapt() {
+    const pot = parseFloat(document.getElementById('potAdapt').value);
+    const bet = parseFloat(document.getElementById('betAdapt').value);
+    const valuePct = parseFloat(document.getElementById('valuePct').value) / 100;
+    const optBluffRatio = bet / (bet + pot);
+    const optBluffPct = valuePct * optBluffRatio / (1 - optBluffRatio);
+    const totalBet = valuePct + optBluffPct;
+    const optCallFreq = 1 - pot / (pot + bet);
+    document.getElementById('adaptResult').innerHTML =
+      '<div><span class="result-label">Optimal bluff ratio:</span> <span class="result-value">' + (optBluffRatio*100).toFixed(1) + '% of bets should be bluffs</span></div>' +
+      '<div style="margin-top:0.4rem"><span class="result-label">A bets:</span> ' + (totalBet*100).toFixed(1) + '% total (' + (valuePct*100).toFixed(0) + '% value + ' + (optBluffPct*100).toFixed(1) + '% bluffs)</div>' +
+      '<div style="margin-top:0.4rem"><span class="result-label">B should call:</span> <span class="result-value">' + ((1-optCallFreq)*100).toFixed(1) + '% of the time</span></div>' +
+      '<div style="margin-top:0.4rem; color: var(--muted); font-size:0.85rem;">At equilibrium, B is indifferent between calling and folding. A is indifferent between bluffing and checking weak hands.</div>';
+  }
+  </script>
+
+
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>Why is pure exploitive play insufficient against a strong, adaptive opponent?</p>
+    <button class="quiz-option" data-correct="false">Because exploitive play always loses money</button>
+    <button class="quiz-option" data-correct="true">Because exploitive strategies can themselves be exploited when the opponent adapts</button>
+    <button class="quiz-option" data-correct="false">Because you can never read a strong player's hand</button>
+    <div class="quiz-feedback" data-correct="Correct! Maximally exploiting one strategy creates predictable patterns that an adaptive opponent can counter-exploit. This arms race motivates game theory optimal play as a defensive foundation." data-incorrect="The issue is that exploitive play, by definition, is maximized against ONE specific strategy. If the opponent changes strategy, your exploit becomes a liability. This creates an adaptation cycle that GTO play resolves."></div>
+  </div>
+
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Distribution vs. distribution</strong> analysis is the most complete form of poker reasoning, requiring double summation over both players' ranges.</li>
+      <li>Strategy is <strong>dynamic</strong> &mdash; players adapt to each other in an ongoing cycle.</li>
+      <li>The <strong>leveling war</strong> means you should be exactly one thinking level above your opponent.</li>
+      <li>Pure exploitive play is <strong>itself exploitable</strong>, motivating the game-theoretic approach of Part III.</li>
+      <li>In practice, players <strong>approximate</strong> distribution analysis using heuristics, simplified ranges, and experience.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-08.html">&larr; Previous Chapter</a>
+    <a href="chapter-10.html">Next Chapter &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+</body>
+</html>

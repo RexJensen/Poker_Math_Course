@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 21: A Case Study &mdash; Using Game Theory &mdash; Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 21</span>
+    <h1>A Case Study: Using Game Theory</h1>
+    <p class="chapter-subtitle">Applying the theoretical framework from Chapters 10&ndash;20 to a complete, multi-street hand analysis</p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>Applying Theory to Practice</h2>
+    <p>The preceding chapters developed a rich theoretical framework: half-street and full-street games, clairvoyance results, bluffing frequencies, protection, semi-bluffs, and multi-street dynamics. This chapter takes all of that theory and applies it to a <strong>detailed, realistic hand analysis</strong>.</p>
+    <p>The goal is not merely to find the "correct" answer for one hand. Rather, it is to demonstrate the <strong>process</strong> of applying game-theoretic reasoning at each decision point &mdash; a process you can replicate in your own play.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Case Study Method</div>
+      <p>Walk through a complete poker hand from preflop to river. At each street, analyze the situation through the lens of game theory: What does your range look like? What does your opponent's range look like? What is the game-theoretically optimal action, and when should you deviate from it?</p>
+    </div>
+  </div>
+
+  <!-- ===== PREFLOP ===== -->
+  <div class="chapter-section">
+    <h2>Preflop Analysis</h2>
+    <p>Every hand begins with preflop decisions. Game theory informs these decisions through range construction:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Range Construction by Position</div>
+      <p>A player's <strong>opening range</strong> depends on their position at the table. Earlier positions require tighter ranges because more players remain to act. Later positions can open wider because fewer players remain and you gain positional advantage postflop.</p>
+      <div class="math-block">
+        <span class="math-label">Typical Opening Ranges (6-max)</span>
+        UTG: ~15% of hands &nbsp;&nbsp;|&nbsp;&nbsp; MP: ~18% &nbsp;&nbsp;|&nbsp;&nbsp; CO: ~27% &nbsp;&nbsp;|&nbsp;&nbsp; BTN: ~40%+
+      </div>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">3-Betting and Defense Ranges</div>
+      <p>When facing an open raise, the game-theoretic framework tells us we need both <strong>value 3-bets</strong> and <strong>bluff 3-bets</strong> to remain balanced:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Value 3-bets:</strong> Hands strong enough to 3-bet for value (e.g., QQ+, AK).</li>
+        <li><strong>Bluff 3-bets:</strong> Hands that benefit from fold equity and have some playability if called (e.g., suited aces like A5s, A4s). These are the semi-bluff principle applied preflop.</li>
+        <li><strong>Flat calls:</strong> Hands too strong to fold but not ideal for 3-betting (e.g., suited connectors, medium pairs).</li>
+      </ul>
+      <p>The ratio of value to bluff 3-bets should roughly match the pot odds you offer the opponent. If a 3-bet to 3x offers the opener about 2:1, your value-to-bluff ratio should be approximately 2:1.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Stack Depth and Preflop Strategy</div>
+      <p>Stack depth fundamentally alters preflop play:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Deep stacks (150+ BB):</strong> Speculative hands (suited connectors, small pairs) gain value because implied odds are large. Positional advantage is magnified.</li>
+        <li><strong>Short stacks (30&ndash;50 BB):</strong> Implied odds shrink. High-card hands increase in value. 3-bet/fold replaces flat calling. Push-fold dynamics begin to dominate.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== FLOP ===== -->
+  <div class="chapter-section">
+    <h2>Flop Play</h2>
+    <p>The flop is where the most complex range interactions begin. Game theory guides us through several critical decisions:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Range vs. Range Analysis</div>
+      <p>Rather than thinking "I have top pair," the game-theoretic approach asks: "How does my <em>entire range</em> interact with this flop, and how does my opponent's range interact with it?" The player whose range connects better with the flop has the <strong>range advantage</strong> and can bet more frequently.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Continuation Betting Strategy</div>
+      <p>The preflop raiser has the <strong>uncapped range</strong> (contains the strongest hands) and typically has range advantage on most flops. This justifies continuation betting, but the frequency and size depend on the flop texture:</p>
+      <table class="data-table">
+        <tr><th>Flop Type</th><th>C-bet Frequency</th><th>C-bet Size</th><th>Reasoning</th></tr>
+        <tr>
+          <td>Ace-high dry (A&spades;7&diams;2&clubs;)</td>
+          <td>High (~70&ndash;80%)</td>
+          <td>Small (25&ndash;33% pot)</td>
+          <td>Strong range advantage. Small bets accomplish protection and value efficiently.</td>
+        </tr>
+        <tr>
+          <td>Low connected (7&hearts;6&spades;5&diams;)</td>
+          <td>Low (~30&ndash;40%)</td>
+          <td>Larger (50&ndash;75% pot)</td>
+          <td>Caller's range connects well. Only bet with strong hands and semi-bluffs.</td>
+        </tr>
+        <tr>
+          <td>K-high rainbow (K&clubs;8&diams;3&spades;)</td>
+          <td>Medium (~55&ndash;65%)</td>
+          <td>Medium (33&ndash;50% pot)</td>
+          <td>Moderate range advantage. Mix of value bets, semi-bluffs, and checks.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Out of Position: Check-Raise vs. Call vs. Fold</div>
+      <p>The out-of-position defender needs a balanced response to continuation bets:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Check-raise:</strong> A mix of strong hands (sets, two pair) and semi-bluffs (flush draws, open-ended straight draws). This is the [0,1] game in action &mdash; a polarized range.</li>
+        <li><strong>Check-call:</strong> Medium-strength hands that are too good to fold but not strong enough to raise (top pair weak kicker, middle pair, gutshots).</li>
+        <li><strong>Check-fold:</strong> Hands with insufficient equity to continue at the price offered.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TURN ===== -->
+  <div class="chapter-section">
+    <h2>Turn Play</h2>
+    <p>The turn introduces a new card that reshapes ranges and equities. Key considerations:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Barrel Selection</div>
+      <p>After continuation betting the flop, which hands should bet again ("double barrel") on the turn? Game theory tells us to continue with:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Value hands</strong> that are still ahead of the calling range.</li>
+        <li><strong>Strong semi-bluffs</strong> that picked up equity or have fold equity against the opponent's flop calling range.</li>
+        <li><strong>Bluffs that block</strong> the opponent's continuing range (blockers).</li>
+      </ul>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Turn Card Impact on Ranges</div>
+      <p>The turn card can dramatically shift the dynamics:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Draw-completing cards</strong> (third flush card, straight-completing card): Dramatically changes equities. The flop caller's range now contains many strong hands. The flop bettor must proceed cautiously.</li>
+        <li><strong>Brick turns</strong> (cards that change little): Equities remain similar to the flop. The flop bettor can continue aggression with a similar rationale.</li>
+        <li><strong>Overcard turns</strong> (e.g., an Ace on a low board): May improve the preflop raiser's range more than the caller's. Can be good barrel cards.</li>
+      </ul>
+    </div>
+
+    <p>Semi-bluffs on the turn are the final opportunity to bet with a draw before the river, where the game becomes static. The turn semi-bluff must be evaluated with the knowledge that only one card remains to improve.</p>
+  </div>
+
+  <!-- ===== RIVER ===== -->
+  <div class="chapter-section">
+    <h2>River Play</h2>
+    <p>The river is where the theoretical framework from Part III culminates. The game is now static &mdash; no more cards to come &mdash; and we are in [0,1] game territory:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Polarized Betting Ranges</div>
+      <p>On the river, optimal betting ranges are <strong>polarized</strong>: they contain the very best hands (value) and the very worst hands (bluffs), with medium-strength hands checking. This is the direct application of the [0,1] game from Chapter 12.</p>
+    </div>
+
+    <div class="math-block">
+      <span class="math-label">Optimal Bluff-to-Value Ratio (River)</span>
+      With a pot-sized bet, the defender gets 2:1 odds to call.<br>
+      To make the defender indifferent: bluff frequency = 1/(1 + pot odds) = 1/3<br>
+      Therefore: <strong>value-to-bluff ratio = 2:1</strong> (2 value combos for every 1 bluff combo)
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">River Bet Sizing and Bluff Ratios</div>
+      <table class="data-table">
+        <tr><th>Bet Size (% of pot)</th><th>Pot Odds to Caller</th><th>Optimal Bluff %</th><th>Value : Bluff Ratio</th></tr>
+        <tr><td>50%</td><td>3:1</td><td>25%</td><td>3:1</td></tr>
+        <tr><td>67%</td><td>2.5:1</td><td>28.6%</td><td>2.5:1</td></tr>
+        <tr><td>75%</td><td>2.33:1</td><td>30%</td><td>2.33:1</td></tr>
+        <tr><td>100%</td><td>2:1</td><td>33.3%</td><td>2:1</td></tr>
+        <tr><td>150%</td><td>1.67:1</td><td>37.5%</td><td>1.67:1</td></tr>
+        <tr><td>200%</td><td>1.5:1</td><td>40%</td><td>1.5:1</td></tr>
+      </table>
+      <p>Larger bets allow more bluffs in the range while keeping the opponent indifferent to calling. This is why overbets can be optimal with very polarized ranges.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Call-Down Decisions vs. Polarized Ranges</div>
+      <p>When facing a river bet from a polarized range, the game-theoretic solution for the defender is to call with the top portion of their range such that the bettor's bluffs are made exactly indifferent. You should call with any hand that beats at least some of the betting range's value hands, and the <strong>breakeven frequency</strong> for calling is determined by the pot odds offered.</p>
+    </div>
+  </div>
+
+  <!-- ===== SYNTHESIZING ===== -->
+  <div class="chapter-section">
+    <h2>Synthesizing the Framework</h2>
+    <p>The complete case study reveals how all the theoretical pieces fit together:</p>
+
+    <div class="example-box">
+      <div class="example-title">The GTO-Then-Exploit Approach</div>
+      <ol style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 2;">
+        <li><strong>Start from game theory.</strong> Build your baseline strategy using the optimal frequencies derived from [0,1] games, half-street games, and full-street games. This strategy is unexploitable &mdash; no opponent can profit by deviating against it.</li>
+        <li><strong>Observe opponent tendencies.</strong> Does this opponent fold too much? Too little? Do they overvalue certain hands? Do they bet too small or too large?</li>
+        <li><strong>Make exploitive adjustments.</strong> Deviate from GTO to profit from specific opponent mistakes:
+          <ul style="margin: 0.3rem 0 0.3rem 1rem;">
+            <li>If they fold too much &rarr; bluff more</li>
+            <li>If they call too much &rarr; bluff less, value bet thinner</li>
+            <li>If they bet too much &rarr; call wider, trap more</li>
+            <li>If they are passive &rarr; bet more, deny equity</li>
+          </ul>
+        </li>
+        <li><strong>Monitor and adjust.</strong> Opponents adapt. Return to baseline when your exploitation is being counter-exploited.</li>
+      </ol>
+    </div>
+
+    <p>Chen and Ankenman emphasize that the <strong>complete poker player</strong> uses both game theory and exploitation. Game theory is the foundation; exploitation is the superstructure built upon it. Without the foundation, the superstructure collapses. Without the superstructure, you leave money on the table.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Hand Walkthrough ===== -->
+  <div class="interactive-widget">
+    <h3>Hand Walkthrough: Street-by-Street GTO Analysis</h3>
+    <p>Step through a poker hand from preflop to river. At each decision point, choose your action and see the game-theoretic recommendation.</p>
+    <div class="widget-controls" id="handSetup">
+      <label>
+        Your Position:
+        <select id="hwPosition">
+          <option value="BTN">Button (BTN)</option>
+          <option value="BB">Big Blind (BB)</option>
+        </select>
+      </label>
+      <label>
+        Effective Stack (BB):
+        <select id="hwStack">
+          <option value="50">50 BB</option>
+          <option value="100" selected>100 BB</option>
+          <option value="200">200 BB</option>
+        </select>
+      </label>
+      <button class="btn" onclick="startWalkthrough()">Deal Hand</button>
+    </div>
+    <div id="hwStreet" style="display:none;"></div>
+    <div class="widget-result" id="hwResult">
+      <div class="result-label">Select position and stack depth, then click Deal Hand</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>River Bluff-to-Value Ratio</h3>
+    <p>On the river with a pot-sized bet, what should your value-to-bluff ratio be in a game-theoretically optimal strategy?</p>
+    <button class="quiz-option" data-correct="false">1:1 &mdash; equal value bets and bluffs</button>
+    <button class="quiz-option" data-correct="true">2:1 &mdash; two value combos for every one bluff combo (bluff 1/3 of betting range)</button>
+    <button class="quiz-option" data-correct="false">3:1 &mdash; three value combos for every one bluff combo</button>
+    <button class="quiz-option" data-correct="false">It depends on your hand &mdash; there is no fixed ratio</button>
+    <div class="quiz-feedback" data-correct="Correct! With a pot-sized bet, the caller gets 2:1 odds (risking one pot to win two). To make the caller indifferent between calling and folding, the bettor must bluff exactly 1/3 of the time (1 bluff for every 2 value bets). If you bluff more, the opponent profits by calling always. If you bluff less, the opponent profits by folding always. This 2:1 ratio is a direct consequence of the [0,1] game solution." data-incorrect="Think about the pot odds. A pot-sized bet gives the caller 2:1 odds. To make the caller indifferent, you need to bluff such that calling breaks even: bluff frequency = 1/(pot odds + 1) = 1/3. This means 2/3 of your bets are value and 1/3 are bluffs &mdash; a 2:1 value-to-bluff ratio."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>GTO and Exploitation</h3>
+    <p>Your opponent at a $2/$5 game folds to river bets 80% of the time (far too often). What is the correct adjustment?</p>
+    <button class="quiz-option" data-correct="false">Continue playing GTO &mdash; never deviate from theory</button>
+    <button class="quiz-option" data-correct="false">Bluff less, since they will eventually adjust</button>
+    <button class="quiz-option" data-correct="true">Bluff significantly more than GTO frequencies to exploit their excessive folding</button>
+    <button class="quiz-option" data-correct="false">Only value bet &mdash; never bluff against a tight player</button>
+    <div class="quiz-feedback" data-correct="Correct! An opponent who folds 80% to river bets is making a massive mistake. GTO might have you bluffing ~33% with a pot-sized bet, but against this opponent, bluffing far more is hugely profitable because fold equity is so high. This is the essence of the GTO-then-exploit approach: know the baseline, then deviate to exploit specific leaks. If they start adjusting (calling more), you move back toward GTO or shift to value-heavy." data-incorrect="When an opponent folds 80% to river bets, they are massively over-folding. Game theory provides your baseline, but exploitive play means deviating when opponents make large errors. Against excessive folding, you should bluff significantly more than GTO frequency. If they fold 80% of the time, nearly any bet is profitable as a bluff. This is the GTO-then-exploit principle in action."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Range-based thinking</strong> replaces hand-based thinking: analyze how your entire range interacts with the board, not just your specific hand.</li>
+      <li><strong>Preflop ranges</strong> are constructed by position, with 3-bet ranges containing both value and bluff components (like semi-bluffs applied preflop).</li>
+      <li><strong>Continuation betting</strong> frequency and sizing should be calibrated to your range advantage on the specific flop texture.</li>
+      <li><strong>Turn barrel selection</strong> depends on how the turn card changes equities and ranges relative to the flop action.</li>
+      <li>River betting ranges should be <strong>polarized</strong> (strong hands and bluffs), with a value-to-bluff ratio determined by the bet sizing and pot odds.</li>
+      <li>The <strong>GTO-then-exploit approach</strong> uses game theory as a baseline and layers exploitive adjustments on top when opponent tendencies are identified.</li>
+      <li>The complete player integrates both <strong>game-theoretic foundations</strong> (unexploitable baseline) and <strong>exploitive adjustments</strong> (profiting from opponent mistakes).</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-20.html">&larr; Chapter 20</a>
+    <a href="chapter-22.html">Chapter 22 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// Hand walkthrough data
+const scenarios = {
+  BTN: {
+    hand: 'A&diams; Q&hearts;',
+    handName: 'Ace-Queen offsuit',
+    preflop: {
+      situation: 'You are on the Button with A&diams;Q&hearts;. Action folds to you.',
+      actions: [
+        { label: 'Fold', correct: false, explain: 'AQo is far too strong to fold on the Button. You should be opening ~40% of hands here, and AQo is in the top 6%.' },
+        { label: 'Call (limp)', correct: false, explain: 'Limping the Button is almost never correct in modern poker. You forfeit the initiative and the chance to win the blinds immediately. Open-raising is superior.' },
+        { label: 'Raise to 2.5 BB', correct: true, explain: 'Correct! AQo is a clear open-raise from the Button. You have position, a strong hand, and fold equity against the blinds. Standard raise sizing is 2&ndash;3 BB.' }
+      ],
+      result: 'You raise to 2.5 BB. The Small Blind folds. The Big Blind calls. Pot: 5.5 BB.'
+    },
+    flop: {
+      board: 'A&spades; 8&hearts; 5&clubs;',
+      situation: 'Flop: A&spades; 8&hearts; 5&clubs;. You have top pair, queen kicker. The Big Blind checks to you.',
+      actions: [
+        { label: 'Check back', correct: false, explain: 'While checking back is viable with some top pair hands to protect your checking range, AQ on this board is strong enough to bet for value. This is an A-high dry board where you have a significant range advantage.' },
+        { label: 'Bet 33% pot (~1.8 BB)', correct: true, explain: 'Correct! On this A-high dry board, you have a massive range advantage. Your entire range benefits from a small c-bet. You deny equity to gutshots and backdoor draws, and get value from worse Ax, pocket pairs, and floats.' },
+        { label: 'Bet 75% pot (~4 BB)', correct: false, explain: 'A larger bet is not wrong per se, but on this static, A-high board, a small bet accomplishes your goals more efficiently. You can bet your entire range small rather than polarizing, which is the higher-EV strategy on dry textures.' }
+      ],
+      result: 'You bet 1.8 BB. The Big Blind calls. Pot: 9.1 BB.'
+    },
+    turn: {
+      card: '6&diams;',
+      board: 'A&spades; 8&hearts; 5&clubs; 6&diams;',
+      situation: 'Turn: 6&diams;. Board is now A&spades; 8&hearts; 5&clubs; 6&diams;. The Big Blind checks again.',
+      actions: [
+        { label: 'Check back', correct: false, explain: 'The 6&diams; is a relatively blank card but does add a straight draw (7x now has an OESD). Your hand is still strong and benefits from continued betting for value and protection.' },
+        { label: 'Bet 50% pot (~4.5 BB)', correct: true, explain: 'Correct! The turn is a good spot to continue betting. You still have top pair strong kicker, the board has gotten slightly more dynamic with straight draws, and you want to charge draws and build the pot for a potential river value bet.' },
+        { label: 'Bet 100% pot (~9 BB)', correct: false, explain: 'Overbetting the turn is typically reserved for very polarized ranges (nutted hands and bluffs). AQ top pair is a medium-strong hand that benefits from a moderate sizing.' }
+      ],
+      result: 'You bet 4.5 BB. The Big Blind calls again. Pot: 18.1 BB.'
+    },
+    river: {
+      card: '2&clubs;',
+      board: 'A&spades; 8&hearts; 5&clubs; 6&diams; 2&clubs;',
+      situation: 'River: 2&clubs;. Final board: A&spades; 8&hearts; 5&clubs; 6&diams; 2&clubs;. No draws completed. The Big Blind checks.',
+      actions: [
+        { label: 'Check back', correct: false, explain: 'Your hand is strong enough for a thin value bet. The BB called two streets, likely with a worse Ax, middle pair, or a draw that missed. Checking forfeits value from hands that would call a small bet.' },
+        { label: 'Bet 40% pot (~7 BB)', correct: true, explain: 'Correct! A thin value bet is optimal. The BB\'s calling range includes worse Ax hands (AT, AJ that didn\'t raise), 8x, and missed draws. A smaller sizing targets these medium-strength hands that might fold to a large bet. This is value betting at its finest &mdash; extracting from worse hands that will call.' },
+        { label: 'Bet 100% pot (~18 BB)', correct: false, explain: 'A large bet polarizes your range and prices out the medium-strength hands that would pay you off. With AQ (not the nuts), a smaller value bet extracts more from the opponent\'s calling range.' }
+      ],
+      result: 'You bet 7 BB. The Big Blind calls with A&clubs;9&diams;. You win with AQ kicker over A9. Total pot won: 32.1 BB.'
+    }
+  },
+  BB: {
+    hand: '9&hearts; 8&hearts;',
+    handName: 'Nine-Eight suited',
+    preflop: {
+      situation: 'You are in the Big Blind with 9&hearts;8&hearts;. The Button raises to 2.5 BB. Small Blind folds.',
+      actions: [
+        { label: 'Fold', correct: false, explain: '98s is too strong to fold in the Big Blind facing a single raise. You are already invested 1 BB, and 98s has excellent playability with straight and flush potential.' },
+        { label: 'Call', correct: true, explain: 'Correct! 98s is an ideal defend hand in the Big Blind. You have a suited connector with good implied odds, and you are closing the action. 3-betting is also viable as a bluff, but calling is the standard GTO play.' },
+        { label: '3-bet to 9 BB', correct: false, explain: '98s can be used as a 3-bet bluff in some frequencies, but the default GTO play is to call. 3-betting works better with hands that block the opener\'s strong range (like A5s) or dominate the calling range.' }
+      ],
+      result: 'You call. Pot: 5.5 BB (after rake adjustment, ~5 BB effective).'
+    },
+    flop: {
+      board: 'T&hearts; 7&clubs; 2&hearts;',
+      situation: 'Flop: T&hearts; 7&clubs; 2&hearts;. You have an open-ended straight draw AND a flush draw (15 outs!). The Button bets 1.8 BB (33% pot).',
+      actions: [
+        { label: 'Fold', correct: false, explain: 'Never! You have 15 outs (8 for straight + 9 for flush - 2 overlap) giving you roughly 54% equity. You are actually ahead of most of your opponent\'s range.' },
+        { label: 'Call', correct: false, explain: 'Calling is okay but misses an opportunity. With this much equity and a draw this strong, you should be raising to build the pot and leverage fold equity.' },
+        { label: 'Check-raise to 7 BB', correct: true, explain: 'Correct! This is a textbook semi-bluff check-raise. You have a monster draw (~54% equity) and fold equity. If called, you have massive equity. If they fold, you win immediately. This is exactly the situation Chapter 20 described &mdash; strong draw + fold equity = aggressive semi-bluff.' }
+      ],
+      result: 'You check-raise to 7 BB. The Button calls. Pot: 14.5 BB.'
+    },
+    turn: {
+      card: 'K&spades;',
+      board: 'T&hearts; 7&clubs; 2&hearts; K&spades;',
+      situation: 'Turn: K&spades;. You missed your draw. Board: T&hearts; 7&clubs; 2&hearts; K&spades;. You still have the flush draw and straight draw (15 outs, ~30% river equity).',
+      actions: [
+        { label: 'Check-fold', correct: false, explain: 'You still have ~30% equity with 15 outs. Abandoning this draw after investing chips in a semi-bluff would be a mistake.' },
+        { label: 'Check-call', correct: false, explain: 'Possible, but passive. You lose fold equity by check-calling, and your hand can\'t win at showdown without improving.' },
+        { label: 'Bet 10 BB (about 70% pot)', correct: true, explain: 'Correct! Continue the aggression. You have fold equity (opponent may have floated the flop or have a medium pair that can\'t call another barrel), plus your draw equity. The K&spades; may scare opponents with Tx-type hands. This is a multi-street semi-bluff as described in Chapter 20.' }
+      ],
+      result: 'You bet 10 BB. The Button calls. Pot: 34.5 BB.'
+    },
+    river: {
+      card: '6&hearts;',
+      board: 'T&hearts; 7&clubs; 2&hearts; K&spades; 6&hearts;',
+      situation: 'River: 6&hearts;! You hit your flush! Board: T&hearts; 7&clubs; 2&hearts; K&spades; 6&hearts;. You now have a strong flush (9-high).',
+      actions: [
+        { label: 'Check (trap)', correct: false, explain: 'Checking risks missing value. Your opponent may check back with many hands that would have called a bet. The flush completing is obvious, but you still get called by sets, two pair, and stubborn top pairs.' },
+        { label: 'Bet 17 BB (50% pot)', correct: false, explain: 'This gets some value, but you have a very strong hand and your opponent has shown they are willing to call down. A larger bet extracts more from their calling range.' },
+        { label: 'Bet 25 BB (~75% pot)', correct: true, explain: 'Correct! With a flush on a board where the draw completed, you want to bet large for value. Your opponent called the flop and turn, indicating a strong hand (likely top pair+, sets, or two pair). These hands will often look you up, especially given the pot size. A large bet maximizes value from their calling range.' }
+      ],
+      result: 'You bet 25 BB. The Button calls with K&diams;T&diams; (two pair). You win with the flush. Total pot won: 84.5 BB. The semi-bluff strategy paid off across all three streets!'
+    }
+  }
+};
+
+let currentScenario = null;
+let currentStreet = null;
+
+function startWalkthrough() {
+  const pos = document.getElementById('hwPosition').value;
+  const stack = document.getElementById('hwStack').value;
+  currentScenario = scenarios[pos];
+  currentStreet = 'preflop';
+
+  document.getElementById('hwResult').innerHTML = `
+    <div style="margin-bottom:0.6rem;">
+      <span class="result-label">Your Hand:</span>
+      <span class="result-value" style="font-size:1.3rem;">${currentScenario.hand}</span>
+      <span style="color:var(--muted);"> (${currentScenario.handName})</span>
+    </div>
+    <div style="margin-bottom:0.4rem;">
+      <span class="result-label">Position:</span> ${pos} &nbsp;|&nbsp;
+      <span class="result-label">Stack:</span> ${stack} BB
+    </div>
+  `;
+
+  showStreet('preflop');
+}
+
+function showStreet(street) {
+  currentStreet = street;
+  const data = currentScenario[street];
+  const streetEl = document.getElementById('hwStreet');
+  streetEl.style.display = 'block';
+
+  const streetNames = { preflop: 'Preflop', flop: 'Flop', turn: 'Turn', river: 'River' };
+  let boardHtml = '';
+  if (data.board) {
+    boardHtml = `<div style="margin:0.5rem 0; font-size:1.1rem;"><span class="result-label">Board:</span> <span class="result-value">${data.board}</span></div>`;
+  }
+
+  let actionsHtml = data.actions.map((a, i) =>
+    `<button class="btn" style="margin:0.3rem;" onclick="selectAction('${street}', ${i})">${a.label}</button>`
+  ).join('');
+
+  streetEl.innerHTML = `
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:1.2rem; margin:1rem 0;">
+      <h4 style="color:var(--gold); margin-bottom:0.6rem;">${streetNames[street]}</h4>
+      ${boardHtml}
+      <p style="margin-bottom:0.8rem;">${data.situation}</p>
+      <div style="display:flex; flex-wrap:wrap; gap:0.3rem;">
+        ${actionsHtml}
+      </div>
+      <div id="actionResult_${street}" style="margin-top:0.8rem;"></div>
+    </div>
+  `;
+}
+
+function selectAction(street, actionIdx) {
+  const data = currentScenario[street];
+  const action = data.actions[actionIdx];
+  const resultEl = document.getElementById(`actionResult_${street}`);
+
+  const icon = action.correct ? '&#10003;' : '&#10007;';
+  const color = action.correct ? 'var(--green)' : 'var(--accent)';
+  const label = action.correct ? 'GTO Recommended!' : 'Not Optimal';
+
+  let html = `
+    <div style="padding:0.8rem; background:var(--surface); border-left:3px solid ${color}; border-radius:4px; margin-bottom:0.6rem;">
+      <div style="color:${color}; font-weight:bold; margin-bottom:0.4rem;">${icon} ${label}: ${action.label}</div>
+      <p style="font-size:0.9rem;">${action.explain}</p>
+    </div>
+  `;
+
+  if (action.correct) {
+    html += `<p style="margin:0.6rem 0; font-style:italic; color:var(--muted);">${data.result}</p>`;
+
+    const nextStreets = { preflop: 'flop', flop: 'turn', turn: 'river' };
+    const next = nextStreets[street];
+    if (next) {
+      html += `<button class="btn" style="margin-top:0.5rem;" onclick="showStreet('${next}')">Continue to ${next.charAt(0).toUpperCase() + next.slice(1)} &rarr;</button>`;
+    } else {
+      html += `<div style="padding:0.8rem; background:var(--surface); border:1px solid var(--green); border-radius:4px; margin-top:0.6rem;">
+        <div style="color:var(--green); font-weight:bold;">Hand Complete!</div>
+        <p style="margin-top:0.4rem;">You played each street according to game-theoretic principles, combining range analysis, position, equity, and bet sizing at every decision point. Try again with a different position to see a different scenario.</p>
+      </div>`;
+    }
+  }
+
+  resultEl.innerHTML = html;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 14: No-Limit Bet Sizing — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 14</span>
+    <h1>You Don't Have To Guess: No-Limit Bet Sizing</h1>
+    <p class="chapter-subtitle">How game theory determines the mathematically optimal bet size and its relationship to bluffing frequency</p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>The Freedom of No-Limit</h2>
+    <p>In limit poker, the bet sizes are fixed by the rules of the game. You can bet exactly one small bet or one big bet, and that is all. No-limit poker removes this constraint entirely: at any point, a player may bet any amount from the minimum (typically one big blind) up to their entire stack.</p>
+    <p>This freedom creates a rich and fascinating <strong>optimization problem</strong>. Rather than asking only "should I bet?" we must also ask "how much should I bet?" The answer, as we will see, depends on the relationship between bet sizing, bluffing frequency, and the opponent's optimal response.</p>
+    <p>In the previous chapters, we developed the half-street framework with fixed bet sizes. Now we allow the bettor to <em>choose</em> the bet size, and we examine how this choice affects the equilibrium strategies of both players.</p>
+  </div>
+
+  <!-- ===== BET SIZING PRINCIPLES ===== -->
+  <div class="chapter-section">
+    <h2>Optimal Bet Sizing Principles</h2>
+    <p>When choosing a bet size in no-limit poker, there are several competing forces at work. Understanding these forces is essential to finding the optimal bet size in any situation.</p>
+
+    <h3>Larger Bets Allow More Bluffing</h3>
+    <p>Recall from the half-street game that the optimal bluff-to-value ratio is determined by the pot odds the opponent is getting. When you bet larger, you offer worse pot odds to the caller, which means you can <strong>bluff more frequently</strong> without being exploited.</p>
+    <div class="math-block">
+      <span class="math-label">Bluff-to-Value Ratio</span>
+      Bluff Ratio = b / (b + P)
+    </div>
+    <p>where <em>b</em> is the bet size and <em>P</em> is the pot before the bet. As <em>b</em> increases, this ratio approaches 1 &mdash; meaning you can bluff nearly as often as you value bet.</p>
+
+    <h3>Larger Value Bets Extract More</h3>
+    <p>When you hold a strong hand and your opponent calls, a larger bet wins a larger amount. If your hand is strong enough that the opponent will call at some frequency regardless, increasing the bet size directly increases your expected value from value betting.</p>
+
+    <h3>But Larger Bets Risk More</h3>
+    <p>The counterbalancing force: when you bet larger and get called by a better hand, you lose more. This creates a natural tension. The optimal bet size balances these three forces.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Bet Sizing Tradeoff</div>
+      <p>The optimal bet size maximizes expected value by balancing three factors:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Bluff profitability</strong>: larger bets make bluffs more profitable when they succeed</li>
+        <li><strong>Value extraction</strong>: larger bets win more when called by worse hands</li>
+        <li><strong>Risk exposure</strong>: larger bets lose more when called by better hands</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== BET SIZE / BLUFF RATIO TABLE ===== -->
+  <div class="chapter-section">
+    <h2>The Bet Size / Bluff Ratio Relationship</h2>
+    <p>From the half-street framework developed in Chapter 11, we can derive the optimal bluff frequency for any bet size. The key formula connects bet size to the fraction of your betting range that should consist of bluffs.</p>
+
+    <div class="math-block">
+      <span class="math-label">Optimal Bluff Ratio Formula</span>
+      Bluff Frequency = b / (b + P)<br><br>
+      where b = bet size, P = current pot size
+    </div>
+
+    <p>Let us examine specific bet sizes relative to the pot:</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Bet Size</th>
+          <th>As Fraction of Pot</th>
+          <th>Bluff Ratio</th>
+          <th>Bluffs per Value Bet</th>
+          <th>Caller's MDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>P/3</td>
+          <td>33%</td>
+          <td>1/4 = 25%</td>
+          <td>1 bluff per 3 value bets</td>
+          <td>75%</td>
+        </tr>
+        <tr>
+          <td>P/2</td>
+          <td>50%</td>
+          <td>1/3 &approx; 33%</td>
+          <td>1 bluff per 2 value bets</td>
+          <td>67%</td>
+        </tr>
+        <tr>
+          <td>2P/3</td>
+          <td>67%</td>
+          <td>2/5 = 40%</td>
+          <td>2 bluffs per 3 value bets</td>
+          <td>60%</td>
+        </tr>
+        <tr>
+          <td>P</td>
+          <td>100%</td>
+          <td>1/2 = 50%</td>
+          <td>1 bluff per 1 value bet</td>
+          <td>50%</td>
+        </tr>
+        <tr>
+          <td>2P</td>
+          <td>200%</td>
+          <td>2/3 &approx; 67%</td>
+          <td>2 bluffs per 1 value bet</td>
+          <td>33%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="example-box">
+      <div class="example-title">Reading the Table</div>
+      <p>When you bet pot-sized (b = P), the bluff ratio is P/(P+P) = 1/2. This means for every value bet you make, you should also include one bluff in your range. Your opponent, facing a pot-sized bet, needs to call with at least 50% of their range to prevent your bluffs from being automatically profitable.</p>
+      <p>When you bet half-pot (b = P/2), the ratio drops to (P/2)/(P/2 + P) = 1/3. Now you bluff only one-third as often as you value bet &mdash; one bluff for every two value bets. Your opponent must defend more frequently (67%) because they are getting better pot odds.</p>
+    </div>
+
+    <h3>The Caller's Minimum Defense Frequency (MDF)</h3>
+    <p>The MDF is the minimum frequency at which the caller must continue to prevent the bettor's bluffs from being automatically profitable. It is the complement of the bluff ratio from the caller's perspective:</p>
+    <div class="math-block">
+      <span class="math-label">Minimum Defense Frequency</span>
+      MDF = P / (P + b) = 1 &minus; Bluff Ratio
+    </div>
+    <p>If the caller folds more than (1 &minus; MDF), the bettor profits from bluffing regardless of the cards. This is why understanding bet sizing is critical for both the bettor and the caller.</p>
+  </div>
+
+  <!-- ===== POLARIZED VS LINEAR ===== -->
+  <div class="chapter-section">
+    <h2>Polarized vs. Linear Ranges</h2>
+    <p>A crucial concept in no-limit bet sizing is the shape of the betting range. There are two fundamental approaches:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Polarized Range</div>
+      <p>A polarized betting range consists of <strong>very strong hands</strong> (value bets) and <strong>very weak hands</strong> (bluffs), while <strong>medium-strength hands are checked</strong>. The range is "split" into two poles with nothing in between.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Linear (Merged) Range</div>
+      <p>A linear betting range consists of <strong>all hands above a certain threshold</strong>. You bet with strong and medium hands, checking only the weakest portion of your range. The range forms a continuous line from strong to moderate.</p>
+    </div>
+
+    <h3>When to Use Each Strategy</h3>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Polarized ranges pair with larger bet sizes.</strong> When you bet big, you need the clear value/bluff separation. Medium hands do not benefit from a large bet because they are often behind when called.</li>
+      <li><strong>Linear ranges pair with smaller bet sizes.</strong> When you bet small, medium hands can extract thin value. The small bet does not need the extreme hand-strength separation.</li>
+      <li><strong>Board texture matters.</strong> On dry boards (few draws), smaller bets with linear ranges work well. On wet boards (many draws), polarized ranges with larger bets help protect against draws and maximize value.</li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">Polarized vs. Linear in Practice</div>
+      <p><strong>Polarized example:</strong> On the river with a pot of $100, you hold either the nuts or a busted draw. You bet $100 (pot-sized). Your range is purely strong hands and bluffs &mdash; there is no middle ground. You bluff with 50% of your betting range.</p>
+      <p><strong>Linear example:</strong> On a dry flop of <span class="poker-card black">K&spades;</span><span class="poker-card black">7&clubs;</span><span class="poker-card red">2&diams;</span>, you bet $15 into a $50 pot with all Kings, all pocket pairs above 7, and AQ/AJ. You are not bluffing at all &mdash; you are betting a continuous range of hands that can extract value from worse hands that call.</p>
+    </div>
+  </div>
+
+  <!-- ===== OVERBETTING ===== -->
+  <div class="chapter-section">
+    <h2>Overbetting: Beyond Pot-Sized Bets</h2>
+    <p>In many poker discussions, betting more than the pot ("overbetting") is considered unusual or aggressive. However, the mathematics reveals that overbetting can be <strong>optimal</strong> in the right circumstances.</p>
+
+    <h3>When Overbetting is Correct</h3>
+    <p>Overbetting becomes optimal when:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>The pot is small relative to the remaining stacks (deep-stacked play)</li>
+      <li>Your range is highly polarized &mdash; you hold either very strong hands or complete air</li>
+      <li>The opponent's range is capped &mdash; they cannot have the strongest possible hands</li>
+    </ul>
+
+    <div class="math-block">
+      <span class="math-label">Overbetting Bluff Ratio</span>
+      For a bet of 2P (twice the pot):<br>
+      Bluff Ratio = 2P / (2P + P) = 2/3 &approx; 67%<br><br>
+      For a bet of 3P (three times the pot):<br>
+      Bluff Ratio = 3P / (3P + P) = 3/4 = 75%
+    </div>
+
+    <p>The larger the overbet, the higher the allowed bluff frequency. This can be extremely profitable when the opponent's range is weak. The opponent faces a terrible decision: call a huge bet with a mediocre hand, or fold and allow frequent bluffs to succeed.</p>
+
+    <div class="example-box">
+      <div class="example-title">The Overbet Scenario</div>
+      <p>The pot is $50 and you have $200 behind. The board is <span class="poker-card red">A&hearts;</span><span class="poker-card black">K&spades;</span><span class="poker-card red">7&diams;</span><span class="poker-card black">3&clubs;</span><span class="poker-card red">2&hearts;</span>. You can represent a strong Ace or a flush/straight and your opponent likely has a medium-strength hand like KQ or QQ.</p>
+      <p>A $150 overbet (3x pot) means your bluff ratio is 75%. Out of every 4 bets you make in this spot, 3 can be bluffs and only 1 needs to be a value bet. The opponent must call with only 25% of their range &mdash; making it very difficult for them to defend properly with their capped range.</p>
+    </div>
+  </div>
+
+  <!-- ===== PRACTICAL GUIDELINES ===== -->
+  <div class="chapter-section">
+    <h2>Practical Guidelines</h2>
+    <p>While the mathematical framework provides precise answers for simplified games, real poker adds complexity. Here are the key practical takeaways:</p>
+
+    <h3>No Universal "Correct" Bet Size</h3>
+    <p>The optimal bet size depends on:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Your range:</strong> How polarized or linear is your range in this spot?</li>
+      <li><strong>Opponent's range:</strong> Is it capped? How elastic is it (how much does their calling frequency change with bet size)?</li>
+      <li><strong>Board texture:</strong> Are there draws? Is the board coordinated or dry?</li>
+      <li><strong>Stack depth:</strong> How much is left to bet on future streets?</li>
+      <li><strong>Street:</strong> On the river (last decision point), polarized strategies with larger bets are more common. On the flop, smaller bets with linear ranges are often preferred.</li>
+    </ul>
+
+    <h3>The Geometric Bet Sizing Principle</h3>
+    <p>When betting across multiple streets, the optimal approach often involves sizing bets so that the pot grows geometrically to reach all-in by the river. This ensures you use the maximum number of betting streets to build the pot.</p>
+    <div class="math-block">
+      <span class="math-label">Geometric Sizing over N Streets</span>
+      Each street's bet as fraction of pot: f = (S/P)<sup>1/N</sup> &minus; 1<br><br>
+      where S = remaining stack, P = current pot, N = streets remaining
+    </div>
+    <p>For example, if the pot is $100 and you have $700 behind with 3 streets to bet, each bet should be approximately 100% of the pot (f &approx; 1.0), growing the pot from $100 to $300 to $900 to $2700 &mdash; but since that exceeds the stack, the geometric solution is to bet roughly 91% of the pot each street.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Bet Size Optimizer ===== -->
+  <div class="interactive-widget">
+    <h3>Bet Size Optimizer</h3>
+    <p>Adjust the bet size as a fraction of the pot to see how it affects the optimal bluff-to-value ratio, the caller's minimum defense frequency, and the maximum profit from bluffing.</p>
+    <div class="widget-controls">
+      <label>
+        Pot Size ($):
+        <input type="number" id="potSize" value="100" min="1" max="10000" step="10">
+      </label>
+      <label>
+        Bet Size (% of pot):
+        <input type="range" id="betPct" value="100" min="10" max="300" step="5">
+        <span id="betPctLabel">100%</span>
+      </label>
+      <button class="btn" onclick="calcBetSize()">Analyze</button>
+    </div>
+    <div class="widget-result" id="betSizeResult">
+      <div class="result-label">Adjust the bet size and click Analyze</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>The pot is $100 and you bet $50 (half-pot). What fraction of your total betting range should be bluffs?</p>
+    <button class="quiz-option" data-correct="false">1/2 &mdash; Half your bets should be bluffs</button>
+    <button class="quiz-option" data-correct="true">1/3 &mdash; One-third of your bets should be bluffs</button>
+    <button class="quiz-option" data-correct="false">1/4 &mdash; One-quarter of your bets should be bluffs</button>
+    <button class="quiz-option" data-correct="false">2/3 &mdash; Two-thirds of your bets should be bluffs</button>
+    <div class="quiz-feedback" data-correct="Correct! The bluff ratio = b/(b+P) = 50/(50+100) = 50/150 = 1/3. So one out of every three bets you make in this spot should be a bluff, with the other two being value bets." data-incorrect="Not quite. The bluff ratio formula is b/(b+P). With b = $50 and P = $100: 50/(50+100) = 50/150 = 1/3. One-third of your betting range should be bluffs."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Polarized or Linear?</h3>
+    <p>You are on a dry flop of <span class="poker-card black">K&spades;</span><span class="poker-card black">8&clubs;</span><span class="poker-card red">3&diams;</span> and want to bet small (about 1/3 pot). Which range construction is more appropriate?</p>
+    <button class="quiz-option" data-correct="false">Polarized &mdash; bet only the nuts and bluffs</button>
+    <button class="quiz-option" data-correct="true">Linear &mdash; bet all hands above a strength threshold</button>
+    <button class="quiz-option" data-correct="false">It does not matter &mdash; range shape is irrelevant to bet sizing</button>
+    <button class="quiz-option" data-correct="false">Neither &mdash; you should always check on dry boards</button>
+    <div class="quiz-feedback" data-correct="Correct! Small bet sizes pair with linear (merged) ranges. On a dry board with a small bet, medium-strength hands like KJ, KT, 88, or even QQ can extract thin value. There is no need for the extreme polarization that larger bets require." data-incorrect="Small bet sizes work best with linear (merged) ranges. When you bet small, medium hands can profitably bet for thin value. Polarized ranges (only nuts and bluffs) are better suited to larger bet sizes where medium hands gain nothing from betting."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>In no-limit poker, the <strong>bet size is a strategic variable</strong> that must be optimized alongside the decision to bet at all.</li>
+      <li>The optimal <strong>bluff-to-value ratio</strong> is b/(b+P), where b is the bet and P is the pot. Larger bets permit more bluffs.</li>
+      <li>The caller's <strong>minimum defense frequency</strong> is P/(P+b). Folding more than this makes the bettor's bluffs automatically profitable.</li>
+      <li><strong>Polarized ranges</strong> (strong hands + bluffs) pair with larger bets; <strong>linear ranges</strong> (all hands above a threshold) pair with smaller bets.</li>
+      <li><strong>Overbetting</strong> (betting more than the pot) is optimal when the pot is small relative to stacks and your range is highly polarized against a capped opponent.</li>
+      <li>No single "correct" bet size exists &mdash; the optimal size depends on <strong>your range, the opponent's range, board texture, stack depth, and street</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-13.html">&larr; Chapter 13: The AKQ Game</a>
+    <a href="chapter-15.html">Chapter 15: Full-Street Games &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcBetSize() {
+  const P = parseFloat(document.getElementById('potSize').value) || 100;
+  const pct = parseInt(document.getElementById('betPct').value) || 100;
+  const b = P * pct / 100;
+
+  const bluffRatio = b / (b + P);
+  const mdf = P / (P + b);
+  const bluffEV = (1 - mdf) * P; // EV of a bluff when opponent plays MDF
+
+  // Value bets per bluff
+  const valuePer = bluffRatio > 0 ? (1 - bluffRatio) / bluffRatio : Infinity;
+
+  // Simplify the ratio
+  function simplifyRatio(num, den) {
+    function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+    const g = gcd(Math.round(num * 100), Math.round(den * 100));
+    return [Math.round(num * 100 / g), Math.round(den * 100 / g)];
+  }
+
+  const [bNum, bDen] = simplifyRatio(bluffRatio, 1);
+
+  document.getElementById('betSizeResult').innerHTML = `
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div>
+        <div class="result-label">Bet Size</div>
+        <div class="result-value" style="font-size:1.1rem;">$${b.toFixed(0)}</div>
+        <div style="color:var(--muted); font-size:0.85rem;">${pct}% of $${P.toFixed(0)} pot</div>
+      </div>
+      <div>
+        <div class="result-label">Bluff Ratio</div>
+        <div class="result-value" style="font-size:1.1rem;">${(bluffRatio * 100).toFixed(1)}%</div>
+        <div style="color:var(--muted); font-size:0.85rem;">of total betting range</div>
+      </div>
+      <div>
+        <div class="result-label">Caller's MDF</div>
+        <div class="result-value" style="font-size:1.1rem;">${(mdf * 100).toFixed(1)}%</div>
+        <div style="color:var(--muted); font-size:0.85rem;">must call at least this often</div>
+      </div>
+      <div>
+        <div class="result-label">Composition</div>
+        <div class="result-value" style="font-size:1.1rem;">1 bluff : ${valuePer.toFixed(1)} value</div>
+        <div style="color:var(--muted); font-size:0.85rem;">bets in your range</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border); color:var(--muted); font-size:0.85rem;">
+      Pot odds for caller: ${(b / (P + b) * 100).toFixed(1)}% equity needed to call &nbsp;|&nbsp;
+      If opponent folds 100%: you profit $${P.toFixed(0)} per bluff
+    </div>
+  `;
+}
+
+document.getElementById('betPct').addEventListener('input', function() {
+  document.getElementById('betPctLabel').textContent = this.value + '%';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,446 @@
+/* ===== Chapter Page Styles ===== */
+/* Extends the base style.css for individual chapter teaching pages */
+
+/* ===== Typography ===== */
+.chapter-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.chapter-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--accent);
+}
+
+.chapter-header .chapter-number {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.chapter-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.chapter-header .chapter-subtitle {
+  color: var(--muted);
+  font-size: 1.05rem;
+  font-style: italic;
+}
+
+/* ===== Sections ===== */
+.chapter-section {
+  margin-bottom: 2.5rem;
+}
+
+.chapter-section h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--accent-hi);
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.chapter-section h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--gold);
+}
+
+.chapter-section p {
+  margin-bottom: 1rem;
+  line-height: 1.75;
+}
+
+/* ===== Math Blocks ===== */
+.math-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  font-family: 'Courier New', monospace;
+  overflow-x: auto;
+}
+
+.math-block .math-label {
+  display: block;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+/* ===== Definition Boxes ===== */
+.definition-box {
+  background: linear-gradient(135deg, rgba(201,56,42,0.08), rgba(201,56,42,0.02));
+  border: 1px solid rgba(201,56,42,0.3);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+}
+
+.definition-box .def-term {
+  font-weight: 700;
+  color: var(--accent-hi);
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+
+.definition-box p {
+  margin-bottom: 0.5rem;
+}
+
+/* ===== Example Boxes ===== */
+.example-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.example-box .example-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+}
+
+.example-box .example-title::before {
+  content: '\2660';
+  font-size: 1.2rem;
+}
+
+/* ===== Interactive Widgets ===== */
+.interactive-widget {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.interactive-widget::before {
+  content: 'Interactive';
+  position: absolute;
+  top: -0.6rem;
+  left: 1rem;
+  background: var(--green);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.interactive-widget h3 {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--green);
+}
+
+.widget-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.widget-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.widget-controls input[type="range"],
+.widget-controls input[type="number"] {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.95rem;
+}
+
+.widget-controls input[type="range"] {
+  width: 180px;
+  accent-color: var(--accent);
+}
+
+.widget-controls input[type="number"] {
+  width: 90px;
+}
+
+.widget-controls select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.95rem;
+}
+
+.widget-result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  font-size: 1.05rem;
+}
+
+.widget-result .result-value {
+  font-weight: 700;
+  color: var(--gold);
+  font-size: 1.3rem;
+}
+
+.widget-result .result-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Button styles */
+.btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn:hover { background: var(--accent-hi); }
+.btn:active { transform: scale(0.97); }
+
+.btn-secondary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--card); border-color: var(--accent); }
+
+/* ===== Key Concepts Box ===== */
+.key-concepts {
+  background: linear-gradient(135deg, rgba(212,160,23,0.1), rgba(212,160,23,0.03));
+  border: 1px solid rgba(212,160,23,0.3);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.key-concepts h2 {
+  color: var(--gold);
+  border: none;
+  padding: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.key-concepts h2::before {
+  content: '\2605 ';
+}
+
+.key-concepts ul {
+  list-style: none;
+  padding: 0;
+}
+
+.key-concepts li {
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  position: relative;
+  line-height: 1.6;
+}
+
+.key-concepts li::before {
+  content: '\2666';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+
+/* ===== Quiz Styles ===== */
+.quiz-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.quiz-box h3 {
+  color: var(--accent-hi);
+  margin-bottom: 1rem;
+}
+
+.quiz-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.quiz-option:hover {
+  border-color: var(--accent);
+  background: rgba(201,56,42,0.08);
+}
+
+.quiz-option.correct {
+  border-color: var(--green);
+  background: rgba(46,160,67,0.15);
+}
+
+.quiz-option.incorrect {
+  border-color: var(--accent);
+  background: rgba(201,56,42,0.15);
+}
+
+.quiz-feedback {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  display: none;
+  line-height: 1.6;
+}
+
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct { background: rgba(46,160,67,0.1); border: 1px solid rgba(46,160,67,0.3); }
+.quiz-feedback.incorrect { background: rgba(201,56,42,0.1); border: 1px solid rgba(201,56,42,0.3); }
+
+/* ===== Navigation ===== */
+.chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.chapter-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.chapter-nav a:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+/* ===== Poker Card Display ===== */
+.card-display {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin: 0 0.25rem;
+}
+
+.poker-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #1a1a2e;
+  border-radius: 3px;
+  padding: 0.1rem 0.3rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  min-width: 1.6rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.poker-card.red { color: #c9382a; }
+.poker-card.black { color: #1a1a2e; }
+
+/* ===== Tables ===== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.data-table td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.8rem;
+}
+
+.data-table tr:nth-child(even) {
+  background: rgba(255,255,255,0.02);
+}
+
+/* ===== Canvas for charts ===== */
+.chart-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.chart-container canvas {
+  max-width: 100%;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .chapter-header h1 { font-size: 1.5rem; }
+  .widget-controls { flex-direction: column; }
+  .widget-controls input[type="range"] { width: 100%; }
+  .chapter-nav { flex-direction: column; gap: 0.75rem; }
+}
