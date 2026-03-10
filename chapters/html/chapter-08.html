@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 8: Playing Accurately, Part II: Hand vs. Distribution — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part II &mdash; Chapter 8</span>
+    <h1>Playing Accurately, Part II: Hand vs. Distribution</h1>
+    <p class="chapter-subtitle">How to make optimal decisions when you know your hand but not your opponent's</p>
+  </div>
+
+
+  <div class="chapter-section">
+    <h2>From Exposed Cards to Hidden Information</h2>
+    <p>In real poker, we don't see our opponent's cards. Instead, we play our known hand against their <strong>distribution of possible hands</strong>. This chapter bridges the gap between the face-up analysis of Chapter 7 and real poker decision-making.</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>EV Against a Distribution</h2>
+    <p>To calculate the EV of an action against an opponent's range, we evaluate against every hand they could hold, weighted by probability:</p>
+    <div class="math-block">
+      <span class="math-label">Distribution EV Formula</span>
+      &lt;A, B&gt; = &Sigma; p(hand<sub>i</sub>) &times; EV(our hand vs. hand<sub>i</sub>)
+    </div>
+    <p>We sum over all hands in the opponent's distribution, multiplying each hand's probability by our EV against that specific hand.</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Worked Example: River Decision</h2>
+    <div class="example-box">
+      <div class="example-title">Value Betting the River</div>
+      <p>You hold top pair on the river. Your opponent's range is:</p>
+      <table class="data-table">
+        <tr><th>Hand Category</th><th>Probability</th><th>Result if you bet and they call</th></tr>
+        <tr><td>Sets (beats you)</td><td>10%</td><td>Lose 1 bet</td></tr>
+        <tr><td>Two pair (beats you)</td><td>15%</td><td>Lose 1 bet</td></tr>
+        <tr><td>Top pair (ties/beats)</td><td>25%</td><td>Push or small loss</td></tr>
+        <tr><td>Middle pair (you win)</td><td>15%</td><td>Win 1 bet</td></tr>
+        <tr><td>Missed draws (folds)</td><td>35%</td><td>Win pot (no call)</td></tr>
+      </table>
+      <p>Whether betting is +EV depends on how often worse hands call vs. better hands call. If only middle pair calls (15%) and sets/two pair always call (25%), you're getting called by better hands more often than worse &mdash; a bad value bet.</p>
+    </div>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Thin Value Betting</h2>
+    <div class="definition-box">
+      <div class="def-term">Thin Value Bet</div>
+      <p>A bet that expects to show profit even when called, but only narrowly &mdash; you beat <em>some</em> of the opponent's calling range but lose to other parts. The key question: is EV(bet) > EV(check)?</p>
+    </div>
+    <p>Thin value betting is one of the most important skills that separates winning players from break-even ones. It requires accurate hand reading (distribution estimation) from Chapter 5.</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>The Importance of Combinatorics</h2>
+    <p>Not all hand types are equally likely:</p>
+    <table class="data-table">
+      <tr><th>Hand Type</th><th>Combinations</th><th>Example</th></tr>
+      <tr><td>Pocket pair</td><td>6</td><td>AA = A&spades;A&hearts;, A&spades;A&diams;, A&spades;A&clubs;, A&hearts;A&diams;, A&hearts;A&clubs;, A&diams;A&clubs;</td></tr>
+      <tr><td>Suited hand</td><td>4</td><td>AKs = A&spades;K&spades;, A&hearts;K&hearts;, A&diams;K&diams;, A&clubs;K&clubs;</td></tr>
+      <tr><td>Offsuit hand</td><td>12</td><td>AKo = A&spades;K&hearts;, A&spades;K&diams;, ... (4&times;3=12 combos)</td></tr>
+    </table>
+    <p>There are <strong>twice as many AKo combos as AA combos</strong>. This dramatically affects distribution analysis.</p>
+  </div>
+
+  <div class="interactive-widget">
+    <h3>Distribution EV Calculator</h3>
+    <p>Estimate whether a river value bet is profitable against a simple range:</p>
+    <div class="widget-controls">
+      <label>Pot Size ($): <input type="number" id="pot8" value="100"></label>
+      <label>Bet Size ($): <input type="number" id="bet8" value="75"></label>
+      <label>% range that beats you and calls: <input type="number" id="betterCall8" value="25" min="0" max="100"></label>
+      <label>% range that you beat and calls: <input type="number" id="worseCall8" value="20" min="0" max="100"></label>
+      <button class="btn" onclick="calcDistEV()">Calculate</button>
+    </div>
+    <div class="widget-result" id="distResult8">
+      <div class="result-label">Set values and click Calculate</div>
+    </div>
+  </div>
+  <script>
+  function calcDistEV() {
+    const pot = parseFloat(document.getElementById('pot8').value);
+    const bet = parseFloat(document.getElementById('bet8').value);
+    const betterPct = parseFloat(document.getElementById('betterCall8').value) / 100;
+    const worsePct = parseFloat(document.getElementById('worseCall8').value) / 100;
+    const foldPct = 1 - betterPct - worsePct;
+    const evBet = foldPct * pot + worsePct * (pot + bet) - betterPct * bet;
+    const evCheck = (1 - betterPct) * pot * 0.5;
+    const diff = evBet - evCheck;
+    document.getElementById('distResult8').innerHTML =
+      '<div><span class="result-label">EV of betting:</span> <span class="result-value" style="color:' + (evBet >= 0 ? 'var(--green)' : 'var(--accent)') + '">$' + evBet.toFixed(2) + '</span></div>' +
+      '<div style="margin-top:0.4rem"><span class="result-label">Breakdown:</span> Folds ' + (foldPct*100).toFixed(0) + '% (win $' + pot + '), worse calls ' + (worsePct*100).toFixed(0) + '% (win $' + (pot+bet) + '), better calls ' + (betterPct*100).toFixed(0) + '% (lose $' + bet + ')</div>' +
+      '<div style="margin-top:0.4rem"><strong>' + (evBet > 0 ? 'BET is profitable' : 'CHECK may be better') + '</strong></div>';
+  }
+  </script>
+
+
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>Why might it be correct to value bet even when more than 50% of your opponent's <em>calling</em> range beats you?</p>
+    <button class="quiz-option" data-correct="false">It's never correct &mdash; you need to beat most of the calling range</button>
+    <button class="quiz-option" data-correct="true">Because the portion of their range that folds adds to your EV, and you still win pot when better hands fold</button>
+    <button class="quiz-option" data-correct="false">Because bluffing is always better than checking</button>
+    <div class="quiz-feedback" data-correct="Correct! The total EV of betting includes: (1) winning the pot when they fold, (2) winning pot+bet when worse calls, and (3) losing your bet when better calls. Even if most callers beat you, the fold equity can make betting profitable." data-incorrect="Consider the FULL picture: betting gains value from folds (winning the pot), from worse hands calling, and only loses when better hands call. The total EV calculation may favor betting even with an unfavorable calling range."></div>
+  </div>
+
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>In real poker, we play our known hand against the opponent's <strong>distribution of possible hands</strong>.</li>
+      <li>EV is calculated by <strong>summing over all hands</strong> in the distribution, weighted by probability.</li>
+      <li><strong>Thin value betting</strong> &mdash; betting when you beat some but not all of the calling range &mdash; is a key skill.</li>
+      <li><strong>Combinatorics matter</strong>: there are 6 combos of a pair, 4 suited, and 12 offsuit combos of unpaired hands.</li>
+      <li>Against unknown opponents, use a <strong>default distribution</strong> and refine as you gather information.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-07.html">&larr; Previous Chapter</a>
+    <a href="chapter-09.html">Next Chapter &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+</body>
+</html>

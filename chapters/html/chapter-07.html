@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 7: Playing Accurately, Part I: Cards Exposed Situations — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part II &mdash; Chapter 7</span>
+    <h1>Playing Accurately, Part I: Cards Exposed Situations</h1>
+    <p class="chapter-subtitle">When the cards are face up, the math still isn't obvious</p>
+  </div>
+
+
+  <div class="chapter-section">
+    <h2>The Two-Step Exploitive Process</h2>
+    <p>Exploitive play has two steps: (1) read your opponent's hand/strategy (Chapter 5), and (2) calculate the EV of each action and choose the highest. This chapter focuses on step two in the simplest setting &mdash; where both players' cards are exposed.</p>
+    <p>You might think face-up poker is trivial: made hands bet, draws call or fold based on pot odds. But Chen and Ankenman show that <strong>some interesting, non-intuitive situations arise</strong> even with perfect information.</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Example: 7-Card Stud with Exposed Hands</h2>
+    <div class="example-box">
+      <div class="example-title">Example 7.1 &mdash; Straight Draw vs. Flush Draw</div>
+      <p>$30-$60 7-card stud. Player X has <span class="poker-card black">A&spades;</span><span class="poker-card red">K&diams;</span><span class="poker-card red">Q&hearts;</span><span class="poker-card black">J&spades;</span><span class="poker-card black">T&clubs;</span> (straight draw). Player Y has <span class="poker-card black">A&spades;</span><span class="poker-card black">T&spades;</span><span class="poker-card black">8&spades;</span><span class="poker-card black">5&spades;</span><span class="poker-card black">2&clubs;</span> (flush draw).</p>
+      <p>Pot: $400. Player Y has only $120 left. Player X covers.</p>
+      <p><strong>Key Insight:</strong> X should NOT bet on 5th street despite being ahead! Y has the correct odds to call AND raise. Betting creates a worse situation for X because it allows Y to get all remaining chips in with correct odds.</p>
+    </div>
+  </div>
+
+  <div class="chapter-section">
+    <h2>The Semi-Bluff with Exposed Cards</h2>
+    <p>Even with cards face up, the semi-bluff can be correct when the pot is large relative to remaining bets. The draw can bet because the made hand cannot profitably call in certain stack configurations.</p>
+    <p>This counterintuitive result demonstrates that poker's complexity goes beyond hidden information &mdash; the <strong>game tree structure itself</strong> (bet sizes, stack depths, pot size) creates strategic richness.</p>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Free Card Play</h2>
+    <p>Sometimes a draw should <strong>raise</strong> to get a "free card" on the next street. The idea: if you raise the flop, the opponent often checks to you on the turn, allowing you to see the river without putting in another bet.</p>
+    <div class="definition-box">
+      <div class="def-term">Free Card Play</div>
+      <p>Raising with a drawing hand to induce a check on the next street, effectively getting to see an additional card without paying a full bet. Works because the opponent, having been raised, fears betting into a potential made hand.</p>
+    </div>
+  </div>
+
+  <div class="chapter-section">
+    <h2>Position, Stack Size, and Pot Size Interactions</h2>
+    <p>The correct play in exposed-card games depends heavily on three interacting factors:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Position:</strong> Acting last provides information advantage even with exposed cards</li>
+      <li><strong>Stack sizes:</strong> Short stacks limit the game tree, changing optimal decisions</li>
+      <li><strong>Pot size:</strong> Large pots relative to remaining bets favor the draw (better odds)</li>
+    </ul>
+    <p>The lesson: even in the simplest possible poker scenario, correct play requires careful analysis of all these factors together.</p>
+  </div>
+
+  <div class="interactive-widget">
+    <h3>Pot Odds in Exposed Games</h3>
+    <p>Calculate whether a draw should call with cards face up:</p>
+    <div class="widget-controls">
+      <label>Pot Size ($): <input type="number" id="potSize7" value="400" min="0"></label>
+      <label>Bet to Call ($): <input type="number" id="betSize7" value="60" min="0"></label>
+      <label>Outs (cards that win): <input type="number" id="outs7" value="9" min="0" max="20"></label>
+      <label>Cards Remaining: <input type="number" id="remaining7" value="42" min="1" max="50"></label>
+      <button class="btn" onclick="calcExposed()">Analyze</button>
+    </div>
+    <div class="widget-result" id="exposedResult7">
+      <div class="result-label">Enter values and click Analyze</div>
+    </div>
+  </div>
+  <script>
+  function calcExposed() {
+    const pot = parseFloat(document.getElementById('potSize7').value);
+    const bet = parseFloat(document.getElementById('betSize7').value);
+    const outs = parseInt(document.getElementById('outs7').value);
+    const remaining = parseInt(document.getElementById('remaining7').value);
+    const pWin = outs / remaining;
+    const potOdds = bet / (pot + bet);
+    const ev = pWin * (pot + bet) - bet;
+    const shouldCall = pWin > potOdds;
+    document.getElementById('exposedResult7').innerHTML = 
+      '<div><span class="result-label">Win probability:</span> <span class="result-value">' + (pWin*100).toFixed(1) + '%</span> (' + outs + '/' + remaining + ')</div>' +
+      '<div style="margin-top:0.4rem"><span class="result-label">Pot odds needed:</span> <span class="result-value">' + (potOdds*100).toFixed(1) + '%</span></div>' +
+      '<div style="margin-top:0.4rem"><span class="result-label">EV of calling:</span> <span class="result-value" style="color:' + (ev >= 0 ? 'var(--green)' : 'var(--accent)') + '">' + (ev >= 0 ? '+' : '') + '$' + ev.toFixed(2) + '</span></div>' +
+      '<div style="margin-top:0.4rem"><strong>' + (shouldCall ? 'CALL — you have the odds' : 'FOLD — insufficient odds') + '</strong></div>';
+  }
+  </script>
+
+
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>In a face-up game, you have a made hand (top pair) against a flush draw. The pot is $300, your opponent has only $50 left. Should you bet?</p>
+    <button class="quiz-option" data-correct="false">Always bet &mdash; you're ahead</button>
+    <button class="quiz-option" data-correct="true">It depends &mdash; with such a small remaining stack, the opponent will call regardless and may even raise profitably</button>
+    <button class="quiz-option" data-correct="false">Never bet &mdash; let the draw miss for free</button>
+    <div class="quiz-feedback" data-correct="Correct! With a tiny stack relative to the pot, the draw has overwhelming odds to call any bet. The strategic question becomes about how the remaining chips go in, not whether to bet." data-incorrect="When the remaining stack is small relative to the pot, the draw's odds are so good that they'll always call. The key insight from this chapter is that the interaction of pot size, stack size, and position creates non-obvious optimal plays."></div>
+  </div>
+
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>Even with <strong>cards face up</strong>, poker decisions can be non-trivial due to game tree structure.</li>
+      <li>The correct play depends on the interaction of <strong>position, stack sizes, and pot size</strong>.</li>
+      <li><strong>Semi-bluffs can be correct</strong> even when the opponent can see your cards, in certain configurations.</li>
+      <li>The <strong>free card play</strong> &mdash; raising with a draw to get a cheaper path to showdown &mdash; exploits opponent's predictable check-to-raiser tendency.</li>
+      <li>Exposed-card games teach us about the <strong>structural elements</strong> of poker strategy independent of hidden information.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-06.html">&larr; Previous Chapter</a>
+    <a href="chapter-08.html">Next Chapter &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+</body>
+</html>
