@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 2: Variance and Sample Outcomes — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part I &mdash; Chapter 2</span>
+    <h1>Predicting the Future: Variance and Sample Outcomes</h1>
+    <p class="chapter-subtitle">Why even winning players have losing sessions &mdash; and what the math says about it</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-02.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>Beyond Expected Value</h2>
+    <p>Expected value tells us our long-run average result. But poker isn't played in the long run &mdash; it's played one hand, one session, one month at a time. <strong>Variance</strong> measures how far your actual results may stray from expectation.</p>
+    <p>Chen and Ankenman note that poker players tend to view variance as a one-sided phenomenon, only noticing downswings while assuming upswings represent their "true" win rate. This <strong>perception bias</strong> leads to overestimating one's actual edge. Understanding variance mathematically corrects this bias.</p>
+  </div>
+
+  <!-- ===== VARIANCE ===== -->
+  <div class="chapter-section">
+    <h2>Variance: Measuring Dispersion</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Variance (V<sub>P</sub>)</div>
+      <p>For a probability distribution P where each of the <em>n</em> outcomes has a value x<sub>i</sub> and probability p<sub>i</sub>:</p>
+      <div class="math-block">
+        <span class="math-label">Equation 2.1</span>
+        V<sub>P</sub> = &Sigma; p<sub>i</sub> &times; (x<sub>i</sub> &minus; &lt;P&gt;)&sup2;
+      </div>
+      <p>Variance is always positive (since each term is squared). It measures the <strong>average squared distance from the mean</strong>.</p>
+    </div>
+
+    <h3>Comparing Two Games</h3>
+    <p>Both games below have EV = 0, but very different variances:</p>
+
+    <div class="example-box">
+      <div class="example-title">Coin Flip: Win or lose 1 unit</div>
+      <p>V<sub>C</sub> = (1/2)(1 &minus; 0)&sup2; + (1/2)(-1 &minus; 0)&sup2; = (1/2)(1) + (1/2)(1) = <strong>1</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Die Roll: Win 5 on a six, lose 1 otherwise</div>
+      <p>V<sub>D</sub> = (5/6)(-1 &minus; 0)&sup2; + (1/6)(5 &minus; 0)&sup2; = (5/6)(1) + (1/6)(25) = <strong>5</strong></p>
+      <p>Five times the variance of the coin flip! The die roll game has much more "swinginess" even though both games are fair.</p>
+    </div>
+
+    <h3>Standard Deviation</h3>
+    <div class="definition-box">
+      <div class="def-term">Standard Deviation (&sigma;)</div>
+      <p>The square root of variance: <strong>&sigma; = &radic;V</strong></p>
+      <p>Standard deviation is in the same units as the outcomes (dollars, big bets) making it easier to compare directly to expected value.</p>
+    </div>
+
+    <p>In poker, a loose-wild game has much higher variance than a tight-passive one. Your style also affects variance &mdash; thin value bets and semi-bluff raises are higher-variance plays that may increase EV, both, or neither.</p>
+  </div>
+
+  <!-- ===== ADDITIVITY ===== -->
+  <div class="chapter-section">
+    <h2>The Square Root Law</h2>
+
+    <p><strong>Variance is additive across trials.</strong> This gives rise to a crucial relationship:</p>
+
+    <div class="math-block">
+      <span class="math-label">Equation 2.4 &mdash; Standard Deviation Scales with &radic;N</span>
+      &sigma;<sub>N</sub> = &sigma; &times; &radic;N
+    </div>
+
+    <p>If one coin flip has &sigma; = 0.5, then 100 flips have &sigma;<sub>100</sub> = 0.5 &times; &radic;100 = <strong>5</strong> (not 50!).</p>
+
+    <p>This square root relationship is profound: as you play more hands, the standard deviation grows, but <strong>much more slowly than the expected value</strong>. Your EV grows linearly (proportional to N), while your standard deviation grows only as &radic;N. This is why a positive edge eventually dominates &mdash; the <strong>law of large numbers</strong>.</p>
+  </div>
+
+  <!-- ===== NORMAL DISTRIBUTION ===== -->
+  <div class="chapter-section">
+    <h2>The Normal Distribution &amp; Central Limit Theorem</h2>
+
+    <p>The <strong>Central Limit Theorem (CLT)</strong> is one of the most powerful results in statistics: regardless of the underlying distribution, the distribution of sample sums approaches a <strong>normal (bell) distribution</strong> as sample size increases.</p>
+
+    <div class="math-block">
+      <span class="math-label">Equation 2.5 &mdash; Normal Distribution</span>
+      N(x, &mu;, &sigma;) = (1/(&sigma;&radic;2&pi;)) &times; exp(-(x-&mu;)&sup2; / (2&sigma;&sup2;))
+    </div>
+
+    <h3>Key Probabilities</h3>
+    <table class="data-table">
+      <tr><th>Range</th><th>Probability</th><th>Meaning</th></tr>
+      <tr><td>&mu; &plusmn; 1&sigma;</td><td>68%</td><td>Results within 1 standard deviation of the mean</td></tr>
+      <tr><td>&mu; &plusmn; 2&sigma;</td><td>95.5%</td><td>Results within 2 standard deviations</td></tr>
+      <tr><td>&mu; &plusmn; 3&sigma;</td><td>99.7%</td><td>Results within 3 standard deviations</td></tr>
+    </table>
+
+    <h3>Z-Scores</h3>
+    <div class="math-block">
+      <span class="math-label">Equation 2.6</span>
+      z = (x &minus; &mu;) / &sigma;
+    </div>
+    <p>A z-score tells us how many standard deviations a result is from the mean. We can use the cumulative normal distribution &Phi;(z) to find the probability of being above or below any given point.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Session Simulator ===== -->
+  <div class="interactive-widget">
+    <h3>Winning Session Calculator</h3>
+    <p>How often will you have a winning session? Enter your stats:</p>
+    <div class="widget-controls">
+      <label>
+        Win rate (BB/hand):
+        <input type="number" id="winRate" value="0.015" step="0.005" min="-0.1" max="0.5">
+      </label>
+      <label>
+        Std dev (BB/hand):
+        <input type="number" id="stdDev" value="2" step="0.1" min="0.1" max="10">
+      </label>
+      <label>
+        Hands per session:
+        <input type="number" id="sessionHands" value="300" step="50" min="10" max="10000">
+      </label>
+      <button class="btn" onclick="calcWinSession()">Calculate</button>
+    </div>
+    <div class="widget-result" id="sessionResult">
+      <div class="result-label">Enter your parameters and click Calculate</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="sessionChart" width="600" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== THE BOOK'S EXAMPLES ===== -->
+  <div class="chapter-section">
+    <h2>Worked Examples from the Book</h2>
+
+    <div class="example-box">
+      <div class="example-title">Die Roll Game (D2)</div>
+      <p>Lose 1 unit on rolls 1-5, win 6 units on a 6.</p>
+      <p><strong>EV per trial:</strong> (5/6)(-1) + (1/6)(6) = <strong>1/6 units</strong></p>
+      <p><strong>Variance:</strong> (1/6)(6 &minus; 1/6)&sup2; + (5/6)(-1 &minus; 1/6)&sup2; &approx; <strong>6.806</strong></p>
+      <p><strong>&sigma;</strong> = &radic;6.806 &approx; 2.61</p>
+      <p>After 200 rolls: &mu;<sub>200</sub> = 33.33, &sigma;<sub>200</sub> = 36.89</p>
+      <table class="data-table">
+        <tr><th>Question</th><th>Normal Approx</th><th>Direct Calculation</th></tr>
+        <tr><td>Chance of being ahead</td><td>81.69%</td><td>81.96%</td></tr>
+        <tr><td>Ahead at least 40 units</td><td>42.83%</td><td>40.46%</td></tr>
+        <tr><td>Ahead at least 100 units</td><td>3.54%</td><td>4.44%</td></tr>
+      </table>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">The Winning Session Problem</div>
+      <p>A player wins 0.015 BB/hand with &sigma; = 2 BB/hand, playing 300-hand sessions.</p>
+      <p>&mu;<sub>300</sub> = 0.015 &times; 300 = <strong>4.5 BB</strong></p>
+      <p>&sigma;<sub>300</sub> = 2 &times; &radic;300 = <strong>34.6 BB</strong></p>
+      <p>z<sub>0</sub> = (0 &minus; 4.5) / 34.6 = -0.1299</p>
+      <p>&Phi;(-0.1299) = 44.83%</p>
+      <p><strong>Winning sessions: 55.17%</strong> &mdash; even a solid winner has losing sessions nearly 45% of the time!</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">The AK vs AQ Claim</div>
+      <p>A player claimed that in 2,000 observed AK vs AQ all-in confrontations online, they ran 50-50. AK should win ~73.5%.</p>
+      <p>&mu;<sub>2000</sub> = 2000 &times; 0.735 = 1470 wins for AK</p>
+      <p>&sigma;<sub>2000</sub> = 0.4413 &times; &radic;2000 = 19.74</p>
+      <p>z<sub>1000</sub> = (1000 &minus; 1470) / 19.74 = <strong>-23.8</strong></p>
+      <p>This is 23.8 standard deviations from the mean &mdash; a staggeringly impossible result if the cards were fair. The player was almost certainly exaggerating, lying, or affected by perception bias.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Variance Explorer ===== -->
+  <div class="interactive-widget">
+    <h3>Confidence Interval Explorer</h3>
+    <p>See how sample size affects the range of likely outcomes for a poker player:</p>
+    <div class="widget-controls">
+      <label>
+        Win rate ($/hand):
+        <input type="number" id="ciWinRate" value="0.75" step="0.25">
+      </label>
+      <label>
+        Std dev ($/hand):
+        <input type="number" id="ciStdDev" value="80" step="5">
+      </label>
+    </div>
+    <table class="data-table" id="ciTable">
+      <tr><th>Hands</th><th>&mu;<sub>N</sub></th><th>&sigma;<sub>N</sub></th><th>95.5% Low</th><th>95.5% High</th></tr>
+    </table>
+    <button class="btn" onclick="calcCI()" style="margin-top:0.5rem">Calculate</button>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Conceptual Check</h3>
+    <p>A player has an edge of 2 BB/100 hands with a standard deviation of 15 BB/100. After 10,000 hands, approximately what is the probability they are losing money?</p>
+    <button class="quiz-option" data-correct="false">~50% (it's nearly a coin flip)</button>
+    <button class="quiz-option" data-correct="false">~35% (substantial downswing risk)</button>
+    <button class="quiz-option" data-correct="true">~9% (unlikely but far from impossible)</button>
+    <button class="quiz-option" data-correct="false">~1% (virtually guaranteed to be ahead)</button>
+    <div class="quiz-feedback" data-correct="Correct! After 10,000 hands (100 sets of 100), &mu; = 200 BB and &sigma; = 15 &times; &radic;100 = 150 BB. z = (0-200)/150 = -1.33. &Phi;(-1.33) &approx; 9.2%. A meaningful chance of being in the red even with a genuine edge." data-incorrect="After 10,000 hands: &mu; = 2 &times; 100 = 200 BB, &sigma; = 15 &times; &radic;100 = 150 BB. z = -200/150 = -1.33. &Phi;(-1.33) &approx; 9.2%."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Variance</strong>, the weighted sum of squared distances from the mean, measures dispersion from expectation.</li>
+      <li><strong>Standard deviation</strong> (&sigma; = &radic;V) puts variance in the same units as outcomes, making comparison easier.</li>
+      <li><strong>Variance is additive</strong> across independent trials, giving rise to the &sigma;<sub>N</sub> = &sigma;&radic;N relationship.</li>
+      <li>The <strong>Central Limit Theorem</strong> tells us sample distributions approach normality as sample size grows, enabling z-score analysis.</li>
+      <li>The <strong>law of large numbers</strong> means relative closeness to the mean increases with sample size, even as absolute spread grows.</li>
+      <li>Even winning poker players have losing sessions frequently &mdash; understanding variance prevents perception bias and tilt.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-01.html">&larr; Chapter 1: Probability</a>
+    <a href="chapter-03.html">Chapter 3: Bayes' Theorem &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcWinSession() {
+  const wr = parseFloat(document.getElementById('winRate').value);
+  const sd = parseFloat(document.getElementById('stdDev').value);
+  const n = parseInt(document.getElementById('sessionHands').value);
+
+  const mu = wr * n;
+  const sigma = sd * Math.sqrt(n);
+  const z = (0 - mu) / sigma;
+  const pLose = normalCDF(z);
+  const pWin = 1 - pLose;
+
+  document.getElementById('sessionResult').innerHTML = `
+    <div><span class="result-label">Session EV (&mu;):</span> <span class="result-value">${mu.toFixed(1)} BB</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Session Std Dev (&sigma;):</span> <span class="result-value">${sigma.toFixed(1)} BB</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">z-score at breakeven:</span> ${z.toFixed(4)}</div>
+    <div style="margin-top:0.6rem"><span class="result-label">Winning session probability:</span> <span class="result-value" style="color:var(--green)">${(pWin*100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Losing session probability:</span> <span class="result-value" style="color:var(--accent)">${(pLose*100).toFixed(1)}%</span></div>
+  `;
+
+  // Draw distribution
+  drawNormalCurve('sessionChart', mu, sigma, {
+    title: `Session Results Distribution (${n} hands)`,
+    shadeFrom: 0,
+    shadeTo: mu + 4 * sigma
+  });
+}
+
+function calcCI() {
+  const wr = parseFloat(document.getElementById('ciWinRate').value);
+  const sd = parseFloat(document.getElementById('ciStdDev').value);
+  const handCounts = [100, 500, 1000, 5000, 25000, 50000, 100000, 1000000];
+
+  let html = '<tr><th>Hands</th><th>&mu;<sub>N</sub></th><th>&sigma;<sub>N</sub></th><th>95.5% Low</th><th>95.5% High</th></tr>';
+  handCounts.forEach(n => {
+    const mu = wr * n;
+    const sigma = sd * Math.sqrt(n);
+    const lo = mu - 2 * sigma;
+    const hi = mu + 2 * sigma;
+    html += `<tr>
+      <td>${n.toLocaleString()}</td>
+      <td>$${mu.toFixed(0)}</td>
+      <td>$${sigma.toFixed(0)}</td>
+      <td style="color:${lo < 0 ? 'var(--accent)' : 'var(--green)'}">$${lo.toFixed(0)}</td>
+      <td style="color:var(--green)">$${hi.toFixed(0)}</td>
+    </tr>`;
+  });
+  document.getElementById('ciTable').innerHTML = html;
+}
+
+// Auto-calculate on load
+calcCI();
+</script>
+</body>
+</html>

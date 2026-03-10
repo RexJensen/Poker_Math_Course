@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 20: Drawing Out &mdash; Non-Static Multi-Street Games &mdash; Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 20</span>
+    <h1>Drawing Out: Non-Static Multi-Street Games</h1>
+    <p class="chapter-subtitle">When hand values change between streets, protection, semi-bluffs, and implied odds reshape optimal strategy</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-20.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== NON-STATIC GAMES ===== -->
+  <div class="chapter-section">
+    <h2>Non-Static = Draws Exist</h2>
+    <p>In the static toy games studied in earlier chapters, the player who holds the best hand on the flop still holds the best hand on the river. Real poker is fundamentally different. In <strong>non-static games</strong>, hand values change between streets:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li><strong>Draws</strong> can improve to the best hand on later streets.</li>
+      <li><strong>Made hands</strong> can be overtaken when an opponent's draw completes.</li>
+      <li>The possibility of future improvement creates strategic options that simply do not exist in static games.</li>
+    </ul>
+    <p>This is the reality of poker. Most interesting strategic decisions arise precisely because the game is non-static &mdash; players must weigh what might happen on future streets, not just what is true right now.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Static vs. Non-Static Games</div>
+      <p><strong>Static game:</strong> The relative hand rankings cannot change on future streets. The best hand now will remain the best hand. Example: a river decision (no more cards to come).</p>
+      <p><strong>Non-static game:</strong> Future cards can alter hand rankings. Draws exist, and made hands can be outdrawn. Example: flop play with two streets remaining.</p>
+    </div>
+  </div>
+
+  <!-- ===== DRAW'S STRATEGIC ADVANTAGE ===== -->
+  <div class="chapter-section">
+    <h2>The Draw's Strategic Advantage</h2>
+    <p>In non-static games, holding a draw provides strategic options beyond simply hoping to hit:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Semi-Bluffing</div>
+      <p>Betting or raising with a hand that is currently behind but has outs to improve. Coined by David Sklansky, the semi-bluff is only possible in non-static games. You combine the chance of winning the pot immediately (fold equity) with the chance of making the best hand if called (draw equity).</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Implied Odds</div>
+      <p>The additional money you expect to win on future streets if you complete your draw. Unlike <strong>pot odds</strong> (which consider only the current pot), implied odds factor in the likelihood that your opponent will put more money in after you hit. Draws in non-static games often have significant implied odds, making calls profitable even when direct pot odds are insufficient.</p>
+    </div>
+
+    <p>Additionally, the <strong>uncertainty of draws</strong> makes the opponent's decisions harder. When a player might hold either a made hand or a draw, the opponent cannot perfectly calibrate their response. This informational advantage is a key reason why aggressive play with draws is often correct.</p>
+  </div>
+
+  <!-- ===== PROTECTION REVISITED ===== -->
+  <div class="chapter-section">
+    <h2>Protection Revisited</h2>
+    <p>In static games, betting serves one primary purpose: <strong>extracting value</strong> from worse hands that will call. In non-static games, betting acquires a second critical function: <strong>protecting your hand</strong> against draws.</p>
+
+    <div class="example-box">
+      <div class="example-title">Why Protection Matters</div>
+      <p>Suppose you hold top pair on a flop with a flush draw possible. If you check, your opponent with a flush draw gets a free card &mdash; a chance to complete the draw without paying anything. If the flush hits, you lose a pot you could have won.</p>
+      <p>By betting, you accomplish two things simultaneously:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>You charge draws to continue.</strong> If they call with insufficient odds, they make a mistake &mdash; your profit.</li>
+        <li><strong>You may win the pot immediately.</strong> The draw might fold, conceding the pot without seeing another card.</li>
+      </ul>
+      <p>This dual purpose adds <strong>urgency</strong> to betting. In static games you can afford to slow-play; in non-static games, delay can be costly.</p>
+    </div>
+
+    <p>Chen and Ankenman emphasize that protection is not about "chasing away draws" per se &mdash; it is about <strong>making opponents pay the mathematically correct price</strong> for their drawing chances. If a draw has 20% equity, a bet that offers worse than 4:1 odds forces a mistake.</p>
+  </div>
+
+  <!-- ===== SEMI-BLUFF EV DECOMPOSITION ===== -->
+  <div class="chapter-section">
+    <h2>Semi-Bluff EV Decomposition</h2>
+    <p>The expected value of a semi-bluff can be broken into two independent components, making it one of the most powerful plays in poker:</p>
+
+    <div class="math-block">
+      <span class="math-label">Semi-Bluff EV Formula</span>
+      EV = P(fold) &times; (pot) + P(call) &times; [equity &times; (pot + bet) &minus; (1 &minus; equity) &times; bet]
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Component 1: Fold Equity</div>
+      <p>The probability that your opponent folds, multiplied by the pot you win. This component exists even if your draw has 0% chance of improving &mdash; it is pure bluff value. In a semi-bluff, this is your "first way to win."</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Component 2: Draw Equity</div>
+      <p>When called, you still have outs to improve. If you complete your draw, you win the now-larger pot. This is the "second way to win" &mdash; and it is what distinguishes a semi-bluff from a pure bluff.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Numerical Example</div>
+      <p>You hold a flush draw (9 outs, roughly 35% equity over two streets). The pot is $100 and you bet $75.</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>Suppose villain folds 40% of the time.</li>
+        <li>When called, your equity is 35%.</li>
+      </ul>
+      <div class="math-block">
+        EV = 0.40 &times; $100 + 0.60 &times; [0.35 &times; $175 &minus; 0.65 &times; $75]
+        <br>EV = $40 + 0.60 &times; [$61.25 &minus; $48.75]
+        <br>EV = $40 + 0.60 &times; $12.50
+        <br>EV = $40 + $7.50 = <strong>$47.50</strong>
+      </div>
+      <p>Compare this to checking (EV = 0 if you give up, or just your draw equity if you check-call). The semi-bluff is substantially more profitable because it combines fold equity with draw equity.</p>
+    </div>
+  </div>
+
+  <!-- ===== THE CHECK-CALL PROBLEM ===== -->
+  <div class="chapter-section">
+    <h2>The Check-Call Problem</h2>
+    <p>Made hands facing aggressive draws encounter a strategic dilemma that Chen and Ankenman analyze in detail:</p>
+
+    <div class="example-box">
+      <div class="example-title">The Dilemma of the Made Hand</div>
+      <table class="data-table">
+        <tr><th>Action</th><th>Problem</th></tr>
+        <tr><td><strong>Check</strong></td><td>Gives draws a free card to improve. If opponent also checks, you miss value. If opponent bets as a semi-bluff, you face a tough call-or-fold decision.</td></tr>
+        <tr><td><strong>Bet small</strong></td><td>Gives draws a cheap price to call. May not charge enough to protect your hand, and a semi-bluff raise puts you in a difficult spot.</td></tr>
+        <tr><td><strong>Bet large</strong></td><td>Charges draws properly, but folds out worse made hands. You only get called by hands that beat you or have significant equity against you.</td></tr>
+      </table>
+      <p>There is no perfect solution. This is exactly why non-static games are strategically richer than static ones: the existence of draws creates genuine dilemmas for both sides.</p>
+    </div>
+  </div>
+
+  <!-- ===== MULTI-STREET DRAW STRATEGIES ===== -->
+  <div class="chapter-section">
+    <h2>Multi-Street Draw Strategies</h2>
+    <p>Not all draws should be played the same way. The optimal strategy depends on the interplay between fold equity and draw strength:</p>
+
+    <table class="data-table">
+      <tr><th>Draw Type</th><th>Strategy</th><th>Reasoning</th></tr>
+      <tr>
+        <td><strong>Strong draw, high fold equity</strong></td>
+        <td>Aggressive semi-bluff (bet or raise)</td>
+        <td>Two robust ways to win. Even if called, you have many outs. Maximum EV play.</td>
+      </tr>
+      <tr>
+        <td><strong>Strong draw, low fold equity</strong></td>
+        <td>Passive draw (check-call)</td>
+        <td>Fold equity is minimal, so betting gains little. Your strong equity justifies calling. Implied odds compensate.</td>
+      </tr>
+      <tr>
+        <td><strong>Weak draw, high fold equity</strong></td>
+        <td>Semi-bluff (lean on fold equity)</td>
+        <td>Few outs but opponent folds often. Most of your EV comes from fold equity. If called, you occasionally get lucky.</td>
+      </tr>
+      <tr>
+        <td><strong>Weak draw, low fold equity</strong></td>
+        <td>Check-fold (abandon)</td>
+        <td>Neither fold equity nor draw equity is sufficient. Investing more is negative EV.</td>
+      </tr>
+    </table>
+
+    <p>The key insight: <strong>draw strength and fold equity are substitutes</strong>. You need a sufficient combination of the two for aggressive play to be profitable. When both are low, give up.</p>
+  </div>
+
+  <!-- ===== BOARD TEXTURE ===== -->
+  <div class="chapter-section">
+    <h2>Board Texture: Dynamic vs. Static Boards</h2>
+    <p>The texture of the community cards determines how "non-static" the game is on a given hand:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Dynamic Boards</div>
+      <p>Boards with many possible draws: connected cards, suited cards, middle-rank cards. Examples: J&hearts; T&spades; 8&hearts;, 9&clubs; 7&diams; 6&hearts;. These boards have flush draws, straight draws, combo draws. Hand values will change significantly on later streets.</p>
+      <p><strong>Strategy implication:</strong> Bet more frequently and larger to protect. Semi-bluff aggressively. Position is extremely valuable because you see opponent's actions before deciding.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Static Boards</div>
+      <p>Boards with few draws: disconnected, rainbow, high-card heavy. Examples: A&spades; 7&diams; 2&clubs;, K&hearts; K&diams; 3&spades;. Few draws are possible, so hand rankings are unlikely to change.</p>
+      <p><strong>Strategy implication:</strong> Slower play is more acceptable. Smaller bets suffice for value because protection is less urgent. Trapping with strong hands is viable.</p>
+    </div>
+
+    <p>Understanding board texture is essential for choosing bet sizes, frequencies, and whether to take aggressive or passive lines with draws and made hands alike.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Semi-Bluff EV Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Semi-Bluff EV Calculator</h3>
+    <p>Input your fold equity, equity when called, pot size, and bet size to see a detailed EV breakdown of a semi-bluff:</p>
+    <div class="widget-controls">
+      <label>
+        Pot Size ($):
+        <input type="number" id="sbPot" value="100" min="1" max="100000" step="1">
+      </label>
+      <label>
+        Bet Size ($):
+        <input type="number" id="sbBet" value="75" min="1" max="100000" step="1">
+      </label>
+      <label>
+        Fold Equity (%):
+        <input type="number" id="sbFold" value="40" min="0" max="100" step="1">
+      </label>
+      <label>
+        Equity When Called (%):
+        <input type="number" id="sbEquity" value="35" min="0" max="100" step="1">
+      </label>
+      <button class="btn" onclick="calcSemiBluff()">Calculate EV</button>
+    </div>
+    <div class="widget-result" id="sbResult">
+      <div class="result-label">Enter values and click Calculate EV</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="sbChart" width="500" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Semi-Bluff vs. Pure Bluff</h3>
+    <p>Why is semi-bluffing generally better than pure bluffing?</p>
+    <button class="quiz-option" data-correct="false">Semi-bluffs use smaller bet sizes, risking less money</button>
+    <button class="quiz-option" data-correct="true">Semi-bluffs have two ways to win: fold equity AND draw equity if called</button>
+    <button class="quiz-option" data-correct="false">Semi-bluffs are harder for opponents to detect</button>
+    <button class="quiz-option" data-correct="false">Pure bluffs are never profitable in poker</button>
+    <div class="quiz-feedback" data-correct="Correct! A semi-bluff has two ways to win. First, the opponent may fold, giving you the pot immediately (fold equity) &mdash; exactly the same as a pure bluff. But second, if called, you still have outs to improve and win the pot (draw equity). A pure bluff has only the first component. This dual source of EV makes semi-bluffs substantially more profitable on average, and it means you can semi-bluff in situations where a pure bluff would be negative EV." data-incorrect="Not quite. The key advantage of a semi-bluff over a pure bluff is that it provides two independent ways to win the pot: (1) the opponent folds immediately (fold equity), and (2) if called, you can still improve to the best hand (draw equity). A pure bluff only has the first component &mdash; if called, you lose. This dual source of profit makes semi-bluffs far more powerful."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Board Texture and Protection</h3>
+    <p>On which flop texture is protection betting MOST important?</p>
+    <button class="quiz-option" data-correct="false">A&spades; K&diams; 7&clubs; (rainbow, disconnected)</button>
+    <button class="quiz-option" data-correct="false">K&hearts; K&spades; 4&diams; (paired, dry)</button>
+    <button class="quiz-option" data-correct="true">J&hearts; T&hearts; 9&clubs; (connected, suited, dynamic)</button>
+    <button class="quiz-option" data-correct="false">2&spades; 2&diams; 2&clubs; (trips on board)</button>
+    <div class="quiz-feedback" data-correct="Correct! The flop J&hearts; T&hearts; 9&clubs; is extremely dynamic. There are flush draws (hearts), open-ended straight draws (Q-8, K-Q, 8-7), combo draws, and even gutshots. Many opponent hands have significant equity to improve. Protection is critical &mdash; checking allows all these draws a free card. Bet sizing should be larger to charge draws appropriately." data-incorrect="Consider which board has the most possible draws. J&hearts; T&hearts; 9&clubs; is a highly dynamic board with flush draws, numerous straight draws, and combo draws. This is the texture where protection is most urgent, because many opponent hands have significant equity to overtake your made hand on later streets."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Non-static games</strong> are the norm in real poker &mdash; hand values change between streets because draws can improve and made hands can be outdrawn.</li>
+      <li><strong>Semi-bluffing</strong> combines fold equity with draw equity, providing two independent ways to win. This makes it generally superior to pure bluffing.</li>
+      <li><strong>Protection</strong> adds urgency to betting in non-static games &mdash; you must charge draws to continue, unlike in static games where slow-playing is safe.</li>
+      <li><strong>Semi-bluff EV</strong> decomposes into fold equity (opponent folds) plus expected value when called (draw equity against the larger pot minus your investment).</li>
+      <li>The optimal draw strategy depends on the <strong>combination of fold equity and draw strength</strong> &mdash; strong in both favors aggression; weak in both favors abandonment.</li>
+      <li><strong>Board texture</strong> determines how non-static the game is: dynamic boards (many draws) require larger, more frequent bets; static boards allow slower play.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-19.html">&larr; Chapter 19</a>
+    <a href="chapter-21.html">Chapter 21 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcSemiBluff() {
+  const pot = parseFloat(document.getElementById('sbPot').value);
+  const bet = parseFloat(document.getElementById('sbBet').value);
+  const foldPct = parseFloat(document.getElementById('sbFold').value) / 100;
+  const equity = parseFloat(document.getElementById('sbEquity').value) / 100;
+
+  // EV components
+  const foldEV = foldPct * pot;
+  const callPct = 1 - foldPct;
+  const winWhenCalled = equity * (pot + bet);
+  const loseWhenCalled = (1 - equity) * bet;
+  const callEV = callPct * (winWhenCalled - loseWhenCalled);
+  const totalEV = foldEV + callEV;
+
+  // Compare to pure bluff (0% equity when called)
+  const pureBluffEV = foldPct * pot - callPct * bet;
+
+  // Compare to check (just draw equity, no bet)
+  const checkEV = equity * pot;
+
+  const el = document.getElementById('sbResult');
+  el.innerHTML = `
+    <div style="margin-bottom:0.8rem;">
+      <span class="result-label">Semi-Bluff EV Breakdown:</span>
+    </div>
+    <table class="data-table" style="margin-bottom:0.8rem;">
+      <tr><th>Component</th><th>Calculation</th><th>Value</th></tr>
+      <tr>
+        <td>Fold Equity</td>
+        <td>${(foldPct*100).toFixed(0)}% &times; $${pot.toFixed(0)}</td>
+        <td><strong>$${foldEV.toFixed(2)}</strong></td>
+      </tr>
+      <tr>
+        <td>Call EV (win)</td>
+        <td>${(callPct*100).toFixed(0)}% &times; ${(equity*100).toFixed(0)}% &times; $${(pot+bet).toFixed(0)}</td>
+        <td>+$${(callPct * winWhenCalled).toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>Call EV (lose)</td>
+        <td>${(callPct*100).toFixed(0)}% &times; ${((1-equity)*100).toFixed(0)}% &times; $${bet.toFixed(0)}</td>
+        <td>&minus;$${(callPct * loseWhenCalled).toFixed(2)}</td>
+      </tr>
+      <tr style="border-top: 2px solid var(--border);">
+        <td><strong>Total Semi-Bluff EV</strong></td>
+        <td></td>
+        <td><strong style="color:${totalEV >= 0 ? 'var(--green)' : 'var(--accent)'}">$${totalEV.toFixed(2)}</strong></td>
+      </tr>
+    </table>
+    <div style="margin-bottom:0.4rem;">
+      <span class="result-label">Comparison:</span>
+    </div>
+    <table class="data-table">
+      <tr><th>Action</th><th>EV</th><th>Difference vs Semi-Bluff</th></tr>
+      <tr>
+        <td>Semi-Bluff (bet $${bet.toFixed(0)})</td>
+        <td style="color:${totalEV >= 0 ? 'var(--green)' : 'var(--accent)'}"><strong>$${totalEV.toFixed(2)}</strong></td>
+        <td>&mdash;</td>
+      </tr>
+      <tr>
+        <td>Pure Bluff (0% equity if called)</td>
+        <td style="color:${pureBluffEV >= 0 ? 'var(--green)' : 'var(--accent)'}">$${pureBluffEV.toFixed(2)}</td>
+        <td>${(totalEV - pureBluffEV) >= 0 ? '+' : ''}$${(totalEV - pureBluffEV).toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>Check (draw equity only)</td>
+        <td style="color:${checkEV >= 0 ? 'var(--green)' : 'var(--accent)'}">$${checkEV.toFixed(2)}</td>
+        <td>${(totalEV - checkEV) >= 0 ? '+' : ''}$${(totalEV - checkEV).toFixed(2)}</td>
+      </tr>
+    </table>
+  `;
+
+  // Draw chart
+  drawSBChart(foldEV, callPct * winWhenCalled, -(callPct * loseWhenCalled), totalEV, pureBluffEV, checkEV);
+}
+
+function drawSBChart(foldComp, winComp, loseComp, totalEV, pureEV, checkEV) {
+  const canvas = document.getElementById('sbChart');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  const pad = 60;
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 0, w, h);
+
+  const bars = [
+    { label: 'Fold\nEquity', value: foldComp, color: '#2ea043' },
+    { label: 'Win if\nCalled', value: winComp, color: '#4CAF50' },
+    { label: 'Lose if\nCalled', value: loseComp, color: '#c9382a' },
+    { label: 'Total\nSemi-Bluff', value: totalEV, color: totalEV >= 0 ? '#FFD700' : '#c9382a' },
+    { label: 'Pure\nBluff', value: pureEV, color: pureEV >= 0 ? '#2196F3' : '#c9382a' },
+    { label: 'Check\n(draw)', value: checkEV, color: '#FF9800' }
+  ];
+
+  const maxVal = Math.max(...bars.map(b => Math.abs(b.value)), 1);
+  const barW = (w - 2 * pad) / bars.length - 10;
+  const zeroY = pad + (h - 2 * pad) * (maxVal / (2 * maxVal));
+
+  // Axes
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, pad);
+  ctx.lineTo(pad, h - pad);
+  ctx.lineTo(w - pad, h - pad);
+  ctx.stroke();
+
+  // Zero line
+  ctx.strokeStyle = '#888';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pad, zeroY);
+  ctx.lineTo(w - pad, zeroY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#888';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('$0', pad - 5, zeroY + 4);
+
+  // Bars
+  bars.forEach((bar, i) => {
+    const x = pad + i * ((w - 2 * pad) / bars.length) + 5;
+    const barH = (bar.value / maxVal) * ((h - 2 * pad) / 2);
+    const y = bar.value >= 0 ? zeroY - barH : zeroY;
+    const absH = Math.abs(barH);
+
+    ctx.fillStyle = bar.color;
+    ctx.globalAlpha = 0.8;
+    ctx.fillRect(x, y, barW, absH);
+    ctx.globalAlpha = 1.0;
+
+    ctx.strokeStyle = bar.color;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, barW, absH);
+
+    // Value label
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px monospace';
+    ctx.textAlign = 'center';
+    const labelY = bar.value >= 0 ? y - 5 : y + absH + 14;
+    ctx.fillText('$' + bar.value.toFixed(1), x + barW / 2, labelY);
+
+    // Bar label
+    ctx.fillStyle = '#aaa';
+    ctx.font = '9px monospace';
+    const lines = bar.label.split('\n');
+    lines.forEach((line, li) => {
+      ctx.fillText(line, x + barW / 2, h - pad + 12 + li * 12);
+    });
+  });
+}
+
+// Initialize with default values
+calcSemiBluff();
+</script>
+</body>
+</html>

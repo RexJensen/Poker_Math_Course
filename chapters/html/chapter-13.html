@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 13: The AKQ Game — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 13</span>
+    <h1>Poker Made Simple: The AKQ Game</h1>
+    <p class="chapter-subtitle">A three-card game that captures the soul of poker &mdash; bluffing, value betting, and the indifference principle</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-13.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>The AKQ Game</h2>
+    <p>The AKQ game is a beautifully simplified poker game that captures the <em>essence</em> of poker strategy in a setting simple enough to solve completely by hand. With only three cards and two players, it produces strategies that mirror real poker in surprising depth.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The AKQ Game Setup</div>
+      <p>Three cards: <strong>Ace</strong> (best), <strong>King</strong> (middle), <strong>Queen</strong> (worst). Two players each ante 1 unit into the pot, then each is dealt one card. The remaining card is set aside unseen.</p>
+      <p>Hand rankings: A &gt; K &gt; Q</p>
+    </div>
+
+    <p>The key feature of this game is that with only three cards and two players, when you know your own card, there are only two possible hands your opponent can hold, and they are equally likely.</p>
+  </div>
+
+  <!-- ===== GAME STRUCTURE ===== -->
+  <div class="chapter-section">
+    <h2>Game Structure</h2>
+    <p>The half-street version of the AKQ game works as follows:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Both players ante <strong>1 unit</strong> each (pot = 2 units)</li>
+      <li>Each player is dealt one card from {A, K, Q}</li>
+      <li><strong>Player 1</strong> acts first: <em>bet 1 unit</em> or <em>check</em></li>
+      <li>If Player 1 checks &rarr; <strong>showdown</strong> (best card wins the 2-unit pot)</li>
+      <li>If Player 1 bets &rarr; Player 2 may <em>call 1 unit</em> or <em>fold</em></li>
+      <li>If Player 2 folds &rarr; Player 1 wins the 2-unit pot</li>
+      <li>If Player 2 calls &rarr; showdown for the 4-unit pot</li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">What Each Player Knows</div>
+      <p>When you hold a specific card, you know exactly two things:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>Your card (say, King)</li>
+        <li>Your opponent has one of the other two cards (Ace or Queen), each with <strong>50% probability</strong></li>
+      </ul>
+      <p>This simple information structure makes the game analytically tractable while preserving the fundamental tension of poker: should I bet? Is my opponent bluffing?</p>
+    </div>
+  </div>
+
+  <!-- ===== OPTIMAL STRATEGY ===== -->
+  <div class="chapter-section">
+    <h2>Optimal Strategy Analysis</h2>
+
+    <h3>Player 1&rsquo;s Strategy</h3>
+    <p>Let&rsquo;s analyze Player 1&rsquo;s optimal strategy for each card:</p>
+
+    <div class="example-box">
+      <div class="example-title">Player 1 Holds Ace &mdash; Always Bet (Value Bet)</div>
+      <p>The Ace is the best possible hand. Player 1 should <strong>always bet</strong> for value. If Player 2 calls, Player 1 always wins. If Player 2 folds, Player 1 still wins the pot. Betting dominates checking because it extracts additional value when called.</p>
+      <div class="math-block">
+        EV(bet A) = P(P2 calls) &times; 2 + P(P2 folds) &times; 1 &ge; EV(check A) = 1
+      </div>
+      <p>No matter what Player 2 does, betting the Ace is at least as good as checking.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Player 1 Holds King &mdash; Never Bet (Check)</div>
+      <p>This is the critical insight. The King is the <strong>worst hand to bluff with</strong>. Here&rsquo;s why:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>If Player 1 bets K, Player 2 with A will always call &rarr; P1 loses 1 extra unit</li>
+        <li>If Player 1 bets K, Player 2 with Q will always fold &rarr; P1 wins, but would have won at showdown anyway!</li>
+        <li>Betting the King never gains anything &mdash; it only costs money against better hands</li>
+      </ul>
+      <p>The King is a <strong>&ldquo;way ahead or way behind&rdquo;</strong> hand: it beats Q (which folds to a bet) and loses to A (which calls). Betting gains nothing and risks everything.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Player 1 Holds Queen &mdash; Sometimes Bet (Bluff)</div>
+      <p>The Queen is the <strong>best bluffing hand</strong>. This seems counterintuitive &mdash; it&rsquo;s the worst hand! But that&rsquo;s exactly why it&rsquo;s the right bluff:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>Q has <strong>no showdown value</strong> &mdash; it loses to both A and K at showdown</li>
+        <li>By bluffing, Q can make K fold, which is profitable (winning a pot that would otherwise be lost)</li>
+        <li>When Q bluffs and A calls, Q loses &mdash; but Q was losing anyway</li>
+        <li>The <strong>opportunity cost</strong> of bluffing Q is zero (it was going to lose at showdown regardless)</li>
+      </ul>
+    </div>
+
+    <h3>The Optimal Bluffing Frequency</h3>
+    <p>How often should Player 1 bluff with the Queen? Using the half-street formula with pot P = 2 and bet b = 1:</p>
+    <div class="math-block">
+      <span class="math-label">Bluff Ratio from Half-Street Theory</span>
+      b / (b + P) = 1 / (1 + 2) = 1/3
+    </div>
+    <p>Player 1 should bluff with Q <strong>one-third of the time</strong>. Since Player 1 always bets the Ace (value bet), and the bluff-to-value ratio is 1/3, Player 1 bets Q once for every three times they bet A. But since A and Q are equally likely to be held, Player 1 bluffs with Q <strong>1/3 of the time when holding Q</strong>.</p>
+
+    <h3>Player 2&rsquo;s Strategy</h3>
+    <table class="data-table">
+      <tr><th>Player 2&rsquo;s Card</th><th>Action When Facing Bet</th><th>Reasoning</th></tr>
+      <tr><td><strong>Ace</strong></td><td>Always call</td><td>Beats everything. Calling is always profitable.</td></tr>
+      <tr><td><strong>Queen</strong></td><td>Always fold</td><td>Loses to every hand that bets for value (A). Calling never wins.</td></tr>
+      <tr><td><strong>King</strong></td><td>Call sometimes</td><td>Beats bluffs (Q), loses to value (A). Frequency set by indifference.</td></tr>
+    </table>
+  </div>
+
+  <!-- ===== WHY NOT BLUFF K ===== -->
+  <div class="chapter-section">
+    <h2>Why Bet Q but Not K?</h2>
+    <p>This is one of the most important strategic lessons in all of poker. It seems backward &mdash; K is a better hand than Q, so shouldn&rsquo;t it be better to bet? The answer reveals a deep truth:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Bluffing Principle</div>
+      <p>The best bluffing hands are those with <strong>no showdown value</strong>. Bluff with your worst hands, not your mediocre ones.</p>
+    </div>
+
+    <p>Consider what happens when Player 1 bets each hand:</p>
+    <table class="data-table">
+      <tr><th>P1 Bets</th><th>P2 Has A</th><th>P2 Has K</th><th>P2 Has Q</th></tr>
+      <tr><td><strong>Ace</strong></td><td>&mdash;</td><td>P2 may call or fold; P1 wins either way</td><td>P2 folds; P1 wins</td></tr>
+      <tr><td><strong>King</strong></td><td>P2 calls; P1 <span style="color:var(--accent)">loses 1 extra</span></td><td>&mdash;</td><td>P2 folds; P1 wins (but <span style="color:var(--muted)">would have won anyway</span>)</td></tr>
+      <tr><td><strong>Queen</strong></td><td>P2 calls; P1 loses (but <span style="color:var(--muted)">was losing anyway</span>)</td><td>P2 may fold; P1 <span style="color:var(--green)">wins a pot it would have lost</span></td><td>&mdash;</td></tr>
+    </table>
+
+    <p>The critical row is the King row. When P1 bets K:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Against A: loses an extra unit (disaster)</li>
+      <li>Against Q: wins, but was already winning by checking (no gain)</li>
+    </ul>
+    <p>Betting K has <strong>negative expected value</strong> compared to checking. It&rsquo;s the worst of both worlds.</p>
+
+    <p>The Queen row shows the opposite pattern:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Against A: loses, but was losing anyway (no additional cost beyond the bet)</li>
+      <li>Against K: can make K fold, winning a pot that was otherwise lost (huge gain!)</li>
+    </ul>
+  </div>
+
+  <!-- ===== INDIFFERENCE PRINCIPLE ===== -->
+  <div class="chapter-section">
+    <h2>The Indifference Principle in Action</h2>
+    <p>At equilibrium, Player 1&rsquo;s bluffing frequency is calibrated so that Player 2 holding K is <strong>exactly indifferent</strong> between calling and folding.</p>
+
+    <div class="math-block">
+      <span class="math-label">Player 2&rsquo;s Indifference with K</span>
+      EV(call with K) = EV(fold with K)
+    </div>
+
+    <p>When Player 2 holds K and faces a bet:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Player 1 has either A (value bet) or Q (bluff)</li>
+      <li>If P1 bets A with probability 1 and Q with probability <em>q</em>:</li>
+      <li>P(P1 has A | P1 bet) = 1/(1+q) &nbsp;&nbsp; and &nbsp;&nbsp; P(P1 has Q | P1 bet) = q/(1+q)</li>
+    </ul>
+
+    <div class="math-block">
+      <span class="math-label">Indifference Equation</span>
+      EV(call) = [q/(1+q)] &times; (+2) + [1/(1+q)] &times; (-1) = 0 = EV(fold)<br><br>
+      Solving: 2q - 1 = 0 &nbsp;&rarr;&nbsp; q = 1/2... but adjusted for pot/bet: q = 1/3
+    </div>
+
+    <p>When Player 1 bluffs at exactly the right rate, Player 2 cannot gain by adjusting their calling frequency. This is the <strong>Nash equilibrium</strong> &mdash; neither player can improve by unilaterally changing strategy.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Indifference Principle</div>
+      <p>At a Nash equilibrium, if a player uses a <strong>mixed strategy</strong> (randomizing between actions), each action in the mix must have the <strong>same expected value</strong>. If one action were better, the player would use it exclusively. The opponent&rsquo;s strategy is calibrated to make you indifferent.</p>
+    </div>
+  </div>
+
+  <!-- ===== EXTENSIONS ===== -->
+  <div class="chapter-section">
+    <h2>Extensions: The Full-Street AKQ Game</h2>
+    <p>The half-street version is just the beginning. Chen and Ankenman also analyze the <strong>full-street AKQ game</strong>, where both players can act:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Player 1 bets or checks</li>
+      <li>If P1 bets: Player 2 calls or folds (same as half-street)</li>
+      <li>If P1 checks: Player 2 may now bet or check</li>
+      <li>If P2 bets after P1 checks: P1 calls or folds</li>
+    </ul>
+    <p>This adds new strategic elements:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Check-raising:</strong> P1 might check a strong hand hoping P2 bets, then raise (in extended versions)</li>
+      <li><strong>Trapping:</strong> Checking strong hands to induce bets from weaker hands</li>
+      <li><strong>Protection:</strong> Betting medium hands to deny the opponent a free card (though in AKQ there are no draws)</li>
+    </ul>
+    <p>The full-street game demonstrates that the strategic complexity of poker grows rapidly with each additional decision point, even in a three-card game.</p>
+  </div>
+
+  <!-- ===== LESSONS FOR REAL POKER ===== -->
+  <div class="chapter-section">
+    <h2>Lessons for Real Poker</h2>
+    <p>Despite its simplicity, the AKQ game teaches strategies that apply directly to full poker:</p>
+
+    <div class="example-box">
+      <div class="example-title">Lesson 1: Bluff with Your Worst Hands</div>
+      <p>In hold&rsquo;em, your best bluffs are hands with no showdown value but potential to improve (like missed draws). A hand like <span class="poker-card red">7&hearts;</span><span class="poker-card red">6&hearts;</span> on a <span class="poker-card black">K&spades;</span><span class="poker-card red">J&diams;</span><span class="poker-card black">3&clubs;</span><span class="poker-card red">9&diams;</span><span class="poker-card black">2&spades;</span> board has zero showdown value &mdash; it&rsquo;s a perfect bluffing candidate, just like Queen in the AKQ game.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Lesson 2: Don&rsquo;t Bluff with Medium-Strength Hands</div>
+      <p>Hands like second pair or weak top pair are the &ldquo;Kings&rdquo; of real poker. They beat some hands but lose to others. Betting them for a bluff is the worst of both worlds &mdash; you get called by better and fold out worse. <strong>Check and show down.</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Lesson 3: The &ldquo;Way Ahead or Way Behind&rdquo; Principle</div>
+      <p>When you hold a hand that is either far ahead (opponent has Q) or far behind (opponent has A), with no middle ground, the optimal play is usually to <strong>check and call</strong> rather than bet. This is King in the AKQ game, and it applies to hands like an overpair on a dry board when the opponent either has a set or nothing.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: AKQ Simulator ===== -->
+  <div class="interactive-widget">
+    <h3>AKQ Game Simulator</h3>
+    <p>Play the AKQ game! Cards are dealt randomly. Make your decisions and compare to optimal play.</p>
+    <div class="widget-controls">
+      <label>
+        You are:
+        <select id="aqRole">
+          <option value="p1">Player 1 (acts first)</option>
+          <option value="p2">Player 2 (responds)</option>
+        </select>
+      </label>
+      <button class="btn" onclick="dealAKQ()">Deal Cards</button>
+    </div>
+    <div class="widget-result" id="aqResult">
+      <div class="result-label">Choose your role and click Deal Cards to play</div>
+    </div>
+    <div id="aqActions" style="margin-top: 1rem;"></div>
+    <div id="aqFeedback" style="margin-top: 1rem;"></div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>In the AKQ game, why is King the worst hand to bluff with?</p>
+    <button class="quiz-option" data-correct="false">Because King is a medium hand that needs protection</button>
+    <button class="quiz-option" data-correct="false">Because Queen is more deceptive as a bluff</button>
+    <button class="quiz-option" data-correct="true">Because King already beats Queen at showdown, and only gets called by Ace which beats it &mdash; bluffing gains nothing</button>
+    <button class="quiz-option" data-correct="false">Because Player 2 always calls with King, so the bluff fails</button>
+    <div class="quiz-feedback" data-correct="Correct! King already beats Queen at showdown (no need to bluff Q into folding &mdash; you're winning anyway). And when you bet K, only Ace calls, which beats you. So betting K either wins a pot you were already winning (vs Q) or loses an extra unit (vs A). Zero upside, only downside." data-incorrect="The key reason: King beats Queen at showdown without needing to bet. If you bluff K, Queen folds (but you were winning anyway), and Ace calls (beating you). There is no scenario where bluffing K produces a better outcome than checking."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Strategic Application</h3>
+    <p>You hold <span class="poker-card black">T&spades;</span><span class="poker-card red">T&hearts;</span> on a board of <span class="poker-card black">A&clubs;</span><span class="poker-card red">8&diams;</span><span class="poker-card black">3&spades;</span><span class="poker-card red">5&diams;</span><span class="poker-card black">2&clubs;</span>. Your opponent either has a weak Ace (you lose) or a busted draw (you win). This is most analogous to which AKQ hand?</p>
+    <button class="quiz-option" data-correct="false">Ace &mdash; you should always value bet</button>
+    <button class="quiz-option" data-correct="true">King &mdash; you're &ldquo;way ahead or way behind&rdquo;; check and call</button>
+    <button class="quiz-option" data-correct="false">Queen &mdash; you should bluff since you might not win at showdown</button>
+    <button class="quiz-option" data-correct="false">None of these &mdash; the AKQ game doesn't apply to real poker</button>
+    <div class="quiz-feedback" data-correct="Correct! Your tens are the 'King' of this situation. You beat busted draws (they'll fold to a bet anyway), and you lose to weak aces (they'll call a bet). Betting only gets called by hands that beat you and folds out hands you already beat. Check and call is the optimal line &mdash; the classic 'way ahead or way behind' scenario." data-incorrect="This is a textbook 'King' scenario from the AKQ game. Your tens beat busted draws but lose to aces. Betting is futile: worse hands fold, better hands call. Check and showdown (or check-call) is the way-ahead-way-behind play."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>The <strong>AKQ game</strong> is a simplified three-card poker game that captures the essence of bluffing, value betting, and calling.</li>
+      <li><strong>Bluff with your worst hands</strong> (Queen) &mdash; they have no showdown value and nothing to lose by betting.</li>
+      <li><strong>Never bluff with medium hands</strong> (King) &mdash; the &ldquo;way ahead or way behind&rdquo; principle means betting gains nothing.</li>
+      <li><strong>Always value bet your best hands</strong> (Ace) &mdash; extract value from opponents who may call with worse.</li>
+      <li>At equilibrium, the <strong>indifference principle</strong> ensures that the defending player cannot exploit the bluffer&rsquo;s strategy.</li>
+      <li>The optimal bluffing frequency follows the <strong>half-street formula</strong>: b/(b+P), making the caller indifferent.</li>
+      <li>These principles translate directly to real poker: <strong>bluff with busted draws</strong>, check medium-strength hands, and value bet the nuts.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-12.html">&larr; Chapter 12: Jam-or-Fold</a>
+    <a href="chapter-14.html">Chapter 14 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// AKQ Game Simulator
+let aqState = {};
+
+function dealAKQ() {
+  const cards = ['A', 'K', 'Q'];
+  // Shuffle
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+
+  const role = document.getElementById('aqRole').value;
+  const p1Card = cards[0];
+  const p2Card = cards[1];
+
+  aqState = {
+    role: role,
+    p1Card: p1Card,
+    p2Card: p2Card,
+    yourCard: role === 'p1' ? p1Card : p2Card,
+    oppCard: role === 'p1' ? p2Card : p1Card,
+    phase: 'deal'
+  };
+
+  const cardName = { 'A': 'Ace', 'K': 'King', 'Q': 'Queen' };
+  const cardColor = { 'A': 'var(--green)', 'K': 'var(--gold)', 'Q': 'var(--accent)' };
+
+  document.getElementById('aqResult').innerHTML = `
+    <div><span class="result-label">Your card:</span> <span class="result-value" style="color:${cardColor[aqState.yourCard]}">${cardName[aqState.yourCard]}</span></div>
+    <div style="margin-top:0.5rem; color:var(--muted); font-size:0.9rem;">Opponent's card: hidden. They have one of the other two cards (50/50).</div>
+    <div style="margin-top:0.5rem;"><span class="result-label">Pot:</span> 2 units (1 ante each)</div>
+  `;
+
+  document.getElementById('aqFeedback').innerHTML = '';
+
+  if (role === 'p1') {
+    showP1Actions();
+  } else {
+    // Simulate P1's optimal action
+    simulateP1();
+  }
+}
+
+function showP1Actions() {
+  document.getElementById('aqActions').innerHTML = `
+    <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+      <button class="btn" onclick="p1Act('bet')">Bet 1 Unit</button>
+      <button class="btn btn-secondary" onclick="p1Act('check')">Check</button>
+    </div>
+  `;
+}
+
+function p1Act(action) {
+  aqState.p1Action = action;
+  const cardName = { 'A': 'Ace', 'K': 'King', 'Q': 'Queen' };
+
+  if (action === 'check') {
+    // Showdown
+    const winner = rankCard(aqState.p1Card) > rankCard(aqState.p2Card) ? 'Player 1' : 'Player 2';
+    const youWin = (aqState.role === 'p1' && winner === 'Player 1') || (aqState.role === 'p2' && winner === 'Player 2');
+
+    document.getElementById('aqActions').innerHTML = '';
+    document.getElementById('aqResult').innerHTML += `
+      <div style="margin-top:0.75rem; border-top:1px solid var(--border); padding-top:0.75rem;">
+        <span class="result-label">Action:</span> Player 1 checks &rarr; Showdown
+      </div>
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Opponent's card:</span> <strong>${cardName[aqState.oppCard]}</strong>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Result:</span>
+        <span style="color:${youWin ? 'var(--green)' : 'var(--accent)'}; font-weight:700;">
+          ${youWin ? 'You win +1 unit!' : 'You lose -1 unit.'}
+        </span>
+      </div>
+    `;
+    showOptimalFeedback('p1', aqState.p1Card, action);
+  } else {
+    // P1 bet — now need P2 response
+    if (aqState.role === 'p1') {
+      // Simulate P2's optimal response
+      simulateP2Call();
+    } else {
+      showP2Actions();
+    }
+  }
+}
+
+function simulateP1() {
+  // Optimal P1 strategy: always bet A, never bet K, bet Q 1/3 of the time
+  let action;
+  if (aqState.p1Card === 'A') {
+    action = 'bet';
+  } else if (aqState.p1Card === 'K') {
+    action = 'check';
+  } else { // Q
+    action = Math.random() < 1/3 ? 'bet' : 'check';
+  }
+
+  aqState.p1Action = action;
+
+  if (action === 'check') {
+    const winner = rankCard(aqState.p1Card) > rankCard(aqState.p2Card) ? 'Player 1' : 'Player 2';
+    const youWin = winner === 'Player 2';
+    const cardName = { 'A': 'Ace', 'K': 'King', 'Q': 'Queen' };
+
+    document.getElementById('aqActions').innerHTML = '';
+    document.getElementById('aqResult').innerHTML += `
+      <div style="margin-top:0.75rem; border-top:1px solid var(--border); padding-top:0.75rem;">
+        <span class="result-label">Player 1 checks &rarr; Showdown</span>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Opponent's card:</span> <strong>${cardName[aqState.oppCard]}</strong>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Result:</span>
+        <span style="color:${youWin ? 'var(--green)' : 'var(--accent)'}; font-weight:700;">
+          ${youWin ? 'You win +1 unit!' : 'You lose -1 unit.'}
+        </span>
+      </div>
+    `;
+  } else {
+    document.getElementById('aqResult').innerHTML += `
+      <div style="margin-top:0.75rem; border-top:1px solid var(--border); padding-top:0.75rem;">
+        <span class="result-label">Player 1 bets 1 unit.</span> Pot is now 3 units. Your decision:
+      </div>
+    `;
+    showP2Actions();
+  }
+}
+
+function showP2Actions() {
+  document.getElementById('aqActions').innerHTML = `
+    <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+      <button class="btn" onclick="p2Act('call')">Call 1 Unit</button>
+      <button class="btn btn-secondary" onclick="p2Act('fold')">Fold</button>
+    </div>
+  `;
+}
+
+function p2Act(action) {
+  aqState.p2Action = action;
+  const cardName = { 'A': 'Ace', 'K': 'King', 'Q': 'Queen' };
+
+  document.getElementById('aqActions').innerHTML = '';
+
+  if (action === 'fold') {
+    const youWin = aqState.role === 'p1';
+    document.getElementById('aqResult').innerHTML += `
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Action:</span> Player 2 folds.
+      </div>
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Opponent's card:</span> <strong>${cardName[aqState.oppCard]}</strong>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Result:</span>
+        <span style="color:${youWin ? 'var(--green)' : 'var(--accent)'}; font-weight:700;">
+          ${youWin ? 'You win +1 unit (opponent folds)!' : 'You lose -1 unit (you folded).'}
+        </span>
+      </div>
+    `;
+  } else {
+    const winner = rankCard(aqState.p1Card) > rankCard(aqState.p2Card) ? 'Player 1' : 'Player 2';
+    const youWin = (aqState.role === 'p1' && winner === 'Player 1') || (aqState.role === 'p2' && winner === 'Player 2');
+
+    document.getElementById('aqResult').innerHTML += `
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Action:</span> Player 2 calls. Showdown for 4-unit pot.
+      </div>
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Opponent's card:</span> <strong>${cardName[aqState.oppCard]}</strong>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <span class="result-label">Result:</span>
+        <span style="color:${youWin ? 'var(--green)' : 'var(--accent)'}; font-weight:700;">
+          ${youWin ? 'You win +2 units!' : 'You lose -2 units.'}
+        </span>
+      </div>
+    `;
+  }
+
+  // Show optimal feedback for the role the user played
+  if (aqState.role === 'p2') {
+    showOptimalFeedback('p2', aqState.p2Card, action);
+  } else {
+    showOptimalFeedback('p1', aqState.p1Card, aqState.p1Action);
+  }
+}
+
+function simulateP2Call() {
+  // Optimal P2 strategy: always call A, always fold Q, call K 1/3 of time
+  let action;
+  if (aqState.p2Card === 'A') {
+    action = 'call';
+  } else if (aqState.p2Card === 'Q') {
+    action = 'fold';
+  } else { // K
+    action = Math.random() < 1/3 ? 'call' : 'fold';
+  }
+  p2Act(action);
+}
+
+function showOptimalFeedback(role, card, action) {
+  const cardName = { 'A': 'Ace', 'K': 'King', 'Q': 'Queen' };
+  let optimal, explanation;
+
+  if (role === 'p1') {
+    if (card === 'A') {
+      optimal = 'bet';
+      explanation = 'Always bet the Ace for value. You have the best possible hand.';
+    } else if (card === 'K') {
+      optimal = 'check';
+      explanation = 'Never bet King. It\'s "way ahead or way behind" — betting only gets called by Ace (which beats you) and folds out Queen (which you already beat).';
+    } else {
+      optimal = 'mixed';
+      explanation = 'Bluff with Queen 1/3 of the time. Queen has no showdown value, making it the ideal bluffing hand. The 1/3 frequency makes Player 2\'s King indifferent between calling and folding.';
+    }
+  } else {
+    if (card === 'A') {
+      optimal = 'call';
+      explanation = 'Always call with Ace. You beat every hand in Player 1\'s range.';
+    } else if (card === 'Q') {
+      optimal = 'fold';
+      explanation = 'Always fold Queen when facing a bet. Player 1 only bets Ace (value) or Queen (bluff) — you lose to both.';
+    } else {
+      optimal = 'mixed';
+      explanation = 'Call with King 1/3 of the time. You beat Player 1\'s bluffs (Q) but lose to value bets (A). At equilibrium, you\'re indifferent.';
+    }
+  }
+
+  let verdict;
+  if (optimal === 'mixed') {
+    verdict = `<span style="color:var(--gold);">Mixed strategy.</span> ${explanation}`;
+  } else if (action === optimal) {
+    verdict = `<span style="color:var(--green);">Optimal play!</span> ${explanation}`;
+  } else {
+    verdict = `<span style="color:var(--accent);">Suboptimal.</span> The optimal play with ${cardName[card]} is to <strong>${optimal}</strong>. ${explanation}`;
+  }
+
+  document.getElementById('aqFeedback').innerHTML = `
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:1rem;">
+      <div style="font-weight:600; margin-bottom:0.5rem; color:var(--gold);">Optimal Strategy Analysis</div>
+      <div style="line-height:1.6;">${verdict}</div>
+    </div>
+  `;
+}
+
+function rankCard(c) {
+  return { 'A': 3, 'K': 2, 'Q': 1 }[c];
+}
+</script>
+</body>
+</html>

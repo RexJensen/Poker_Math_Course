@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appendix to Chapter 15: The No-Limit AKQ Game — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Appendix</span>
+    <h1>The No-Limit AKQ Game</h1>
+    <p class="chapter-subtitle">Complete solution to the full-street no-limit AKQ game</p>
+    <p style="margin-top: 1rem;"><a href="../appendix-ch15.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Appendix PDF</a></p>
+  </div>
+
+  <!-- ===== OVERVIEW ===== -->
+  <div class="chapter-section">
+    <h2>Overview</h2>
+    <p>Chapter 15 introduced the full-street AKQ game, where both players can bet. This appendix provides the <strong>complete derivation of the no-limit solution</strong> &mdash; a game where bet sizes are unrestricted. The solution turns out to be surprisingly close to the spread-limit game analyzed in Chapter 17.</p>
+    <p>The AKQ game uses a three-card deck (Ace, King, Queen) with each player dealt one card. Players post antes of size 1 into the pot, and the game proceeds with one full street of betting.</p>
+  </div>
+
+  <!-- ===== SOLUTION OUTLINE ===== -->
+  <div class="chapter-section">
+    <h2>Solution Strategy Outline</h2>
+    <p>The derivation proceeds through a series of increasingly refined strategic steps:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Step 1: Constrain X from Betting Kings</div>
+      <p>First, solve the game where Player X may not bet with kings. X bets amount <strong>r</strong> (the &ldquo;Golden Mean of Poker,&rdquo; &radic;2 &minus; 1 &approx; 0.4142) with some aces and checks the remainder. Y bets a different, larger amount <strong>s<sub>0</sub></strong> when checked to. Both players balance their strategies with aces and queens appropriately.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Step 2: X Bets Kings for a Small Amount</div>
+      <p>Relaxing the constraint, X can improve by betting a smaller amount <strong>t</strong> with some kings. This is a &ldquo;blocking bet&rdquo; that reduces the value Y extracts.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Step 3: Y Responds with Raises</div>
+      <p>Y raises X&rsquo;s king-bets to amount <strong>s(t)</strong> and raise-bluffs with queens at frequency <strong>&beta;</strong>. This makes X at most indifferent between checking and betting <em>t</em> with kings. The bluffing frequency &beta; is related to <strong>s<sub>0</sub></strong>, the amount Y bets when X checks.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Step 4: X Mixes Aces into Bet-t Range</div>
+      <p>X responds by also betting <em>t</em> with some aces (in addition to kings), gaining value by either picking off raise-bluffs or getting called by Y&rsquo;s kings. Y cannot prevent X from gaining value in one of these two ways.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Step 5: X Cannot Bet All Aces</div>
+      <p>Crucially, in the no-limit case X cannot bet <em>all</em> aces for amount <em>t</em>. If he does, his checking range contains only kings, and Y exploits this by betting very large with aces and queens. X must retain some aces in his checking range to prevent this exploitation.</p>
+    </div>
+  </div>
+
+  <!-- ===== KEY VALUES ===== -->
+  <div class="chapter-section">
+    <h2>Equilibrium Values</h2>
+    <p>The solution produces these key numerical values:</p>
+
+    <table class="data-table" style="max-width: 500px;">
+      <thead>
+        <tr><th>Parameter</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>X&rsquo;s bet size with aces/queens (r)</td><td>&radic;2 &minus; 1 &approx; 0.4142</td></tr>
+        <tr><td>Y&rsquo;s bet size when X checks (s<sub>0</sub>)</td><td>0.5422</td></tr>
+        <tr><td>X&rsquo;s king blocking bet (&tau;)</td><td>0.2521</td></tr>
+        <tr><td>X&rsquo;s queen bluff frequency with &tau; bet</td><td>7.81%</td></tr>
+        <tr><td>Y&rsquo;s queen bluff frequency after check</td><td>35.16%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== X STRATEGY ===== -->
+  <div class="chapter-section">
+    <h2>Player X&rsquo;s Optimal Strategy</h2>
+
+    <div class="example-box">
+      <div class="example-title">With Aces</div>
+      <p>Bet <strong>r &approx; 0.4142</strong> with some aces. Bet <strong>&tau; = 0.2521</strong> with some aces (mixed in with kings). Check remaining aces. If checked and Y bets, raise all-in.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">With Kings</div>
+      <p>Bet <strong>&tau; = 0.2521</strong> with some kings. Check remaining kings. Call enough to make total calling frequency equal to <strong>1/(1 + s)</strong> against Y&rsquo;s bets.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">With Queens</div>
+      <p>Bet <strong>r</strong> with some queens (as bluffs, balanced against ace bets). Bet <strong>&tau;</strong> with <strong>7.81%</strong> of queens (fold to any raise). Check and fold remaining queens.</p>
+    </div>
+  </div>
+
+  <!-- ===== Y STRATEGY ===== -->
+  <div class="chapter-section">
+    <h2>Player Y&rsquo;s Optimal Strategy</h2>
+
+    <div class="example-box">
+      <div class="example-title">If X Checks</div>
+      <p>Bet <strong>s<sub>0</sub> = 0.5422</strong> with all aces and <strong>35.16%</strong> of queens. If X check-raises, reraise all-in with aces, fold queens.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">If X Bets Amount t</div>
+      <p>Raise to <strong>t<sub>2</sub></strong> with all aces and <strong>&beta;</strong> of queens. Call with enough kings to make total calling frequency with hands that beat a queen equal to <strong>1/(1 + t)</strong>. If X re-raises, Y re-raises all-in with aces and folds queens.</p>
+    </div>
+  </div>
+
+  <!-- ===== THE KEY FUNCTION ===== -->
+  <div class="chapter-section">
+    <h2>The Value Function A(t)</h2>
+    <p>The analysis constructs a function <strong>A(t)</strong> representing the value to X of betting amount <em>t</em> with aces. This function is the sum of:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Value from being called by Y&rsquo;s kings</li>
+      <li>Value from picking off Y&rsquo;s raise-bluffs with queens</li>
+    </ul>
+    <p>The optimal <em>t</em> maximizes this function, yielding the equilibrium blocking bet size of <strong>&tau; = 0.2521</strong>.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Why X Can&rsquo;t Bet All Aces</div>
+      <p>If X bets all aces (leaving only kings when checking), Y bets very large with aces and some queens. X must call with kings at a loss, which exceeds the gain from betting aces. The equilibrium requires X to <strong>keep some aces in reserve</strong> for his checking range to protect against Y&rsquo;s large bets.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE ===== -->
+  <div class="chapter-section">
+    <h2>Explore: Blocking Bet Value</h2>
+    <div class="interactive-widget">
+      <h3>Blocking Bet Size Calculator</h3>
+      <p>Adjust the blocking bet size to see how it affects X&rsquo;s value. The optimal value is &tau; &approx; 0.2521.</p>
+      <div style="margin: 1rem 0;">
+        <label>Blocking bet size (t): <strong id="betVal">0.25</strong></label><br>
+        <input type="range" id="betSlider" min="0.01" max="0.80" step="0.01" value="0.25" style="width: 100%; margin: 0.5rem 0;">
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="definition-box">
+          <div class="def-term">Y&rsquo;s Raise Size</div>
+          <p>s(t) = <strong id="raiseSize">—</strong></p>
+        </div>
+        <div class="definition-box">
+          <div class="def-term">Y&rsquo;s Bluff Frequency (&beta;)</div>
+          <p>&beta; = <strong id="bluffFreq">—</strong></p>
+        </div>
+      </div>
+      <div class="definition-box" style="margin-top: 0.5rem;">
+        <div class="def-term">X&rsquo;s Required King-Call Frequency</div>
+        <p>1/(1+t) = <strong id="callFreq">—</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="chapter-section key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Blocking bets</strong> reduce opponents&rsquo; ability to extract value with large bets</li>
+      <li>The <strong>Golden Mean r = &radic;2 &minus; 1</strong> appears again as X&rsquo;s primary bet size</li>
+      <li>Players must <strong>protect their checking ranges</strong> by keeping strong hands in them</li>
+      <li>Y&rsquo;s raise-bluff frequency <strong>&beta;</strong> is calibrated to make X indifferent about betting kings</li>
+      <li>The solution closely mirrors the <strong>spread-limit game</strong> from Chapter 17</li>
+      <li>Even in no-limit, <strong>balance and mixed strategies</strong> are essential at equilibrium</li>
+    </ul>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="chapter-section">
+    <h2>Test Your Understanding</h2>
+    <div class="quiz-box" data-answer="2">
+      <p class="quiz-question">Why can&rsquo;t Player X bet all of his aces in the no-limit AKQ game?</p>
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="1"> It would make his bet size too large</label>
+        <label><input type="radio" name="q1" value="2"> It leaves only kings in his checking range, which Y can exploit with large bets</label>
+        <label><input type="radio" name="q1" value="3"> Y would always fold, so betting aces has no value</label>
+        <label><input type="radio" name="q1" value="4"> The pot odds don&rsquo;t justify it</label>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-box" data-answer="3">
+      <p class="quiz-question">What is the &ldquo;Golden Mean of Poker&rdquo; (r)?</p>
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="1"> &phi; = (1 + &radic;5)/2 &approx; 1.618</label>
+        <label><input type="radio" name="q2" value="2"> 1/3 &approx; 0.333</label>
+        <label><input type="radio" name="q2" value="3"> &radic;2 &minus; 1 &approx; 0.4142</label>
+        <label><input type="radio" name="q2" value="4"> 1/e &approx; 0.368</label>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-box" data-answer="1">
+      <p class="quiz-question">What is Y&rsquo;s optimal bet size when X checks?</p>
+      <div class="quiz-options">
+        <label><input type="radio" name="q3" value="1"> s<sub>0</sub> &approx; 0.5422 (about 54% of the pot)</label>
+        <label><input type="radio" name="q3" value="2"> r &approx; 0.4142 (about 41% of the pot)</label>
+        <label><input type="radio" name="q3" value="3"> 1.0 (pot-sized bet)</label>
+        <label><input type="radio" name="q3" value="4"> 0.2521 (about 25% of the pot)</label>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- ===== NAV ===== -->
+  <div class="chapter-nav">
+    <a href="chapter-15.html">&larr; Chapter 15: Full-Street Games</a>
+    <a href="chapter-16.html">Chapter 16: No-Fold [0,1] Games &rarr;</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+(function(){
+  const slider = document.getElementById('betSlider');
+  const betVal = document.getElementById('betVal');
+  const raiseSize = document.getElementById('raiseSize');
+  const bluffFreq = document.getElementById('bluffFreq');
+  const callFreq = document.getElementById('callFreq');
+
+  const s0 = 0.5422;
+  const alpha0 = s0 / (1 + s0);
+
+  function update() {
+    const t = parseFloat(slider.value);
+    betVal.textContent = t.toFixed(2);
+
+    // Beta: Y's bluff frequency
+    const beta = alpha0 > t ? (alpha0 - t) / (1 + t) : 0;
+    bluffFreq.textContent = (beta * 100).toFixed(2) + '%';
+
+    // Y's raise size
+    let t2;
+    if (beta > 0) {
+      t2 = alpha0 / (1 - beta);
+      if (t2 < 2 * t) t2 = 2 * t;
+    } else {
+      t2 = 2 * t;
+    }
+    raiseSize.textContent = t2.toFixed(4);
+
+    // X's king-call frequency
+    const cf = 1 / (1 + t);
+    callFreq.textContent = (cf * 100).toFixed(2) + '%';
+  }
+
+  slider.addEventListener('input', update);
+  update();
+})();
+</script>
+</body>
+</html>

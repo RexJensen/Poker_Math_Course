@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 15: Full-Street Games — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 15</span>
+    <h1>Player X Strikes Back: Full-Street Games</h1>
+    <p class="chapter-subtitle">Extending the model to two-player action &mdash; check-raises, donk bets, and the true value of position</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-15.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>From Half-Street to Full-Street</h2>
+    <p>In Chapters 11 through 14, we studied <strong>half-street games</strong>: one player bets or checks, and the other player calls or folds. This is a powerful but incomplete model. In real poker, <em>both</em> players can act. The first player might check, the second player might bet, and then the first player can call, fold, or <strong>raise</strong>.</p>
+    <p>The full-street game allows both players to act, creating a richer set of strategic possibilities. The most important new element is the <strong>check-raise</strong> &mdash; a weapon that was entirely absent from half-street analysis.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Full-Street Game</div>
+      <p>A game in which <strong>both players</strong> have the opportunity to act. Player X (first to act) can check or bet. If X checks, Player Y can check or bet. If Y bets after X checks, X can fold, call, or raise. If X bets initially, Y can fold, call, or raise.</p>
+    </div>
+
+    <p>This dramatically increases the complexity. In a half-street game, the game tree has a handful of terminal nodes. In a full-street game, the tree branches much more extensively, and the equilibrium strategies become correspondingly more complex.</p>
+  </div>
+
+  <!-- ===== CHECK-RAISING ===== -->
+  <div class="chapter-section">
+    <h2>The Check-Raise: A Fundamental Weapon</h2>
+    <p>The check-raise is the defining strategic element of full-street games. It occurs when Player X checks, Player Y bets, and then Player X raises.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Check-Raise</div>
+      <p>The act of <strong>checking with the intention of raising</strong> after the opponent bets. It is a deceptive play that disguises hand strength &mdash; the checker appeared weak but is actually strong (or bluffing).</p>
+    </div>
+
+    <h3>Why Check-Raising Matters</h3>
+    <p>Without the check-raise, the half-street model gives the bettor enormous power. The bettor can bet with value hands and bluffs freely, knowing the checker can only call or fold. The check-raise changes this dynamic fundamentally:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>It punishes loose betting.</strong> If Player Y bets too frequently after X checks, X can check-raise and force Y to put in more money with weak hands.</li>
+      <li><strong>It extracts extra value.</strong> By checking a strong hand, X can induce a bet from Y and then raise, winning more than a simple bet would have.</li>
+      <li><strong>It creates a trapping threat.</strong> The mere <em>possibility</em> of a check-raise constrains the opponent's betting strategy, even when the check-raise does not actually occur.</li>
+    </ul>
+
+    <h3>Optimal Check-Raise Frequency</h3>
+    <p>Like bluffing, check-raising has an optimal frequency. Check-raise too often, and the opponent adapts by checking behind more frequently (denying you the chance to raise). Check-raise too rarely, and the opponent bets freely after your checks, exploiting your passivity.</p>
+
+    <div class="math-block">
+      <span class="math-label">Check-Raise Balance Principle</span>
+      The optimal check-raise frequency makes the opponent <strong>indifferent</strong><br>
+      between betting and checking after a check.<br><br>
+      If X check-raises too often &rarr; Y checks behind more &rarr; X loses value<br>
+      If X check-raises too rarely &rarr; Y bets freely &rarr; X is exploited
+    </div>
+
+    <p>The exact frequency depends on the bet size, pot size, and the hand distributions of both players. In the simplified AKQ game (discussed below), we can solve for it precisely.</p>
+  </div>
+
+  <!-- ===== THE FULL-STREET AKQ GAME ===== -->
+  <div class="chapter-section">
+    <h2>The Full-Street AKQ Game</h2>
+    <p>To illustrate full-street concepts, we extend the AKQ game from Chapter 13. Recall the setup: a three-card deck (A, K, Q), each player is dealt one card, there is an ante in the pot, and the bet size is fixed.</p>
+
+    <h3>Half-Street Review</h3>
+    <p>In the half-street version, Player 1 could only bet or check, and Player 2 could only call or fold. The optimal strategy was:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Player 1 bets the Ace (value) and sometimes bluffs with the Queen</li>
+      <li>Player 1 always checks the King (medium hand)</li>
+      <li>Player 2 calls with the Ace always, and calls with the King at the right frequency</li>
+    </ul>
+
+    <h3>Full-Street Extension</h3>
+    <p>Now Player 1 can also <strong>check-raise</strong>. After Player 1 checks and Player 2 bets, Player 1 can raise instead of just calling or folding. This adds several new strategic elements:</p>
+
+    <div class="example-box">
+      <div class="example-title">New Strategic Possibilities</div>
+      <p><strong>Check-raise with the Ace (trapping):</strong> Player 1 checks the Ace, hoping Player 2 bets so Player 1 can raise. This wins more than simply betting, but risks Player 2 checking behind and winning nothing extra.</p>
+      <p><strong>Check-call with the King:</strong> The King is too strong to fold but not strong enough to raise. Player 1 checks and calls a bet, playing the middle-strength hand passively.</p>
+      <p><strong>Check-raise bluff with the Queen:</strong> Player 1 can check, wait for Player 2 to bet, and then raise as a bluff. This is risky but creates balance in the check-raising range.</p>
+    </div>
+
+    <h3>The Optimal Solution</h3>
+    <p>The full-street AKQ game solution involves mixed strategies (randomizing between actions at certain frequencies). Key results include:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Player 1 sometimes bets the Ace directly and sometimes check-raises it</li>
+      <li>Player 1 checks the King and calls if Player 2 bets</li>
+      <li>Player 1 bluffs with the Queen at a lower frequency than in the half-street game (because the check-raise creates additional bluffing opportunities)</li>
+      <li>Player 2 must bet less aggressively after Player 1 checks (because of the check-raise threat)</li>
+    </ul>
+
+    <div class="math-block">
+      <span class="math-label">Key Result: Full-Street AKQ Equilibrium</span>
+      Player 1's strategy with Ace: mix between betting and check-raising<br>
+      Player 1's strategy with King: check, then call if Y bets<br>
+      Player 1's strategy with Queen: mix between bluff-betting and checking<br><br>
+      The check-raise threat constrains Player 2's betting frequency after a check.
+    </div>
+  </div>
+
+  <!-- ===== DONK BETTING ===== -->
+  <div class="chapter-section">
+    <h2>Donk Betting</h2>
+    <p>A <strong>donk bet</strong> is a bet made into the previous aggressor &mdash; that is, when a player who was passive on the previous street (calling or checking) suddenly leads out with a bet on the next street.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Donk Bet</div>
+      <p>A bet made by a player who was <strong>not the aggressor on the previous street</strong>, into the player who was. In standard play, the non-aggressor checks to the aggressor. A donk bet deviates from this convention.</p>
+    </div>
+
+    <h3>Is Donk Betting Optimal?</h3>
+    <p>In most optimal strategies derived from game theory, donk betting is rare or entirely absent. The reasoning:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Information disadvantage:</strong> The caller from the previous street typically has a weaker, less defined range. Betting into a stronger, better-defined range is usually suboptimal.</li>
+      <li><strong>Check-raise option:</strong> By checking, the out-of-position player preserves the option to check-raise, which is often more profitable than donk betting.</li>
+      <li><strong>Range asymmetry:</strong> The previous aggressor's range usually contains more strong hands. Donk betting into this range risks being raised frequently.</li>
+    </ul>
+    <p>However, there are specific situations where donk betting can appear in optimal play &mdash; typically when the board changes dramatically and the caller's range benefits more from the new card than the previous bettor's range.</p>
+  </div>
+
+  <!-- ===== POSITION ADVANTAGE ===== -->
+  <div class="chapter-section">
+    <h2>The Value of Position in Full-Street Games</h2>
+    <p>One of the most important results from full-street analysis is the <strong>quantification of positional advantage</strong>. The player who acts last (in position) has a significant strategic edge.</p>
+
+    <h3>Why Position Matters</h3>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Information advantage:</strong> The in-position player sees the opponent's action before deciding. A check reveals weakness; a bet reveals strength (or bluff). This information is valuable.</li>
+      <li><strong>Pot control:</strong> The in-position player can check behind to keep the pot small with medium-strength hands, or bet to grow it with strong hands.</li>
+      <li><strong>Bluff efficiency:</strong> The in-position player's bluffs are more efficient because they occur after the opponent has shown weakness (by checking).</li>
+      <li><strong>Closing the action:</strong> When in position on the last street, you get the final say. You cannot be check-raised if you check, and your bet closes the action if the opponent just calls or folds.</li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">Position Advantage Quantified</div>
+      <p>In the full-street AKQ game with a pot of P and bet of b, the in-position player's expected value is strictly higher than the out-of-position player's. The difference comes from:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>Ability to bet or check behind after the opponent checks (free showdown or value bet)</li>
+        <li>No risk of being check-raised when checking behind</li>
+        <li>Better information for calling/folding decisions when facing a bet</li>
+      </ul>
+      <p>The check-raise partially compensates the out-of-position player, but does <strong>not fully close the gap</strong>. Position remains a significant advantage.</p>
+    </div>
+
+    <h3>Key Result</h3>
+    <div class="math-block">
+      <span class="math-label">Position Value Theorem</span>
+      EV(in-position) > EV(out-of-position) in full-street games<br><br>
+      The difference in EV represents the <strong>mathematical value of position</strong>.<br>
+      The check-raise partially but incompletely compensates the OOP player.
+    </div>
+    <p>This result explains why experienced poker players fight for position and why being on the button is universally considered the most profitable seat at the table.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Decision Tree ===== -->
+  <div class="interactive-widget">
+    <h3>Full-Street Decision Tree</h3>
+    <p>Explore the action sequences in a full-street game. Select an initial action for Player X to see the possible continuations and their strategic implications.</p>
+    <div class="widget-controls">
+      <label>
+        Player X's Action:
+        <select id="xAction">
+          <option value="check">Check</option>
+          <option value="bet">Bet</option>
+        </select>
+      </label>
+      <label>
+        Player Y's Response:
+        <select id="yAction">
+          <option value="--">-- Select --</option>
+        </select>
+      </label>
+      <button class="btn" onclick="showDecisionTree()">Show Analysis</button>
+    </div>
+    <div class="widget-result" id="treeResult">
+      <div class="result-label">Select actions and click Show Analysis</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>Why is the check-raise an important addition to the full-street game?</p>
+    <button class="quiz-option" data-correct="false">It allows the out-of-position player to always win the pot</button>
+    <button class="quiz-option" data-correct="true">It prevents the bettor from profiting freely with all bets by creating a threat of facing a raise</button>
+    <button class="quiz-option" data-correct="false">It is only a psychological play with no mathematical significance</button>
+    <button class="quiz-option" data-correct="false">It eliminates the advantage of position entirely</button>
+    <div class="quiz-feedback" data-correct="Correct! Without the check-raise, the bettor (in-position player) could bet aggressively after a check with no risk of escalation. The check-raise creates a credible threat that constrains the bettor's strategy. The mere possibility of a check-raise forces the in-position player to bet less often and more carefully after a check." data-incorrect="The check-raise's importance is strategic: it prevents the bettor from profiting freely with all bets. Without it, the in-position player could bet with impunity after a check. The threat of a check-raise forces the bettor to be more selective, restoring some equity to the out-of-position player (though not enough to fully overcome the positional disadvantage)."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Donk Betting</h3>
+    <p>In most game-theoretic solutions, why is donk betting (betting into the previous aggressor) generally suboptimal?</p>
+    <button class="quiz-option" data-correct="false">Because it is against the rules of poker</button>
+    <button class="quiz-option" data-correct="false">Because it always loses money</button>
+    <button class="quiz-option" data-correct="true">Because checking preserves the more profitable option to check-raise, and the previous aggressor has a stronger range</button>
+    <button class="quiz-option" data-correct="false">Because it reveals your hand to the opponent</button>
+    <div class="quiz-feedback" data-correct="Correct! Donk betting gives up the check-raise option, which is often more profitable. Additionally, the previous aggressor typically has a stronger range (they bet on the last street), so leading into them is less effective than checking and letting them bet into you. The check preserves strategic flexibility." data-incorrect="Donk betting is legal and does not always lose money, but it is generally suboptimal because it sacrifices the check-raise option. By checking, you maintain flexibility: you can check-raise strong hands, check-call medium hands, or check-fold weak hands. Donk betting commits you before seeing the opponent's action."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Full-street games</strong> allow both players to act, creating richer strategy spaces than half-street games.</li>
+      <li>The <strong>check-raise</strong> is the key new element: checking strong hands to induce a bet, then raising. It constrains the opponent's betting frequency.</li>
+      <li>Optimal check-raise frequency makes the opponent <strong>indifferent</strong> between betting and checking after a check.</li>
+      <li>In the <strong>full-street AKQ game</strong>, Player 1 mixes between betting and check-raising the Ace, check-calls the King, and adjusts bluff frequency accordingly.</li>
+      <li><strong>Donk betting</strong> (betting into the previous aggressor) is generally rare in optimal strategies because checking preserves the more profitable check-raise option.</li>
+      <li>The <strong>in-position player has higher EV</strong> than the out-of-position player. The check-raise partially but incompletely compensates for this disadvantage.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-14.html">&larr; Chapter 14: No-Limit Bet Sizing</a>
+    <a href="chapter-16.html">Chapter 16: No-Fold [0,1] Games &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// Decision tree data
+const treeData = {
+  check: {
+    options: ['Check back (Y)', 'Bet (Y)'],
+    'Check back (Y)': {
+      label: 'X Checks &rarr; Y Checks Back',
+      desc: '<strong>Showdown.</strong> Neither player puts additional money in the pot. This occurs when Y has a medium-strength hand that does not want to bet for value or as a bluff. The check-raise threat from X makes Y check behind more often than in a half-street game.',
+      actions: 'X: Check &rarr; Y: Check &rarr; Showdown',
+      strategic: 'Y checks behind to avoid the check-raise. This is a direct consequence of X having the check-raise weapon. In half-street games, Y would bet more freely here.'
+    },
+    'Bet (Y)': {
+      label: 'X Checks &rarr; Y Bets',
+      desc: 'Y bets after X\'s check. Now X has three options: <strong>fold</strong> (give up the pot), <strong>call</strong> (see a showdown), or <strong>raise</strong> (the check-raise).',
+      actions: 'X: Check &rarr; Y: Bet &rarr; X: Fold / Call / Raise',
+      strategic: '<strong>Fold:</strong> X gives up with the weakest hands. <strong>Call:</strong> X continues with medium hands (too good to fold, not strong enough to raise). <strong>Raise (check-raise):</strong> X raises with very strong hands for value and with some bluffs for balance.'
+    }
+  },
+  bet: {
+    options: ['Fold (Y)', 'Call (Y)', 'Raise (Y)'],
+    'Fold (Y)': {
+      label: 'X Bets &rarr; Y Folds',
+      desc: '<strong>X wins the pot.</strong> Y determines the hand is too weak to continue facing X\'s bet. X\'s bluffs succeed when this happens.',
+      actions: 'X: Bet &rarr; Y: Fold &rarr; X wins pot',
+      strategic: 'The bluffs in X\'s betting range profit when Y folds. Y must fold infrequently enough (meeting the MDF) to prevent X from bluffing profitably with any hand.'
+    },
+    'Call (Y)': {
+      label: 'X Bets &rarr; Y Calls',
+      desc: '<strong>Showdown.</strong> Y calls with medium-to-strong hands. The pot is larger by the bet amount from each player.',
+      actions: 'X: Bet &rarr; Y: Call &rarr; Showdown',
+      strategic: 'X\'s value bets profit when called by worse hands. Y must call enough to deter bluffing (MDF) but not so much that calling with weak hands becomes costly.'
+    },
+    'Raise (Y)': {
+      label: 'X Bets &rarr; Y Raises',
+      desc: 'Y raises X\'s bet. Now X must fold, call, or re-raise. This is the reverse of the check-raise &mdash; Y is raising the initial bettor.',
+      actions: 'X: Bet &rarr; Y: Raise &rarr; X: Fold / Call / Re-raise',
+      strategic: 'Y raises with very strong hands for value and with some bluffs. X must then decide whether to continue. This makes X\'s initial betting range more cautious &mdash; X cannot bet weak hands freely because Y might raise.'
+    }
+  }
+};
+
+// Update Y's options when X's action changes
+document.getElementById('xAction').addEventListener('change', function() {
+  const ySelect = document.getElementById('yAction');
+  ySelect.innerHTML = '<option value="--">-- Select --</option>';
+  const options = treeData[this.value].options;
+  options.forEach(opt => {
+    const el = document.createElement('option');
+    el.value = opt;
+    el.textContent = opt;
+    ySelect.appendChild(el);
+  });
+  document.getElementById('treeResult').innerHTML = '<div class="result-label">Select Y\'s response and click Show Analysis</div>';
+});
+
+function showDecisionTree() {
+  const xAct = document.getElementById('xAction').value;
+  const yAct = document.getElementById('yAction').value;
+
+  if (yAct === '--') {
+    document.getElementById('treeResult').innerHTML = '<div class="result-label">Please select Player Y\'s response first</div>';
+    return;
+  }
+
+  const data = treeData[xAct][yAct];
+  document.getElementById('treeResult').innerHTML = `
+    <div style="margin-bottom:1rem;">
+      <div style="font-weight:700; color:var(--gold); margin-bottom:0.5rem;">${data.label}</div>
+      <div style="background:var(--bg); padding:0.6rem 1rem; border-radius:4px; font-family:monospace; font-size:0.9rem; margin-bottom:0.75rem; border-left:3px solid var(--accent);">
+        ${data.actions}
+      </div>
+    </div>
+    <div style="margin-bottom:0.75rem; line-height:1.7;">${data.desc}</div>
+    <div style="padding-top:0.75rem; border-top:1px solid var(--border);">
+      <div class="result-label" style="margin-bottom:0.3rem;">Strategic Implications</div>
+      <div style="line-height:1.7; font-size:0.95rem;">${data.strategic}</div>
+    </div>
+  `;
+}
+
+// Initialize Y's options
+document.getElementById('xAction').dispatchEvent(new Event('change'));
+</script>
+</body>
+</html>

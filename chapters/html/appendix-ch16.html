@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appendix to Chapter 16: Solving the Difference Equations — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Appendix</span>
+    <h1>Solving the Difference Equations</h1>
+    <p class="chapter-subtitle">Mathematical derivation of the threshold formulas from Chapter 16</p>
+    <p style="margin-top: 1rem;"><a href="../appendix-ch16.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Appendix PDF</a></p>
+  </div>
+
+  <!-- ===== THE DIFFERENCE EQUATION ===== -->
+  <div class="chapter-section">
+    <h2>The Difference Equation</h2>
+    <p>In Chapter 16, the analysis of no-fold [0,1] games produced a <strong>second-order homogeneous difference equation</strong> that describes the relationship between consecutive betting thresholds:</p>
+
+    <div class="math-block">
+      <span class="math-label">Equation 16.1</span>
+      y<sub>k+2</sub> + 2y<sub>k+1</sub> &minus; y<sub>k</sub> = 0
+    </div>
+
+    <p>This equation governs where each player&rsquo;s betting thresholds fall in the [0,1] game as the number of betting rounds increases. Each <strong>y<sub>k</sub></strong> represents the hand strength at which a player transitions from one action to another.</p>
+  </div>
+
+  <!-- ===== GENERAL FORM ===== -->
+  <div class="chapter-section">
+    <h2>General Solution Method</h2>
+    <p>All equations of the form:</p>
+
+    <div class="math-block">
+      y<sub>n+2</sub> + c&middot;y<sub>n+1</sub> + d&middot;y<sub>n</sub> = 0
+    </div>
+
+    <p>where <em>c</em> and <em>d</em> are constants, have a solution of the form:</p>
+
+    <div class="math-block">
+      <span class="math-label">Equation 16.1a</span>
+      y<sub>n</sub> = a&middot;p<sup>n</sup> + b&middot;q<sup>n</sup>
+    </div>
+
+    <p>where <em>a</em> and <em>b</em> are constants determined by boundary conditions, and <em>p</em> and <em>q</em> are the <strong>real distinct roots</strong> of the <em>characteristic equation</em>:</p>
+
+    <div class="math-block">
+      x&sup2; + cx + d = 0
+    </div>
+  </div>
+
+  <!-- ===== CHARACTERISTIC EQUATION ===== -->
+  <div class="chapter-section">
+    <h2>Finding the Roots</h2>
+    <p>For our difference equation (c = 2, d = &minus;1), the characteristic equation is:</p>
+
+    <div class="math-block">
+      x&sup2; + 2x &minus; 1 = 0
+    </div>
+
+    <p>Applying the quadratic formula:</p>
+
+    <div class="math-block">
+      x = &minus;1 &plusmn; &radic;2
+    </div>
+
+    <p>This gives us two roots:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>p = &radic;2 &minus; 1 &approx; 0.4142</strong> &mdash; the &ldquo;Golden Mean of Poker&rdquo; from Chapter 14</li>
+      <li><strong>q = &minus;1 &minus; &radic;2 &approx; &minus;2.4142</strong></li>
+    </ul>
+
+    <div class="definition-box">
+      <div class="def-term">The Golden Mean of Poker (r)</div>
+      <p>We define <strong>r = &radic;2 &minus; 1</strong>. This constant appears throughout the book&rsquo;s game-theoretic analysis. It is the positive root of x&sup2; + 2x &minus; 1 = 0 and governs optimal bet sizing in many poker toy games.</p>
+    </div>
+  </div>
+
+  <!-- ===== SIMPLIFICATION ===== -->
+  <div class="chapter-section">
+    <h2>Simplifying the Solution</h2>
+    <p>Substituting the roots into the general solution:</p>
+
+    <div class="math-block">
+      y<sub>n</sub> = a&middot;r<sup>n</sup> + b&middot;(&minus;1 &minus; &radic;2)<sup>n</sup>
+    </div>
+
+    <p>A critical observation: as n &rarr; &infin;, the thresholds y<sub>n</sub> must converge to 0 (the player needs an increasingly strong hand to justify additional bets). The second term <strong>diverges</strong> for any b &ne; 0, since |&minus;1 &minus; &radic;2| &gt; 1.</p>
+
+    <div class="example-box">
+      <div class="example-title">Boundary Condition Argument</div>
+      <p>Since y<sub>n</sub> &rarr; 0 as n &rarr; &infin;, we must have <strong>b = 0</strong>. The solution simplifies dramatically to:</p>
+      <div class="math-block">y<sub>n</sub> = a&middot;r<sup>n</sup></div>
+    </div>
+  </div>
+
+  <!-- ===== FINDING a ===== -->
+  <div class="chapter-section">
+    <h2>Finding the Constant <em>a</em></h2>
+    <p>Using the boundary condition y<sub>2</sub> = 1 &minus; y<sub>1</sub>:</p>
+
+    <div class="math-block">
+      ar&sup2; = 1 &minus; ar
+    </div>
+
+    <p>We use the identity <strong>r&sup2; = 1 &minus; 2r</strong> (derived from r = &radic;2 &minus; 1):</p>
+
+    <div class="math-block">
+      a(1 &minus; 2r) + ar = 1<br>
+      a(1 &minus; r) = 1<br>
+      a = 1/(1 &minus; r) = 1/(2 &minus; &radic;2)
+    </div>
+
+    <p>Rationalizing: <strong>a = (2 + &radic;2)/2 &approx; 1.7071</strong></p>
+  </div>
+
+  <!-- ===== FINAL RESULT ===== -->
+  <div class="chapter-section">
+    <h2>Final Threshold Formula</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Threshold Formula</div>
+      <p>The betting thresholds in the no-fold [0,1] game are:</p>
+      <div class="math-block">
+        y<sub>n</sub> = <sup>(2 + &radic;2)</sup>&frasl;<sub>2</sub> &middot; (&radic;2 &minus; 1)<sup>n</sup>
+      </div>
+      <p>Each threshold is the previous threshold multiplied by <strong>r = &radic;2 &minus; 1</strong>.</p>
+    </div>
+
+    <p>The first several thresholds:</p>
+    <table class="data-table" style="max-width: 400px;">
+      <thead>
+        <tr><th>n</th><th>y<sub>n</sub></th><th>Decimal</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>a&middot;r</td><td>0.7071</td></tr>
+        <tr><td>2</td><td>a&middot;r&sup2;</td><td>0.2929</td></tr>
+        <tr><td>3</td><td>a&middot;r&sup3;</td><td>0.1213</td></tr>
+        <tr><td>4</td><td>a&middot;r&sup4;</td><td>0.0503</td></tr>
+        <tr><td>5</td><td>a&middot;r&sup5;</td><td>0.0208</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== INTERACTIVE ===== -->
+  <div class="chapter-section">
+    <h2>Explore: Threshold Calculator</h2>
+    <div class="interactive-widget">
+      <h3>Betting Round Thresholds</h3>
+      <p>See how the thresholds shrink geometrically as the number of betting rounds increases.</p>
+      <div style="margin: 1rem 0;">
+        <label>Number of betting rounds: <strong id="numRounds">5</strong></label><br>
+        <input type="range" id="roundSlider" min="1" max="15" step="1" value="5" style="width: 100%; margin: 0.5rem 0;">
+      </div>
+      <canvas id="thresholdChart" width="700" height="300" style="width: 100%; background: var(--surface); border-radius: 8px;"></canvas>
+      <div id="thresholdList" style="margin-top: 1rem; font-size: 0.9rem; color: var(--muted);"></div>
+    </div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="chapter-section key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>The <strong>difference equation</strong> y<sub>k+2</sub> + 2y<sub>k+1</sub> &minus; y<sub>k</sub> = 0 governs no-fold [0,1] game thresholds</li>
+      <li>The <strong>characteristic equation</strong> method converts difference equations into closed-form solutions</li>
+      <li>The <strong>boundary condition</strong> y<sub>n</sub> &rarr; 0 eliminates the divergent term, simplifying the solution</li>
+      <li>Thresholds decrease <strong>geometrically</strong> by factor r = &radic;2 &minus; 1 per additional betting round</li>
+      <li>The constant <strong>r = &radic;2 &minus; 1</strong> (&ldquo;Golden Mean of Poker&rdquo;) is fundamental to optimal play</li>
+      <li>The identity <strong>r&sup2; = 1 &minus; 2r</strong> simplifies many calculations involving r</li>
+    </ul>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="chapter-section">
+    <h2>Test Your Understanding</h2>
+    <div class="quiz-box" data-answer="2">
+      <p class="quiz-question">What type of equation is y<sub>k+2</sub> + 2y<sub>k+1</sub> &minus; y<sub>k</sub> = 0?</p>
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="1"> First-order linear differential equation</label>
+        <label><input type="radio" name="q1" value="2"> Second-order homogeneous difference equation</label>
+        <label><input type="radio" name="q1" value="3"> Partial differential equation</label>
+        <label><input type="radio" name="q1" value="4"> Non-linear recurrence relation</label>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-box" data-answer="3">
+      <p class="quiz-question">Why is b = 0 in the general solution y<sub>n</sub> = ar<sup>n</sup> + b(&minus;1&minus;&radic;2)<sup>n</sup>?</p>
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="1"> Because b must always equal zero in difference equations</label>
+        <label><input type="radio" name="q2" value="2"> Because the initial conditions force it</label>
+        <label><input type="radio" name="q2" value="3"> Because the second term diverges, but y<sub>n</sub> must converge to 0</label>
+        <label><input type="radio" name="q2" value="4"> Because &minus;1 &minus; &radic;2 is irrational</label>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-box" data-answer="1">
+      <p class="quiz-question">By what factor does each successive threshold decrease?</p>
+      <div class="quiz-options">
+        <label><input type="radio" name="q3" value="1"> r = &radic;2 &minus; 1 &approx; 0.4142</label>
+        <label><input type="radio" name="q3" value="2"> 1/2 = 0.5</label>
+        <label><input type="radio" name="q3" value="3"> 1/e &approx; 0.368</label>
+        <label><input type="radio" name="q3" value="4"> &radic;2 &approx; 1.414</label>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- ===== NAV ===== -->
+  <div class="chapter-nav">
+    <a href="chapter-16.html">&larr; Chapter 16: No-Fold [0,1] Games</a>
+    <a href="chapter-17.html">Chapter 17: Finite Pot [0,1] Games &rarr;</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+(function(){
+  const r = Math.sqrt(2) - 1;
+  const a = (2 + Math.sqrt(2)) / 2;
+  const slider = document.getElementById('roundSlider');
+  const numRounds = document.getElementById('numRounds');
+  const canvas = document.getElementById('thresholdChart');
+  const ctx = canvas.getContext('2d');
+  const listEl = document.getElementById('thresholdList');
+
+  function draw() {
+    const n = parseInt(slider.value);
+    numRounds.textContent = n;
+
+    const W = canvas.width, H = canvas.height;
+    const pad = {top: 30, right: 30, bottom: 40, left: 60};
+    const plotW = W - pad.left - pad.right;
+    const plotH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Axes
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, H - pad.bottom);
+    ctx.lineTo(W - pad.right, H - pad.bottom);
+    ctx.stroke();
+
+    // Compute thresholds
+    const vals = [];
+    for (let i = 1; i <= n; i++) {
+      vals.push(a * Math.pow(r, i));
+    }
+
+    const maxY = Math.max(vals[0], 0.8);
+
+    // Y-axis labels
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'right';
+    for (let v = 0; v <= maxY; v += 0.1) {
+      const y = H - pad.bottom - (v / maxY) * plotH;
+      ctx.fillText(v.toFixed(1), pad.left - 8, y + 4);
+      ctx.strokeStyle = '#333';
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(W - pad.right, y);
+      ctx.stroke();
+    }
+
+    // Bars
+    const barW = Math.min(40, plotW / n * 0.6);
+    const gap = plotW / n;
+
+    ctx.fillStyle = '#c9362c';
+    for (let i = 0; i < vals.length; i++) {
+      const x = pad.left + gap * i + (gap - barW) / 2;
+      const barH = (vals[i] / maxY) * plotH;
+      const y = H - pad.bottom - barH;
+      ctx.fillRect(x, y, barW, barH);
+
+      // Label
+      ctx.fillStyle = '#aaa';
+      ctx.textAlign = 'center';
+      ctx.fillText('y' + (i + 1), x + barW / 2, H - pad.bottom + 15);
+      ctx.fillText(vals[i].toFixed(4), x + barW / 2, y - 5);
+      ctx.fillStyle = '#c9362c';
+    }
+
+    // X-axis label
+    ctx.fillStyle = '#aaa';
+    ctx.textAlign = 'center';
+    ctx.fillText('Threshold index (n)', W / 2, H - 5);
+
+    // List
+    listEl.innerHTML = vals.map((v, i) =>
+      'y<sub>' + (i+1) + '</sub> = ' + v.toFixed(6) +
+      (i > 0 ? '  (ratio: ' + (v / vals[i-1]).toFixed(4) + ')' : '')
+    ).join(' &nbsp;&bull;&nbsp; ');
+  }
+
+  slider.addEventListener('input', draw);
+  draw();
+})();
+</script>
+</body>
+</html>

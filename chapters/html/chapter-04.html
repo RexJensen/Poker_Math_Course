@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 4: Pot Odds and Implied Odds — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part II &mdash; Chapter 4</span>
+    <h1>Playing the Odds: Pot Odds and Implied Odds</h1>
+    <p class="chapter-subtitle">When to call, when to fold, and why future bets change everything</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-04.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== GAMES AND STRATEGIES ===== -->
+  <div class="chapter-section">
+    <h2>Games and Strategies</h2>
+    <p>Before diving into pot odds, Chen and Ankenman establish fundamental definitions. A <strong>game</strong> consists of two or more players, each of whom must choose among available actions, with outcomes that depend on the choices of all players. A <strong>strategy</strong> is a complete specification of which action a player takes at every possible decision point &mdash; every path through the game tree.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Exploitive Play</div>
+      <p><strong>Exploitive play</strong> seeks to maximize expected value by choosing the highest-EV action at each decision point, given our beliefs about the opponent's strategy. This is the foundation of poker decision-making.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Maximally Exploitive Strategy</div>
+      <p>The strategy with the <strong>highest expectation</strong> against a specific opponent strategy S. If we know exactly how our opponent plays, the maximally exploitive strategy tells us the best possible counter.</p>
+    </div>
+  </div>
+
+  <!-- ===== TOY GAME: EXAMPLE 4.1 ===== -->
+  <div class="chapter-section">
+    <h2>The Bluffing Threshold &mdash; Example 4.1</h2>
+    <p>Consider this toy game that illustrates a critical concept:</p>
+
+    <div class="example-box">
+      <div class="example-title">Example 4.1 &mdash; Toy Bluffing Game</div>
+      <p>Player A holds the nuts 20% of the time and a dead hand 80% of the time. The pot contains 4 big bets. Player A always bets with the nuts, and may also bluff with some fraction <em>x</em> of the total hands dealt.</p>
+      <p><strong>B's EV of calling:</strong></p>
+      <div class="math-block">
+        EV<sub>call</sub> = 5x &minus; 0.2
+      </div>
+      <p><strong>B's EV of folding:</strong> 0</p>
+      <p>B should call when EV<sub>call</sub> &gt; 0, i.e., when <strong>x &gt; 0.04 (4%)</strong>.</p>
+    </div>
+
+    <p>The critical insight: a <em>tiny</em> change in A's bluffing frequency &mdash; crossing the 4% threshold &mdash; causes B's optimal response to shift entirely from always-fold to always-call. This threshold effect is fundamental to poker strategy.</p>
+
+    <ul>
+      <li>If A bluffs less than 4%: B should <strong>always fold</strong></li>
+      <li>If A bluffs more than 4%: B should <strong>always call</strong></li>
+      <li>If A bluffs exactly 4%: B is <strong>indifferent</strong></li>
+    </ul>
+  </div>
+
+  <!-- ===== POT ODDS ===== -->
+  <div class="chapter-section">
+    <h2>Pot Odds</h2>
+
+    <p>Pot odds form the backbone of correct calling decisions. A draw should call when the expected value of calling exceeds the cost:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Pot Odds Rule</div>
+      <p>A call is correct when:</p>
+      <div class="math-block">
+        <span class="math-label">Pot Odds Inequality</span>
+        p(win) &times; (pot + call) &gt; call
+      </div>
+      <p>Equivalently, the minimum win probability required is:</p>
+      <div class="math-block">
+        x &gt; cost / (pot + cost)
+      </div>
+    </div>
+
+    <p>Two key principles from the book:</p>
+    <ul>
+      <li><em>"In made hand vs. draw situations, the made hand usually bets."</em></li>
+      <li><em>"The draw usually calls if it has positive equity after calling."</em></li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">Example 4.2 &mdash; AA vs Flush Draw</div>
+      <p>Player A has A&spades;A&diams;. Player B has 9&hearts;8&hearts; with a flush draw. The pot is $400 in a $30-60 limit game.</p>
+      <p>B has <strong>9 outs</strong> out of 44 unseen cards.</p>
+      <p>Probability of hitting: 9/44 &approx; 20.5%</p>
+      <p>Pot odds needed: 60 / (400 + 60) = 13.0%</p>
+      <p>Since 20.5% &gt; 13.0%, <strong>calling is clearly correct</strong>. B's EV of calling is positive.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Pot Odds Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Pot Odds Calculator</h3>
+    <p>Enter the pot size, bet to call, and your number of outs to see if you should call:</p>
+    <div class="widget-controls">
+      <label>
+        Pot size ($):
+        <input type="number" id="potSize" value="400" step="10" min="1">
+      </label>
+      <label>
+        Bet to call ($):
+        <input type="number" id="betToCall" value="60" step="5" min="1">
+      </label>
+      <label>
+        Your outs:
+        <input type="number" id="numOuts" value="9" step="1" min="0" max="20">
+      </label>
+      <label>
+        Unknown cards:
+        <input type="number" id="unknownCards" value="44" step="1" min="1" max="50">
+      </label>
+      <button class="btn" onclick="calcPotOdds()">Calculate</button>
+    </div>
+    <div class="widget-result" id="potOddsResult">
+      <div class="result-label">Enter your parameters and click Calculate</div>
+    </div>
+  </div>
+
+  <!-- ===== MULTI-STREET POT ODDS ===== -->
+  <div class="chapter-section">
+    <h2>Pot Odds on Multiple Streets</h2>
+
+    <p>A common mistake is evaluating pot odds one street at a time without considering the total cost across all remaining streets. Sometimes it is correct to call on the flop even without immediate odds if the combined odds across flop and river work out.</p>
+
+    <div class="example-box">
+      <div class="example-title">Example 4.5 &mdash; Multi-Street Calling</div>
+      <p>The pot is $135. A draw can call the flop and, if it misses, face another bet on the turn.</p>
+      <p>Key insight: B may be correct to call the flop (taking into account the probability of hitting on both the turn and river) but must <strong>fold the turn</strong> if the draw misses &mdash; because the turn call alone does not have the right odds with only one card to come.</p>
+      <p>The total cost of seeing both cards must be weighed against the total probability of hitting on either street.</p>
+    </div>
+  </div>
+
+  <!-- ===== RAISING FOR ODDS ===== -->
+  <div class="chapter-section">
+    <h2>Why "Raising to Give Yourself Odds" Doesn't Work</h2>
+
+    <p>A persistent poker myth says you should raise the flop with a draw to "buy" a cheaper turn card. Chen and Ankenman dismantle this argument:</p>
+
+    <div class="example-box">
+      <div class="example-title">Example 4.6 &mdash; Raising vs. Calling on the Flop</div>
+      <p>Raising the flop to try to create better pot odds on the turn actually produces <strong>$20 less EV</strong> than the simpler line of calling the flop and folding the turn when you miss.</p>
+      <p>The flaw in the "raise for odds" argument: it ignores that you are putting in extra money on the flop at bad odds. The turn "free card" is not free &mdash; you paid for it with the flop raise.</p>
+    </div>
+
+    <p>This is a critical example of why analyzing <em>total expected value</em> over multiple streets is essential, rather than optimizing each street in isolation.</p>
+  </div>
+
+  <!-- ===== IMPLIED ODDS ===== -->
+  <div class="chapter-section">
+    <h2>Implied Odds</h2>
+
+    <p>When hands are not exposed (as in real poker), a draw that hits may collect <strong>additional bets</strong> from an opponent who doesn't know the draw came in. This makes the effective pot larger than the current pot.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Implied Odds</div>
+      <p>The ratio between the amount you expect to win (including future bets) and the amount you must call now. Implied odds account for the money you expect to win on later streets when your draw completes.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Implied Odds &mdash; Three-Case Breakdown</div>
+      <p>Consider a flush draw where we track the three possible outcomes:</p>
+      <table class="data-table">
+        <tr><th>Scenario</th><th>Result</th></tr>
+        <tr><td>Turn flush (hit immediately)</td><td>+$285</td></tr>
+        <tr><td>River flush (miss turn, hit river)</td><td>+$285</td></tr>
+        <tr><td>No flush (miss both streets)</td><td>&minus;$90</td></tr>
+      </table>
+      <p>Without implied odds, the EV of calling is just <strong>$4.67</strong>.</p>
+      <p>With implied odds (collecting future bets when the flush hits), the EV jumps to <strong>$32.73</strong>.</p>
+      <p>Implied odds nearly <em>seven times</em> the basic EV &mdash; this is why draws are often far more profitable than simple pot odds suggest.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Implied Odds Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Implied Odds Calculator</h3>
+    <p>Add expected future bets to see the true value of your draw:</p>
+    <div class="widget-controls">
+      <label>
+        Current pot ($):
+        <input type="number" id="impliedPot" value="400" step="10" min="1">
+      </label>
+      <label>
+        Bet to call ($):
+        <input type="number" id="impliedCall" value="60" step="5" min="1">
+      </label>
+      <label>
+        Your outs:
+        <input type="number" id="impliedOuts" value="9" step="1" min="0" max="20">
+      </label>
+      <label>
+        Unknown cards:
+        <input type="number" id="impliedUnknown" value="44" step="1" min="1" max="50">
+      </label>
+      <label>
+        Expected future bets won ($):
+        <input type="number" id="futureBets" value="120" step="10" min="0">
+      </label>
+      <button class="btn" onclick="calcImpliedOdds()">Calculate</button>
+    </div>
+    <div class="widget-result" id="impliedOddsResult">
+      <div class="result-label">Enter your parameters and click Calculate</div>
+    </div>
+  </div>
+
+  <!-- ===== BLUFFING, SEMI-BLUFFING, VALUE BETTING ===== -->
+  <div class="chapter-section">
+    <h2>Bluffing, Semi-Bluffing, and Value Betting</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Types of Bets</div>
+      <ul>
+        <li><strong>Pure bluff:</strong> A bet with no chance of winning if called. The only way to profit is by getting the opponent to fold.</li>
+        <li><strong>Semi-bluff:</strong> A bet with a hand that is probably behind but might improve on later streets (e.g., betting a flush draw).</li>
+        <li><strong>Value bet:</strong> A bet with a hand that has positive expectation even when called &mdash; you expect to win more than you lose.</li>
+        <li><strong>Snowing:</strong> Bluffing with no outs on early streets, planning to continue bluffing on later streets to push the opponent off their hand.</li>
+      </ul>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">7-Card Stud &mdash; Bluffing Thresholds</div>
+      <p>The pot is $655. Player A has open aces. Player B has a flush draw.</p>
+      <p>Let <em>x</em> = A's calling frequency, <em>y</em> = B's bluffing frequency.</p>
+      <ul>
+        <li><strong>A should call</strong> when B bluffs more than <strong>2.2%</strong> of the time</li>
+        <li><strong>B should bluff</strong> when A calls less than <strong>89.1%</strong> of the time</li>
+      </ul>
+      <p>This creates two player archetypes:</p>
+      <table class="data-table">
+        <tr><th>Type</th><th>Tendency</th><th>Exploitive Counter</th></tr>
+        <tr><td><strong>Skeptics</strong></td><td>Call too often</td><td>Never bluff, value bet thinly</td></tr>
+        <tr><td><strong>Believers</strong></td><td>Fold too often</td><td>Bluff frequently, bet for folds</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Bluffing Frequency Explorer ===== -->
+  <div class="interactive-widget">
+    <h3>Bluffing Frequency Explorer</h3>
+    <p>Explore the toy game from Example 4.1. Adjust A's bluff frequency to see B's optimal response and the threshold effect:</p>
+    <div class="widget-controls">
+      <label>
+        A's bluff frequency (%):
+        <input type="range" id="bluffSlider" min="0" max="20" step="0.5" value="4" oninput="updateBluffExplorer()">
+        <span id="bluffValue">4.0%</span>
+      </label>
+      <label>
+        Pot size (big bets):
+        <input type="number" id="bluffPot" value="4" step="1" min="1" max="20" onchange="updateBluffExplorer()">
+      </label>
+      <label>
+        A's nut frequency (%):
+        <input type="number" id="nutFreq" value="20" step="1" min="1" max="50" onchange="updateBluffExplorer()">
+      </label>
+    </div>
+    <div class="widget-result" id="bluffResult">
+      <div class="result-label">Adjust the slider to explore</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ 1 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: Minimum Win Probability</h3>
+    <p>The pot is $200 and you must call $50. What is the minimum win probability needed to make the call correct?</p>
+    <button class="quiz-option" data-correct="false">25% &mdash; you need to win 1 in 4</button>
+    <button class="quiz-option" data-correct="true">20% &mdash; $50 / ($200 + $50) = 1/5</button>
+    <button class="quiz-option" data-correct="false">10% &mdash; $50 / $500 = 1/10</button>
+    <button class="quiz-option" data-correct="false">33% &mdash; you need better than 2:1</button>
+    <div class="quiz-feedback" data-correct="Correct! You need to win at least $50 / $250 = 20% of the time. You are risking $50 to win the $200 pot plus your $50 call = $250 total. The pot is offering you 4:1, so you need to win more than 1 in 5 times." data-incorrect="Not quite. Apply the pot odds formula: minimum win% = cost / (pot + cost) = $50 / ($200 + $50) = $50 / $250 = 20%. You're getting 4:1 pot odds, so you need to win at least 1 in 5 times."></div>
+  </div>
+
+  <!-- ===== QUIZ 2 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: Calculating Outs</h3>
+    <p>You have 8 outs on the turn with 46 unknown cards remaining. What are your approximate odds of hitting your draw?</p>
+    <button class="quiz-option" data-correct="false">8% &mdash; roughly 12:1 against</button>
+    <button class="quiz-option" data-correct="true">17.4% &mdash; roughly 4.75:1 against</button>
+    <button class="quiz-option" data-correct="false">25% &mdash; roughly 3:1 against</button>
+    <button class="quiz-option" data-correct="false">34.8% &mdash; roughly 2:1 against (double the outs)</button>
+    <div class="quiz-feedback" data-correct="Correct! 8/46 &approx; 0.174 or 17.4%. In odds notation, that's 38:8 or approximately 4.75:1 against. You need pot odds better than 4.75:1 to call profitably (before implied odds)." data-incorrect="The probability is simply outs / unknown cards = 8/46 &approx; 17.4%. In odds format: (46&minus;8) : 8 = 38:8 &approx; 4.75:1 against."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>A <strong>game</strong> requires 2+ players choosing actions whose outcomes depend on all players' choices; a <strong>strategy</strong> specifies actions at every decision point.</li>
+      <li><strong>Exploitive play</strong> maximizes EV by choosing the best action against the opponent's specific strategy.</li>
+      <li><strong>Pot odds</strong> compare the cost of calling to the total pot: call when p(win) &gt; cost / (pot + cost).</li>
+      <li>On <strong>multiple streets</strong>, evaluate total cost vs. total probability &mdash; don't optimize each street in isolation.</li>
+      <li><strong>Raising to "give yourself odds"</strong> is a fallacy &mdash; the extra flop money goes in at bad odds, costing more EV than it saves.</li>
+      <li><strong>Implied odds</strong> account for future bets won when your draw hits, often making calls profitable that raw pot odds don't justify.</li>
+      <li><strong>Semi-bluffs</strong> combine fold equity with draw equity; <strong>pure bluffs</strong> rely solely on fold equity.</li>
+      <li>Small changes in bluffing frequency can cross <strong>thresholds</strong> that completely flip the opponent's optimal response &mdash; the exploitive dynamic is discontinuous.</li>
+      <li>Opponents can be classified as <strong>Skeptics</strong> (call too much) or <strong>Believers</strong> (fold too much), each requiring opposite exploitive adjustments.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-03.html">&larr; Chapter 3: Bayes' Theorem</a>
+    <a href="chapter-05.html">Chapter 5: Strategic Alternatives &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcPotOdds() {
+  const pot = parseFloat(document.getElementById('potSize').value);
+  const call = parseFloat(document.getElementById('betToCall').value);
+  const outs = parseInt(document.getElementById('numOuts').value);
+  const unknown = parseInt(document.getElementById('unknownCards').value);
+
+  const potOddsNeeded = call / (pot + call);
+  const potOddsRatio = pot / call;
+  const handOdds = outs / unknown;
+  const handOddsAgainst = (unknown - outs) / outs;
+  const ev = handOdds * (pot + call) - call;
+  const shouldCall = handOdds > potOddsNeeded;
+
+  document.getElementById('potOddsResult').innerHTML = `
+    <div><span class="result-label">Pot odds required:</span> <span class="result-value">${(potOddsNeeded * 100).toFixed(1)}%</span> (${potOddsRatio.toFixed(1)}:1)</div>
+    <div style="margin-top:0.4rem"><span class="result-label">Your hand odds:</span> <span class="result-value">${(handOdds * 100).toFixed(1)}%</span> (${handOddsAgainst.toFixed(1)}:1 against)</div>
+    <div style="margin-top:0.4rem"><span class="result-label">EV of calling:</span> <span class="result-value" style="color:${ev >= 0 ? 'var(--green)' : 'var(--accent)'}">$${ev.toFixed(2)}</span></div>
+    <div style="margin-top:0.6rem; font-size:1.2rem; font-weight:bold; color:${shouldCall ? 'var(--green)' : 'var(--accent)'}">
+      ${shouldCall ? '&#10003; CALL &mdash; You have the odds' : '&#10007; FOLD &mdash; Pot odds are insufficient'}
+    </div>
+  `;
+}
+
+function calcImpliedOdds() {
+  const pot = parseFloat(document.getElementById('impliedPot').value);
+  const call = parseFloat(document.getElementById('impliedCall').value);
+  const outs = parseInt(document.getElementById('impliedOuts').value);
+  const unknown = parseInt(document.getElementById('impliedUnknown').value);
+  const future = parseFloat(document.getElementById('futureBets').value);
+
+  const handOdds = outs / unknown;
+  const handOddsAgainst = (unknown - outs) / outs;
+
+  // Without implied odds
+  const basicEV = handOdds * (pot + call) - call;
+  const basicNeeded = call / (pot + call);
+
+  // With implied odds
+  const effectivePot = pot + call + future;
+  const impliedEV = handOdds * effectivePot - call;
+  const impliedNeeded = call / (pot + call + future);
+
+  document.getElementById('impliedOddsResult').innerHTML = `
+    <div style="margin-bottom:0.6rem; font-weight:bold; border-bottom:1px solid var(--border); padding-bottom:0.4rem">Without Implied Odds</div>
+    <div><span class="result-label">Pot odds required:</span> <span class="result-value">${(basicNeeded * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.3rem"><span class="result-label">Your hand odds:</span> <span class="result-value">${(handOdds * 100).toFixed(1)}%</span> (${handOddsAgainst.toFixed(1)}:1 against)</div>
+    <div style="margin-top:0.3rem"><span class="result-label">Basic EV:</span> <span class="result-value" style="color:${basicEV >= 0 ? 'var(--green)' : 'var(--accent)'}">$${basicEV.toFixed(2)}</span></div>
+
+    <div style="margin-top:0.8rem; margin-bottom:0.6rem; font-weight:bold; border-bottom:1px solid var(--border); padding-bottom:0.4rem">With Implied Odds (+$${future.toFixed(0)} future bets)</div>
+    <div><span class="result-label">Effective pot:</span> <span class="result-value">$${effectivePot.toFixed(0)}</span></div>
+    <div style="margin-top:0.3rem"><span class="result-label">Implied odds required:</span> <span class="result-value">${(impliedNeeded * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.3rem"><span class="result-label">Implied EV:</span> <span class="result-value" style="color:${impliedEV >= 0 ? 'var(--green)' : 'var(--accent)'}">$${impliedEV.toFixed(2)}</span></div>
+
+    <div style="margin-top:0.6rem; font-size:1.1rem; font-weight:bold; color:var(--green)">
+      Implied odds add $${(impliedEV - basicEV).toFixed(2)} to your EV
+    </div>
+  `;
+}
+
+function updateBluffExplorer() {
+  const bluffPct = parseFloat(document.getElementById('bluffSlider').value);
+  const potSize = parseFloat(document.getElementById('bluffPot').value);
+  const nutPct = parseFloat(document.getElementById('nutFreq').value) / 100;
+
+  document.getElementById('bluffValue').textContent = bluffPct.toFixed(1) + '%';
+
+  const x = bluffPct / 100;
+  // B's EV of calling: when A bets, A has nuts with prob nutPct/(nutPct+x), bluff with prob x/(nutPct+x)
+  // If B calls: wins (pot+1) when A is bluffing, loses 1 when A has nuts
+  // EV_call = [x/(nutPct+x)] * (potSize) - [nutPct/(nutPct+x)] * 1
+  // Simplified from the book's formula for 4-bet pot:
+  // B's EV of calling = (potSize + 1) * x - nutPct  (per hand dealt)
+  const evCall = (potSize + 1) * x - nutPct;
+  const evFold = 0;
+  const threshold = nutPct / (potSize + 1);
+  const thresholdPct = (threshold * 100).toFixed(1);
+
+  let bestResponse, responseColor;
+  if (x > threshold + 0.0001) {
+    bestResponse = 'ALWAYS CALL';
+    responseColor = 'var(--green)';
+  } else if (x < threshold - 0.0001) {
+    bestResponse = 'ALWAYS FOLD';
+    responseColor = 'var(--accent)';
+  } else {
+    bestResponse = 'INDIFFERENT';
+    responseColor = 'var(--gold)';
+  }
+
+  document.getElementById('bluffResult').innerHTML = `
+    <div><span class="result-label">Bluff threshold:</span> <span class="result-value">${thresholdPct}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">A's bluff frequency:</span> <span class="result-value">${bluffPct.toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">B's EV of calling (per hand):</span> <span class="result-value" style="color:${evCall >= 0 ? 'var(--green)' : 'var(--accent)'}">${evCall.toFixed(3)} big bets</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">B's EV of folding:</span> <span class="result-value">0</span></div>
+    <div style="margin-top:0.6rem; font-size:1.2rem; font-weight:bold; color:${responseColor}">
+      B's optimal response: ${bestResponse}
+    </div>
+    <div style="margin-top:0.4rem; font-size:0.9rem; opacity:0.8">
+      ${x < threshold ? 'A is bluffing too rarely &mdash; B profits by folding and conceding the small bluff equity.' : x > threshold ? 'A is bluffing too often &mdash; B profits by calling and catching bluffs.' : 'At exactly the threshold, B\'s EV is the same whether calling or folding.'}
+    </div>
+  `;
+}
+
+// Initialize bluff explorer on load
+updateBluffExplorer();
+</script>
+</body>
+</html>
