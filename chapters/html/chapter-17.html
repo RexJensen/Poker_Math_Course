@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 17: Mixing in Bluffs — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 17</span>
+    <h1>Mixing in Bluffs: Finite Pot [0,1] Games</h1>
+    <p class="chapter-subtitle">Reintroducing the fold option &mdash; how bluffing emerges from strategic necessity in continuous-distribution games</p>
+  </div>
+
+  <!-- ===== ADDING FOLDING BACK ===== -->
+  <div class="chapter-section">
+    <h2>Adding Folding Back</h2>
+    <p>In Chapter 16, we explored [0,1] games where players could only bet and call &mdash; no folding allowed. That simplified model let us isolate the value-betting decision: when should you put money in because you expect to be ahead? But real poker is far richer than that.</p>
+    <p>Now we reintroduce the option to <strong>fold</strong>. This single addition transforms the game entirely. Once a player can fold, a new strategic weapon appears: the <strong>bluff</strong>. If your opponent will sometimes fold, then even your worst hands can profit by betting &mdash; not because they expect to win at showdown, but because they expect to win the pot uncontested.</p>
+    <p>With folding restored, the full strategic complexity of poker comes alive. The bettor must decide which hands to bet for value, which to check, and which to bluff. The defender must decide which hands to call and which to surrender. Both decisions are locked in a tense equilibrium where each player's strategy constrains the other's.</p>
+  </div>
+
+  <!-- ===== THE FINITE POT [0,1] GAME ===== -->
+  <div class="chapter-section">
+    <h2>The Finite Pot [0,1] Game</h2>
+
+    <div class="definition-box">
+      <div class="def-term">The [0,1] Game with Folding</div>
+      <p>Each player is dealt a hand uniformly at random from the interval [0, 1], where higher numbers are stronger. There is a pot of size <strong>P</strong>. One player (the bettor) may <strong>bet b</strong> or <strong>check</strong>. If the bettor checks, hands are revealed and the higher hand wins the pot. If the bettor bets, the opponent may <strong>call b</strong> or <strong>fold</strong>.</p>
+      <div class="math-block">
+        <span class="math-label">Game Setup</span>
+        Hands: x, y ~ Uniform[0, 1]<br>
+        Pot: P &gt; 0 &emsp; Bet: b &gt; 0<br>
+        Bettor: bet b or check<br>
+        Defender: call b or fold
+      </div>
+    </div>
+
+    <p>This model is simple enough to solve analytically, yet complex enough to capture the fundamental tension of poker: the interplay between value betting, bluffing, and calling. Every concept that emerges here &mdash; bluff frequencies, calling thresholds, the indifference principle &mdash; has a direct analog in real-world poker.</p>
+  </div>
+
+  <!-- ===== THREE-REGION STRATEGY ===== -->
+  <div class="chapter-section">
+    <h2>The Three-Region Strategy</h2>
+
+    <p>The optimal strategy for the bettor in this game divides the [0,1] interval into three distinct regions. This is one of the most beautiful and practical results in poker mathematics.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Three Regions</div>
+      <p>The bettor's optimal strategy partitions the hand space [0, 1] into exactly three zones:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Top Region (near 1.0): Value Bet</strong> &mdash; These hands are strong enough to bet expecting to be called by worse hands. They profit from the call.</li>
+        <li><strong>Middle Region: Check</strong> &mdash; These hands have showdown value (they can often win if checked down) but are not strong enough to bet for value. Betting them would only get called by better hands.</li>
+        <li><strong>Bottom Region (near 0.0): Bluff</strong> &mdash; These hands have no showdown value. They cannot win at showdown, so they lose nothing by bluffing. If the opponent folds, they win a pot they would otherwise lose.</li>
+      </ul>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Visualizing the Three Regions</div>
+      <p>Imagine the number line from 0 to 1:</p>
+      <div style="margin: 1rem 0; font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 2;">
+        <div>0.0 &mdash;&mdash;&mdash;&mdash; 0.2 &mdash;&mdash;&mdash;&mdash; 0.4 &mdash;&mdash;&mdash;&mdash; 0.6 &mdash;&mdash;&mdash;&mdash; 0.8 &mdash;&mdash;&mdash;&mdash; 1.0</div>
+        <div style="color: var(--accent);">[&emsp; BLUFF &emsp;] &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp;</div>
+        <div style="color: var(--muted);">&emsp; &emsp; &emsp; &emsp; &emsp; [&emsp; &emsp; &emsp; CHECK &emsp; &emsp; &emsp;] &emsp; &emsp; &emsp; &emsp; &emsp;</div>
+        <div style="color: var(--green);">&emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; [&emsp; VALUE BET &emsp;]</div>
+      </div>
+      <p>The exact boundaries depend on P and b. With a larger pot, the value-bet region expands (more hands are worth betting) and the bluff region shrinks (opponent calls more often, making bluffs less profitable).</p>
+    </div>
+
+    <p>The elegance of this result is that it mirrors the structure of optimal play in real poker. Strong hands bet for value. Medium hands try to get to showdown cheaply. And bluffs come from the very bottom of the range &mdash; a point we will explore in depth below.</p>
+  </div>
+
+  <!-- ===== OPTIMAL BLUFF THRESHOLD ===== -->
+  <div class="chapter-section">
+    <h2>The Optimal Bluff Threshold</h2>
+
+    <p>How much should the bettor bluff? This is determined by the <strong>indifference principle</strong>: the bettor must bluff at exactly the frequency that makes the defender indifferent between calling and folding with their marginal hand.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Indifference Principle for Bluffing</div>
+      <p>At equilibrium, the defender's marginal calling hand must have the same EV whether it calls or folds. This pins down the ratio of bluffs to value bets in the bettor's range.</p>
+      <div class="math-block">
+        <span class="math-label">Equation 17.1 &mdash; Bluff-to-Value Ratio</span>
+        Bluffs / (Value Bets + Bluffs) = b / (b + P)
+      </div>
+      <p>Equivalently, the fraction of the bettor's betting range that is bluffs equals:</p>
+      <div class="math-block">
+        <span class="math-label">Equation 17.2 &mdash; Bluff Frequency</span>
+        &alpha; = b / (b + P)
+      </div>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Numerical Example</div>
+      <p>Suppose P = 10 (pot) and b = 5 (bet). Then:</p>
+      <div class="math-block">
+        <span class="math-label">Calculation</span>
+        &alpha; = 5 / (5 + 10) = 5 / 15 = 1/3 &asymp; 33.3%
+      </div>
+      <p>One-third of the bettor's bets should be bluffs. If the bettor value bets with 20% of hands, they should bluff with 10% of hands, for a total betting frequency of 30%. The ratio of bluffs to total bets is 10/30 = 1/3.</p>
+      <p>Why 1/3? Because the defender is getting <strong>pot odds of 5:15 (1:3)</strong> to call. The defender needs to win at least 1/4 of the time to break even calling. If exactly 1/3 of bets are bluffs, the defender wins (by calling a bluff) exactly 1/3 of the time, which is more than the 1/4 needed &mdash; but the bettor balances this by choosing the right value-bet threshold to make calling and folding equally attractive for the defender's marginal hand.</p>
+    </div>
+  </div>
+
+  <!-- ===== DEFENDER'S OPTIMAL RESPONSE ===== -->
+  <div class="chapter-section">
+    <h2>Defender's Optimal Response</h2>
+
+    <p>The defender faces the inverse problem: given that the bettor is betting with a mix of strong hands and bluffs, which hands should the defender call with?</p>
+
+    <div class="definition-box">
+      <div class="def-term">Optimal Calling Threshold</div>
+      <p>The defender's calling threshold is set to make the bettor indifferent between bluffing and checking with their marginal bluff. The defender calls with hands that beat enough of the bettor's range to justify the call.</p>
+      <div class="math-block">
+        <span class="math-label">Equation 17.3 &mdash; Calling Threshold</span>
+        Defender calls when: hand &ge; 1 &minus; (Value Bet Region) &minus; &alpha; &times; (Value Bet Region) / (1 &minus; &alpha;)
+      </div>
+      <p>In practice, the calling threshold is determined by the pot odds offered by the bet. The defender needs to be correct at least <strong>b / (P + 2b)</strong> fraction of the time to profit from calling.</p>
+    </div>
+
+    <p>The symmetry is striking: the bettor bluffs at a rate to make the defender indifferent about calling, and the defender calls at a rate to make the bettor indifferent about bluffing. Neither player can improve their EV by deviating unilaterally &mdash; this is the <strong>Nash equilibrium</strong>.</p>
+  </div>
+
+  <!-- ===== KEY INSIGHT: BLUFF WITH THE WORST ===== -->
+  <div class="chapter-section">
+    <h2>Key Insight: Bluff with the Worst Hands</h2>
+
+    <p>This is perhaps the most counterintuitive and important lesson of the [0,1] game: <strong>bluffs should come from the absolute worst hands, not from medium-strength hands</strong>.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Why Bluffs Come from the Bottom</div>
+      <p>A medium-strength hand has <strong>showdown value</strong> &mdash; it can win if both players check. Bluffing with such a hand means sacrificing this value. If the opponent calls, you lose both the showdown AND the bet. If the opponent folds, you gain the pot but give up the showdown equity you already had.</p>
+      <p>By contrast, a truly weak hand (near 0.0) has <strong>zero showdown value</strong>. It will lose at showdown regardless. Bluffing costs nothing extra &mdash; you are turning a hand worth zero into a hand that sometimes wins the pot.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Medium vs. Weak Hand Bluffing</div>
+      <p>Suppose you hold hand = 0.45 (medium) vs. hand = 0.05 (weak). The pot is 10 and the bet is 5.</p>
+      <p><strong>Hand 0.45 (medium):</strong> If you check, you win the pot ~45% of the time at showdown (EV = 0.45 &times; 10 = 4.5). If you bluff, and the opponent calls ~60% of the time, your EV from bluffing is negative compared to checking.</p>
+      <p><strong>Hand 0.05 (weak):</strong> If you check, you win the pot ~5% of the time (EV = 0.05 &times; 10 = 0.5). If you bluff, and the opponent folds ~40% of the time, your EV from bluffing is 0.4 &times; 10 &minus; 0.6 &times; 5 = 4.0 &minus; 3.0 = 1.0. That is better than 0.5!</p>
+      <p>The weak hand gains from bluffing; the medium hand does not. This is why optimal bluffs come from the bottom of the range.</p>
+    </div>
+
+    <p>This mirrors the lesson from the AKQ game (Chapter 15): in that game, the optimal strategy was to bluff with the weakest hand (Q) rather than the medium hand (K). The K has showdown value against the Q, so bluffing with it wastes that advantage. The same principle scales to the continuous [0,1] distribution.</p>
+  </div>
+
+  <!-- ===== POT SIZE EFFECTS ===== -->
+  <div class="chapter-section">
+    <h2>Pot Size Effects</h2>
+
+    <p>The size of the pot profoundly affects the equilibrium strategy. Understanding these effects builds intuition that transfers directly to real poker.</p>
+
+    <div class="example-box">
+      <div class="example-title">Large Pot vs. Small Pot</div>
+      <table class="data-table">
+        <tr><th>Factor</th><th>Large Pot (P = 20, b = 5)</th><th>Small Pot (P = 4, b = 5)</th></tr>
+        <tr>
+          <td><strong>Pot Odds for Defender</strong></td>
+          <td>5:25 = 1:5 (need 16.7% to call)</td>
+          <td>5:9 &asymp; 1:1.8 (need 35.7% to call)</td>
+        </tr>
+        <tr>
+          <td><strong>Defender Calls...</strong></td>
+          <td>More often (great pot odds)</td>
+          <td>Less often (poor pot odds)</td>
+        </tr>
+        <tr>
+          <td><strong>Bluff Frequency (&alpha;)</strong></td>
+          <td>5/25 = 20% (less bluffing)</td>
+          <td>5/9 = 55.6% (more bluffing)</td>
+        </tr>
+        <tr>
+          <td><strong>Intuition</strong></td>
+          <td>Opponent calls wide, bluffs rarely work</td>
+          <td>Opponent folds often, bluffs are cheap</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="math-block">
+      <span class="math-label">Equation 17.4 &mdash; Pot Size and Strategy</span>
+      As P &rarr; &infin;: &alpha; &rarr; 0 (no bluffing, opponent always calls)<br>
+      As P &rarr; 0: &alpha; &rarr; b/(b+0) = 1 (all bluffs, opponent never calls)
+    </div>
+
+    <p>The practical lesson: in large pots, lean toward value betting. Your opponent is getting excellent odds to call and will do so frequently. In small pots, you can bluff more aggressively because your opponent's calling odds are worse. This is why position and pot manipulation are so important in real poker &mdash; controlling the pot size is controlling the game's incentive structure.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: [0,1] Bluffing Game ===== -->
+  <div class="interactive-widget">
+    <h3>[0,1] Bluffing Game Visualizer</h3>
+    <p>Adjust the pot size and bet size to see how the three-region strategy changes in real time. Watch how the value-bet, check, and bluff regions shift on the number line.</p>
+    <div class="widget-controls">
+      <label>
+        Pot Size (P)
+        <input type="range" id="potSlider" min="1" max="30" value="10" step="1" oninput="updateBluffGame()">
+        <span id="potValue">10</span>
+      </label>
+      <label>
+        Bet Size (b)
+        <input type="range" id="betSlider" min="1" max="20" value="5" step="1" oninput="updateBluffGame()">
+        <span id="betValue">5</span>
+      </label>
+    </div>
+    <div id="bluffGameCanvas" style="margin: 1rem 0; position: relative; height: 120px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); overflow: hidden;"></div>
+    <div class="widget-result" id="bluffGameResult">
+      <div class="result-label">Adjust sliders to explore</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Conceptual Check</h3>
+    <p>In a [0,1] game with a finite pot, why should bluffs come from the <strong>weakest</strong> hands rather than medium-strength hands?</p>
+    <button class="quiz-option" data-correct="false">Because weak hands have better implied odds when they hit</button>
+    <button class="quiz-option" data-correct="false">Because medium hands confuse the opponent more when revealed</button>
+    <button class="quiz-option" data-correct="true">Because medium hands have showdown value that would be sacrificed by bluffing, while weak hands have nothing to lose</button>
+    <button class="quiz-option" data-correct="false">Because the weakest hands have the highest probability of improving on later streets</button>
+    <div class="quiz-feedback" data-correct="Correct! Medium-strength hands can win at showdown if checked down, so bluffing with them sacrifices that showdown equity. The weakest hands (near 0.0) will lose at showdown anyway, so turning them into bluffs costs nothing — they are converting zero-value holdings into hands that sometimes win the pot through fold equity." data-incorrect="Not quite. The key reason is about showdown value. Medium hands can win if both players check — they have positive showdown equity. Bluffing with them throws away that equity. But the weakest hands will lose at showdown regardless (they have zero showdown value), so bluffing with them is 'free' — you are converting worthless hands into opportunities to win the pot through fold equity."></div>
+  </div>
+
+  <!-- ===== QUIZ 2 ===== -->
+  <div class="quiz-box">
+    <h3>Calculation Check</h3>
+    <p>In a [0,1] game with pot P = 8 and bet b = 4, what fraction of the bettor's betting range should be bluffs at equilibrium?</p>
+    <button class="quiz-option" data-correct="false">25%</button>
+    <button class="quiz-option" data-correct="true">33.3% (one-third)</button>
+    <button class="quiz-option" data-correct="false">50%</button>
+    <button class="quiz-option" data-correct="false">40%</button>
+    <div class="quiz-feedback" data-correct="Correct! Using the formula &alpha; = b / (b + P) = 4 / (4 + 8) = 4/12 = 1/3 &asymp; 33.3%. One-third of the bettor's bets should be bluffs. This ratio ensures the defender is indifferent between calling and folding with their marginal hand." data-incorrect="Apply the bluff frequency formula: &alpha; = b / (b + P) = 4 / (4 + 8) = 4/12 = 1/3 &asymp; 33.3%. The correct answer is one-third."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Folding reintroduces bluffing.</strong> Without the ability to fold, there is no reason to bluff. Once folding is possible, bluffing becomes a powerful and necessary strategic tool.</li>
+      <li><strong>Three-region strategy:</strong> Optimal play divides hands into value bets (top), checks (middle), and bluffs (bottom). This tripartite structure is fundamental to poker strategy.</li>
+      <li><strong>Bluff with the worst hands, not medium hands.</strong> Medium hands have showdown value that bluffing would sacrifice. The weakest hands have nothing to lose, making them ideal bluff candidates.</li>
+      <li><strong>The bluff frequency &alpha; = b/(b+P)</strong> makes the defender indifferent between calling and folding with marginal hands. This is a direct application of the indifference principle.</li>
+      <li><strong>Larger pots mean less bluffing.</strong> When the pot is large, opponents get better odds to call, making bluffs less profitable. Smaller pots create more bluffing opportunities.</li>
+      <li><strong>Nash equilibrium</strong> arises from mutual indifference: the bettor bluffs enough to keep the defender uncertain, and the defender calls enough to keep the bettor from profiting with reckless bluffs.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-16.html">&larr; Chapter 16</a>
+    <a href="chapter-18.html">Chapter 18 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// ===== [0,1] Bluffing Game Visualizer =====
+function updateBluffGame() {
+  const P = parseInt(document.getElementById('potSlider').value);
+  const b = parseInt(document.getElementById('betSlider').value);
+  document.getElementById('potValue').textContent = P;
+  document.getElementById('betValue').textContent = b;
+
+  // Bluff-to-value ratio
+  const alpha = b / (b + P);
+
+  // Value bet threshold: hands above this value bet
+  // In the [0,1] game, the value bet threshold is approximately 1 - b/(b+P) from the top
+  // Simplified model: value bet region = top portion, bluff region = bottom portion
+  const valueBetSize = P / (2 * (b + P));  // fraction of hands that value bet
+  const bluffSize = alpha * valueBetSize / (1 - alpha);  // bluffs proportional to value bets
+  const valueThreshold = 1 - valueBetSize;
+  const bluffThreshold = Math.min(bluffSize, valueThreshold);
+
+  // Draw the visualization
+  const canvas = document.getElementById('bluffGameCanvas');
+  const width = canvas.offsetWidth;
+  const barHeight = 40;
+  const topY = 20;
+  const labelY = topY + barHeight + 25;
+
+  // Build HTML visualization
+  const bluffWidth = (bluffThreshold * 100);
+  const checkStart = bluffThreshold * 100;
+  const checkWidth = (valueThreshold - bluffThreshold) * 100;
+  const valueStart = valueThreshold * 100;
+  const valueWidth = (1 - valueThreshold) * 100;
+
+  canvas.innerHTML = `
+    <div style="position:absolute; left:5%; right:5%; top:${topY}px; height:${barHeight}px; border-radius:6px; overflow:hidden; display:flex;">
+      <div style="width:${bluffWidth}%; background:rgba(201,56,42,0.5); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:0.75rem; min-width:0; overflow:hidden;">${bluffWidth > 8 ? 'BLUFF' : ''}</div>
+      <div style="width:${checkWidth}%; background:rgba(139,148,158,0.3); display:flex; align-items:center; justify-content:center; color:var(--muted); font-weight:700; font-size:0.75rem; min-width:0; overflow:hidden;">${checkWidth > 8 ? 'CHECK' : ''}</div>
+      <div style="width:${valueWidth}%; background:rgba(46,160,67,0.5); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:0.75rem; min-width:0; overflow:hidden;">${valueWidth > 8 ? 'VALUE BET' : ''}</div>
+    </div>
+    <div style="position:absolute; left:5%; right:5%; top:${labelY}px; display:flex; justify-content:space-between; font-size:0.8rem; color:var(--muted);">
+      <span>0.0 (weakest)</span>
+      <span>0.5</span>
+      <span>1.0 (strongest)</span>
+    </div>
+    <div style="position:absolute; left:5%; top:${labelY + 22}px; font-size:0.7rem; color:var(--accent);">&uarr; ${bluffThreshold.toFixed(3)}</div>
+    <div style="position:absolute; left:calc(5% + ${valueStart}% * 0.9); top:${labelY + 22}px; font-size:0.7rem; color:var(--green);">&uarr; ${valueThreshold.toFixed(3)}</div>
+  `;
+
+  // Update result text
+  const totalBetting = valueBetSize + bluffSize;
+  document.getElementById('bluffGameResult').innerHTML = `
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+      <div><span class="result-label">Pot Size (P):</span> <span class="result-value">${P}</span></div>
+      <div><span class="result-label">Bet Size (b):</span> <span class="result-value">${b}</span></div>
+      <div><span class="result-label">Bluff Ratio (&alpha;):</span> <span class="result-value">${(alpha * 100).toFixed(1)}%</span></div>
+      <div><span class="result-label">Pot Odds:</span> <span class="result-value">${b}:${P + b} (1:${((P+b)/b).toFixed(1)})</span></div>
+      <div><span class="result-label">Value Bet Region:</span> <span style="color:var(--green);">${(valueBetSize * 100).toFixed(1)}% of hands</span></div>
+      <div><span class="result-label">Bluff Region:</span> <span style="color:var(--accent);">${(bluffSize * 100).toFixed(1)}% of hands</span></div>
+      <div><span class="result-label">Check Region:</span> <span style="color:var(--muted);">${((1 - valueBetSize - bluffSize) * 100).toFixed(1)}% of hands</span></div>
+      <div><span class="result-label">Total Betting Freq:</span> <span class="result-value">${(totalBetting * 100).toFixed(1)}%</span></div>
+    </div>
+  `;
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', updateBluffGame);
+</script>
+</body>
+</html>
