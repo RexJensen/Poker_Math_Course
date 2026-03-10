@@ -8,3 +8,17 @@
     bar.style.width = (scrollTop / docHeight * 100) + '%';
   });
 })();
+
+// Video toggle buttons
+(function () {
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.video-toggle');
+    if (!btn) return;
+    var targetId = btn.getAttribute('data-target');
+    var wrapper = document.getElementById(targetId);
+    if (!wrapper) return;
+    var isOpen = wrapper.classList.toggle('visible');
+    btn.classList.toggle('open', isOpen);
+    btn.innerHTML = isOpen ? '&#9660; Hide Animation' : '&#9654; Watch Chapter Animation';
+  });
+})();
