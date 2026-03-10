@@ -21,127 +21,71 @@
   <div class="chapter-header">
     <span class="chapter-number">Part III &mdash; Chapter 19</span>
     <h1>The Road to Poker: Static Multi-Street Games</h1>
-    <p class="chapter-subtitle">Extending toy games across multiple betting rounds &mdash; where stack depth, SPR, and multi-barrel strategy emerge</p>
+    <p class="chapter-subtitle">Extending the [0,1] game to multiple betting rounds &mdash; SPR, geometric sizing, and multi-street bluffing</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-19.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
   </div>
 
-  <!-- ===== FROM SINGLE TO MULTI-STREET ===== -->
+  <!-- ===== INTRODUCTION ===== -->
   <div class="chapter-section">
-    <h2>From Single Street to Multi-Street</h2>
-    <p>Everything we have analyzed so far &mdash; the AKQ game, the [0,1] game with and without folding &mdash; has been a <strong>single-street</strong> model. One player bets (or checks), the other responds, and the hand is over. This simplification isolated fundamental concepts like value betting, bluffing, and the indifference principle.</p>
-    <p>But real poker has <strong>multiple betting rounds</strong>: preflop, flop, turn, and river. Each additional street adds exponential complexity to the game tree. A strategy that works perfectly on one street might be suboptimal when considered in the context of future streets. This chapter begins the critical transition from single-street models to multi-street thinking.</p>
-    <p>The key insight: <strong>decisions on early streets must account for what happens on later streets.</strong> A flop bet is not just about the flop &mdash; it sets up the turn and river. This forward-looking perspective is what separates strong players from weak ones.</p>
-  </div>
-
-  <!-- ===== STATIC MULTI-STREET GAMES ===== -->
-  <div class="chapter-section">
-    <h2>Static Multi-Street Games</h2>
-
-    <div class="definition-box">
-      <div class="def-term">Static Multi-Street Game</div>
-      <p>A game where hand values are <strong>fixed</strong> &mdash; they do not change between streets. There are no draws, no community cards that improve or worsen a hand. The only thing that changes across streets is the <strong>betting</strong>: players have multiple opportunities to bet, raise, call, or fold.</p>
-      <div class="math-block">
-        <span class="math-label">Key Simplification</span>
-        Static game: hand values fixed at deal time<br>
-        Dynamic game: hand values change with new cards (draws, board cards)<br>
-        This chapter: static games only
-      </div>
-    </div>
-
-    <p>Why study static multi-street games first? Because they isolate the effect of <strong>multiple betting rounds</strong> without the additional complexity of changing hand values. This lets us understand how stack depth, bet sizing across streets, and multi-barrel bluffing work in their purest form. Dynamic games (with draws and changing equity) will come later.</p>
-  </div>
-
-  <!-- ===== WHY MULTIPLE STREETS MATTER ===== -->
-  <div class="chapter-section">
-    <h2>Why Multiple Streets Matter</h2>
-
-    <p>Multiple betting rounds transform poker strategy in several fundamental ways that single-street models cannot capture.</p>
-
-    <div class="example-box">
-      <div class="example-title">The Four Dimensions of Multi-Street Play</div>
-      <table class="data-table">
-        <tr><th>Dimension</th><th>Single-Street</th><th>Multi-Street</th></tr>
-        <tr>
-          <td><strong>Value Extraction</strong></td>
-          <td>One chance to bet for value</td>
-          <td>Multiple bets = more money from strong hands</td>
-        </tr>
-        <tr>
-          <td><strong>Bluffing</strong></td>
-          <td>Bluff once, opponent calls or folds</td>
-          <td>Multi-barrel bluffs &mdash; increasing pressure across streets</td>
-        </tr>
-        <tr>
-          <td><strong>Stack Depth</strong></td>
-          <td>Irrelevant (only one bet)</td>
-          <td>Critical &mdash; how much can be wagered over all streets</td>
-        </tr>
-        <tr>
-          <td><strong>Planning</strong></td>
-          <td>Decide bet or check, done</td>
-          <td>Must plan entire sequences: bet-bet-bet, bet-check-bet, etc.</td>
-        </tr>
-      </table>
-    </div>
-
-    <p>The most important new variable that emerges is <strong>stack depth</strong>. In a single-street game, you bet b and that is it. In a multi-street game, the total amount you can wager is limited by your stack. How you distribute bets across streets &mdash; and how your stack size relates to the pot &mdash; becomes a central strategic consideration.</p>
+    <h2>From One Street to Many</h2>
+    <p>In previous chapters, we analyzed games with a single betting round. Real poker, however, has <strong>multiple streets</strong> &mdash; preflop, flop, turn, and river in Hold'em. Each street offers another opportunity to bet, raise, or fold, creating a vastly more complex strategic landscape.</p>
+    <p>This chapter studies <strong>static multi-street games</strong>: games where hand values do not change between streets. This "static" assumption strips away the complexity of draws and improving hands, letting us isolate the pure effect of <em>having multiple opportunities to bet</em>. The insights are powerful and directly applicable to real poker.</p>
+    <p>The key questions we address:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li>How does the stack-to-pot ratio (SPR) shape strategy?</li>
+      <li>What is the optimal bet size across multiple streets?</li>
+      <li>How do bluffs work when there are multiple betting rounds?</li>
+    </ul>
   </div>
 
   <!-- ===== SPR ===== -->
   <div class="chapter-section">
-    <h2>SPR: Stack-to-Pot Ratio</h2>
+    <h2>Stack-to-Pot Ratio (SPR)</h2>
 
     <div class="definition-box">
-      <div class="def-term">Stack-to-Pot Ratio (SPR)</div>
-      <p>The <strong>SPR</strong> is the ratio of the effective stack size to the current pot size. It is the single most important number for multi-street decision-making.</p>
+      <div class="def-term">SPR &mdash; Stack-to-Pot Ratio</div>
+      <p>The <strong>SPR</strong> is the ratio of the effective stack size to the current pot size. It is the single most important number for strategic decision-making at the start of any post-flop situation.</p>
       <div class="math-block">
-        <span class="math-label">Equation 19.1 &mdash; SPR</span>
+        <span class="math-label">Definition</span>
         SPR = Effective Stack / Pot Size
       </div>
-      <p>The effective stack is the smaller of the two players' stacks (since you can never bet more than your opponent can call).</p>
+      <p>The effective stack is the smaller of the two players' stacks (the maximum amount that can be wagered).</p>
     </div>
 
-    <p>SPR determines the <strong>commitment threshold</strong> &mdash; how strong your hand needs to be to justify putting all your chips in the pot across the remaining streets.</p>
-
     <div class="example-box">
-      <div class="example-title">SPR Guidelines</div>
+      <div class="example-title">SPR Ranges and Their Meaning</div>
       <table class="data-table">
-        <tr><th>SPR Range</th><th>Required Hand Strength</th><th>Typical Situation</th><th>Strategic Implication</th></tr>
+        <tr><th>SPR</th><th>Description</th><th>Strategic Implication</th></tr>
         <tr>
-          <td><strong>Low (&lt; 4)</strong></td>
-          <td>Top pair / overpair</td>
-          <td>Short stacks, 3-bet pots, tournaments</td>
-          <td>Can commit with one-pair hands. Many hands become "all-in or fold." Less room for maneuvering.</td>
+          <td>&lt; 3</td>
+          <td>Very low</td>
+          <td>Commit with top pair or better. All-in is viable. Bluffing is expensive relative to pot. Focus on hand strength.</td>
         </tr>
         <tr>
-          <td><strong>Medium (4&ndash;13)</strong></td>
-          <td>Strong top pair / two pair</td>
-          <td>Standard single-raised pots, 100bb deep</td>
-          <td>Need stronger hands to stack off. Room for multi-street play, bluffing, and position exploitation.</td>
+          <td>3 &ndash; 7</td>
+          <td>Low</td>
+          <td>One pair hands can commit. Two streets of betting typically gets you all-in. Position less important.</td>
         </tr>
         <tr>
-          <td><strong>High (&gt; 13)</strong></td>
-          <td>Two pair+ / sets / straights</td>
-          <td>Deep stacks, limped pots</td>
-          <td>One-pair hands are rarely strong enough to commit. Premium hands needed. Implied odds become huge.</td>
+          <td>7 &ndash; 15</td>
+          <td>Medium</td>
+          <td>Need two pair+ to comfortably stack off. Multi-street planning crucial. Draws have good implied odds.</td>
+        </tr>
+        <tr>
+          <td>&gt; 15</td>
+          <td>High</td>
+          <td>Very deep play. Position extremely valuable. Sets, straights, flushes needed to stack off. Complex multi-street games.</td>
         </tr>
       </table>
     </div>
 
-    <div class="example-box">
-      <div class="example-title">SPR in Practice</div>
-      <p><strong>Scenario 1:</strong> You open to $15, opponent 3-bets to $50, you call. Pot = $100, effective stacks = $250 remaining.</p>
-      <div class="math-block">
-        <span class="math-label">Calculation</span>
-        SPR = $250 / $100 = 2.5 (Low SPR)
-      </div>
-      <p>With SPR = 2.5, you can commit with overpairs and top pair top kicker. A single pot-sized bet on the flop essentially commits you to the hand.</p>
+    <h3>Why SPR Matters</h3>
+    <p>SPR determines the "depth" of the game &mdash; how many decisions remain and how significant each one is. At low SPR, the game collapses toward a single decision (go or no-go). At high SPR, there are many decision points, each adding complexity and rewarding skill.</p>
 
-      <p style="margin-top:1rem;"><strong>Scenario 2:</strong> You open to $10, opponent calls. Pot = $20, effective stacks = $490 remaining.</p>
-      <div class="math-block">
-        <span class="math-label">Calculation</span>
-        SPR = $490 / $20 = 24.5 (High SPR)
-      </div>
-      <p>With SPR = 24.5, top pair is far too weak to stack off. You need two pair, sets, or better to commit all your chips. This is why set-mining and playing speculative hands becomes profitable at deep stacks &mdash; the implied odds justify the investment.</p>
+    <div class="math-block">
+      <span class="math-label">Key Insight</span>
+      Low SPR &rarr; Simpler decisions, hand strength dominates<br>
+      High SPR &rarr; Complex decisions, skill (position, reads) dominates
     </div>
   </div>
 
@@ -149,153 +93,143 @@
   <div class="chapter-section">
     <h2>Multi-Street Bluffing</h2>
 
-    <p>In a single-street game, a bluff either works or it does not. In a multi-street game, bluffing becomes far more nuanced. You must decide: if I bluff the flop, do I continue on the turn? And the river?</p>
+    <p>When there are multiple streets, bluffing becomes more nuanced. A bluff does not need to succeed on a single street &mdash; it can be deployed as a <strong>multi-street plan</strong>.</p>
 
     <div class="definition-box">
-      <div class="def-term">Multi-Barrel Bluffing</div>
-      <p>A <strong>multi-barrel bluff</strong> is a bluff that continues across multiple streets. A "double barrel" is a bluff on the flop followed by a bluff on the turn. A "triple barrel" continues through all three postflop streets.</p>
-    </div>
-
-    <div class="example-box">
-      <div class="example-title">The Escalating Cost of Multi-Barrel Bluffs</div>
-      <p>Consider a pot of $100 with a 75%-pot bet sizing on each street:</p>
-      <table class="data-table">
-        <tr><th>Street</th><th>Pot Before Bet</th><th>Bet Size (75%)</th><th>Cumulative Risk</th><th>Pot if Called</th></tr>
-        <tr>
-          <td><strong>Flop</strong></td>
-          <td>$100</td>
-          <td>$75</td>
-          <td>$75</td>
-          <td>$250</td>
-        </tr>
-        <tr>
-          <td><strong>Turn</strong></td>
-          <td>$250</td>
-          <td>$187.50</td>
-          <td>$262.50</td>
-          <td>$625</td>
-        </tr>
-        <tr>
-          <td><strong>River</strong></td>
-          <td>$625</td>
-          <td>$468.75</td>
-          <td>$731.25</td>
-          <td>$1,562.50</td>
-        </tr>
-      </table>
-      <p>The total risk of a triple-barrel bluff is <strong>$731.25</strong> to win the original $100 pot. This enormous cost is why most bluffs should <em>not</em> continue on all three streets. However, those that do continue are extremely credible precisely <em>because</em> they are so expensive &mdash; most players assume nobody would risk that much without a strong hand.</p>
-    </div>
-
-    <h3>Optimal Multi-Street Bluffing Strategy</h3>
-    <p>The game-theoretically optimal approach to multi-street bluffing involves a key principle:</p>
-
-    <div class="definition-box">
-      <div class="def-term">Bluff Attrition</div>
-      <p>At equilibrium, some bluffs from earlier streets should be <strong>abandoned</strong> on later streets, while others continue. The fraction that continues is determined by the same indifference principle we saw in the [0,1] game, applied street by street.</p>
+      <div class="def-term">Multi-Street Bluff (Barrel)</div>
+      <p>A <strong>multi-street bluff</strong> (or "barreling") involves betting on consecutive streets with a hand that has no showdown value. Each bet represents another "barrel" of the bluff. The threat of continued aggression puts maximum pressure on the opponent.</p>
       <div class="math-block">
-        <span class="math-label">Equation 19.2 &mdash; Multi-Street Bluff Attrition</span>
-        On each street, maintain the ratio:<br>
-        Bluffs / Total Bets = b / (b + Current Pot)<br>
-        <br>
-        As the pot grows, the allowed bluff ratio shrinks.<br>
-        Some flop bluffs must be given up on the turn.
+        <span class="math-label">Multi-Street Bluff Probability</span>
+        P(opponent folds over N streets) = 1 &minus; P(calls street 1) &times; P(calls street 2) &times; ... &times; P(calls street N)
       </div>
     </div>
 
-    <p>This creates a natural "funnel" effect: you start with more bluffs on the flop, discard some on the turn, and arrive at the river with a smaller but precisely calibrated number of bluffs relative to your value bets.</p>
+    <div class="example-box">
+      <div class="example-title">The Compounding Power of Barreling</div>
+      <p>Suppose your opponent calls one bet about 60% of the time. On a single street, your bluff folds out 40%.</p>
+      <p>But over three streets of betting:</p>
+      <div class="math-block">
+        <span class="math-label">Three Barrel Success Rate</span>
+        P(opponent folds at least once) = 1 &minus; 0.6&sup3; = 1 &minus; 0.216 = 78.4%
+      </div>
+      <p>Your bluff succeeds nearly 80% of the time! This is the power of multi-street aggression. Each additional barrel compounds the fold equity. Of course, each barrel also risks more chips, so the sizing and selection of bluffing hands must be calibrated carefully.</p>
+    </div>
+
+    <h3>When to Continue Barreling</h3>
+    <p>Not every bluff should be continued on the next street. The decision depends on:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li><strong>Remaining streets:</strong> More streets remaining means more future fold equity.</li>
+      <li><strong>Board texture:</strong> Scare cards that arrive can strengthen your bluffing story.</li>
+      <li><strong>Opponent tendencies:</strong> Calling stations should be barreled less; fit-or-fold players more.</li>
+      <li><strong>Commitment threshold:</strong> As the pot grows relative to remaining stacks, opponents become pot-committed.</li>
+    </ul>
   </div>
 
   <!-- ===== GEOMETRIC BET SIZING ===== -->
   <div class="chapter-section">
     <h2>Geometric Bet Sizing</h2>
 
-    <p>If your goal is to get all the money in by the river, how should you size your bets? Betting too large on early streets leaves you with an awkward stack on later streets. Betting too small means you cannot get it all in. The solution is <strong>geometric bet sizing</strong>.</p>
+    <p>One of the most elegant results in multi-street poker theory: to get all-in over N streets, there is an <strong>optimal geometric bet size</strong> that creates maximum pressure while maintaining balanced bluff ratios on each street.</p>
 
     <div class="definition-box">
-      <div class="def-term">Geometric Bet Sizing</div>
-      <p>Geometric bet sizing means choosing a consistent fraction of the pot to bet on each street such that the cumulative bets exactly exhaust the effective stack by the final street. Each bet is the same percentage of the <em>current</em> pot.</p>
+      <div class="def-term">Geometric Sizing</div>
+      <p>Geometric bet sizing means betting the <strong>same fraction of the pot on each street</strong>, chosen so that the cumulative bets exactly equal the remaining stack by the final street.</p>
       <div class="math-block">
-        <span class="math-label">Equation 19.3 &mdash; Geometric Sizing Formula</span>
-        Given: Pot = P, Effective Stack = S, Streets remaining = n<br>
-        <br>
-        Let r = bet as fraction of pot on each street.<br>
-        After n streets of betting r &times; pot (and getting called):<br>
-        P &times; (1 + 2r)<sup>n</sup> = P + 2S<br>
-        <br>
-        Solving for r:<br>
-        r = [(P + 2S)/P]<sup>1/n</sup> &minus; 1) / 2
+        <span class="math-label">Equation 19.1 &mdash; Geometric Bet Fraction</span>
+        Let r = bet / pot (fraction of pot bet each street)<br>
+        After N streets of betting fraction r:<br>
+        Final pot = Initial pot &times; (1 + 2r)<sup>N</sup><br><br>
+        To get all-in: Stack + Pot = Pot &times; (1 + 2r)<sup>N</sup><br>
+        &rArr; (1 + 2r)<sup>N</sup> = (Stack + Pot) / Pot = SPR + 1<br>
+        &rArr; r = [(SPR + 1)<sup>1/N</sup> &minus; 1] / 2
       </div>
     </div>
 
     <div class="example-box">
-      <div class="example-title">Geometric Sizing: Worked Examples</div>
-      <p><strong>Example 1:</strong> Pot = $100, Stack = $400, Streets = 3 (flop, turn, river)</p>
+      <div class="example-title">Geometric Sizing in Practice</div>
+      <p>Pot = $100, Stack = $400 (SPR = 4). You want to get all-in over 3 streets.</p>
       <div class="math-block">
         <span class="math-label">Calculation</span>
-        (P + 2S) / P = (100 + 800) / 100 = 9<br>
-        9<sup>1/3</sup> = 2.08<br>
-        r = (2.08 &minus; 1) / 2 = 0.54 = 54% pot
+        (1 + 2r)&sup3; = 5<br>
+        1 + 2r = 5<sup>1/3</sup> &asymp; 1.71<br>
+        2r &asymp; 0.71<br>
+        r &asymp; 0.355 (bet ~35.5% of pot each street)
       </div>
-      <p>Bet 54% of the pot on each street. This gets all $400 in by the river.</p>
-      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
-        <li>Flop: Pot $100, bet $54. Called &rarr; Pot $208</li>
-        <li>Turn: Pot $208, bet $112. Called &rarr; Pot $432</li>
-        <li>River: Pot $432, bet $234. All-in (total bet across streets: $54 + $112 + $234 = $400)</li>
-      </ul>
-
-      <p style="margin-top:1.5rem;"><strong>Example 2:</strong> Pot = $100, Stack = $150, Streets = 2 (turn and river only)</p>
-      <div class="math-block">
-        <span class="math-label">Calculation</span>
-        (100 + 300) / 100 = 4<br>
-        4<sup>1/2</sup> = 2.0<br>
-        r = (2.0 &minus; 1) / 2 = 0.50 = 50% pot
-      </div>
-      <p>Bet 50% of the pot on each remaining street to get the money in by the river.</p>
+      <p><strong>Street 1:</strong> Pot = $100. Bet $35.50. Pot becomes $171.</p>
+      <p><strong>Street 2:</strong> Pot = $171. Bet $60.70. Pot becomes $292.40.</p>
+      <p><strong>Street 3:</strong> Pot = $292.40. Bet $103.80 (remaining stack). All-in.</p>
+      <p>Total wagered across 3 streets: $200 (half the original stack per player), for a final pot of $500.</p>
     </div>
 
-    <p>Geometric sizing has an elegant property: it keeps the <strong>SPR constant</strong> across streets. If the SPR is 4 on the flop and you bet geometrically, the SPR going into the turn and river is the same. This means your hand-strength commitment threshold does not change from street to street &mdash; the same hands that were worth betting on the flop remain worth betting on the turn.</p>
+    <h3>Why Geometric Sizing Is Optimal</h3>
+    <p>Geometric sizing has several desirable properties:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li><strong>Consistent pressure:</strong> Each bet is the same fraction of the pot, keeping the pot odds the same on every street.</li>
+      <li><strong>Balanced bluff ratios:</strong> Constant pot odds mean the optimal bluff-to-value ratio is the same on every street.</li>
+      <li><strong>Efficient stacking:</strong> You get all-in by the final street without having to overbet or underbet on any particular street.</li>
+    </ul>
+
+    <div class="math-block">
+      <span class="math-label">Common Geometric Sizes</span>
+      SPR = 3, N = 2 streets: r &asymp; 50% pot<br>
+      SPR = 4, N = 3 streets: r &asymp; 35.5% pot<br>
+      SPR = 8, N = 3 streets: r &asymp; 55% pot<br>
+      SPR = 13, N = 3 streets: r &asymp; 72% pot<br>
+      SPR = 20, N = 3 streets: r &asymp; 88% pot
+    </div>
   </div>
 
-  <!-- ===== LESSONS ===== -->
+  <!-- ===== MULTI-STREET GAME EQUILIBRIUM ===== -->
   <div class="chapter-section">
-    <h2>Lessons for Real Poker</h2>
+    <h2>Equilibrium in Multi-Street Static Games</h2>
 
-    <p>Multi-street thinking fundamentally changes how you approach every hand. Here are the key lessons:</p>
+    <p>In a multi-street static game, the equilibrium structure extends the single-street [0,1] game results. Each street has its own three-region strategy, and the regions are interconnected across streets.</p>
 
-    <div class="example-box">
-      <div class="example-title">Single-Street vs. Multi-Street Mindset</div>
-      <table class="data-table">
-        <tr><th>Single-Street Thinking</th><th>Multi-Street Thinking</th></tr>
-        <tr>
-          <td>"Should I bet or check?"</td>
-          <td>"What is my plan for all remaining streets?"</td>
-        </tr>
-        <tr>
-          <td>"I'll bet $75 into $100"</td>
-          <td>"How does this bet size set up my turn and river actions?"</td>
-        </tr>
-        <tr>
-          <td>"I'll bluff here"</td>
-          <td>"Am I prepared to continue this bluff on the turn if called? What about the river?"</td>
-        </tr>
-        <tr>
-          <td>"My hand is strong"</td>
-          <td>"My hand is strong relative to the SPR &mdash; is it strong enough to commit my stack?"</td>
-        </tr>
-        <tr>
-          <td>"I have top pair"</td>
-          <td>"I have top pair with SPR 3 &mdash; this is a stacking hand. With SPR 15 &mdash; this is a one-bet hand."</td>
-        </tr>
-      </table>
+    <div class="definition-box">
+      <div class="def-term">Backward Induction</div>
+      <p>Multi-street games are solved by <strong>backward induction</strong>: start from the last street (where the game reduces to a single-street problem), solve it, then work backwards to earlier streets. Each earlier-street decision accounts for the future game tree.</p>
     </div>
 
-    <p>The transition from single-street to multi-street analysis is the bridge between toy games and real poker. Every concept from Chapters 15-18 &mdash; value betting, bluffing, the three-region strategy, equity denial &mdash; still applies, but now it must be evaluated across the full trajectory of the hand.</p>
+    <div class="example-box">
+      <div class="example-title">Two-Street Static Game</div>
+      <p>In a two-street [0,1] game with geometric sizing:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Street 2 (river):</strong> Standard three-region strategy. Value bet top, check middle, bluff bottom.</li>
+        <li><strong>Street 1 (turn):</strong> Similar structure, but now "value betting" means planning to continue on street 2. Some street-1 bets are semi-bluffs that become value bets or pure bluffs on street 2.</li>
+      </ul>
+      <p>The <strong>overall bluff frequency across both streets combined</strong> is what matters for equilibrium.</p>
+    </div>
+  </div>
+
+  <!-- ===== PRACTICAL IMPLICATIONS ===== -->
+  <div class="chapter-section">
+    <h2>Practical Implications for Real Poker</h2>
+
+    <h3>Plan Ahead, Not Street by Street</h3>
+    <p>The biggest lesson: <strong>do not make isolated street-by-street decisions</strong>. Before you bet the flop, have a plan for the turn and river.</p>
+
+    <div class="example-box">
+      <div class="example-title">Planning a Three-Barrel Bluff</div>
+      <p>You hold 7&spades;6&spades; and the board is A&diams;9&clubs;2&hearts;. You decide to c-bet as a bluff. Before betting, plan:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Turn plan:</strong> Barrel on spade turns (picking up a flush draw), on 8 or 5 (picking up a straight draw), and on Kings or other scare cards. Check-fold on blanks.</li>
+        <li><strong>River plan:</strong> If you picked up equity, evaluate. If you hit, bet for value. If missed, consider a river bluff if the runout looks scary.</li>
+      </ul>
+    </div>
+
+    <h3>SPR Drives Strategy</h3>
+    <p>Before any post-flop action, check the SPR. It tells you:</p>
+    <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+      <li>How many streets of betting it takes to get all-in</li>
+      <li>How strong your hand needs to be to commit</li>
+      <li>Whether you have room to maneuver (high SPR) or are in a go/no-go situation (low SPR)</li>
+    </ul>
   </div>
 
   <!-- ===== INTERACTIVE: SPR Calculator ===== -->
   <div class="interactive-widget">
     <h3>SPR Calculator</h3>
-    <p>Enter the pot size and effective stack to calculate the Stack-to-Pot Ratio. The calculator will suggest what types of hands are strong enough to commit your stack.</p>
+    <p>Enter the pot size and effective stack to calculate SPR and see strategic implications.</p>
     <div class="widget-controls">
       <label>
         Pot Size ($)
@@ -303,7 +237,7 @@
       </label>
       <label>
         Effective Stack ($)
-        <input type="number" id="sprStack" min="1" max="100000" value="400" onchange="calcSPR()">
+        <input type="number" id="sprStack" min="1" max="100000" value="500" onchange="calcSPR()">
       </label>
       <button class="btn" onclick="calcSPR()">Calculate SPR</button>
     </div>
@@ -315,7 +249,7 @@
   <!-- ===== INTERACTIVE: Geometric Bet Sizing Calculator ===== -->
   <div class="interactive-widget">
     <h3>Geometric Bet Sizing Calculator</h3>
-    <p>Given a pot, effective stack, and number of streets remaining, calculate the optimal bet size on each street to get all the money in by the river.</p>
+    <p>Find the optimal bet size (as a fraction of the pot) to get all-in over a given number of streets.</p>
     <div class="widget-controls">
       <label>
         Pot Size ($)
@@ -342,37 +276,47 @@
 
   <!-- ===== QUIZ 1 ===== -->
   <div class="quiz-box">
-    <h3>SPR Application</h3>
-    <p>You are playing no-limit hold'em. The pot is $100 and both you and your opponent have $400 in effective stacks (SPR = 4). You hold A&spades;K&hearts; on a board of A&diams; 9&clubs; 3&hearts; (top pair, top kicker). Should you be willing to go all-in?</p>
-    <button class="quiz-option" data-correct="true">Yes &mdash; at SPR 4, top pair top kicker is strong enough to commit. This is near the low-SPR threshold where one-pair hands can stack off.</button>
-    <button class="quiz-option" data-correct="false">No &mdash; top pair is never strong enough to risk your whole stack, regardless of SPR.</button>
-    <button class="quiz-option" data-correct="false">Only if the board has no flush draw.</button>
-    <button class="quiz-option" data-correct="false">Only if you are in position.</button>
-    <div class="quiz-feedback" data-correct="Correct! At SPR = 4, you are in the low SPR range where top pair top kicker is a strong enough hand to commit your full stack. With TPTK on a dry board at this SPR, you should be happy to get all the money in. At SPR = 15, the same hand would be too weak to stack off, because you would need two pair or better to justify committing that many chips relative to the pot." data-incorrect="At SPR = 4, the stack-to-pot ratio is in the low range (&lt; 4-5). This means top pair top kicker IS strong enough to commit all your chips. The pot is $100 and you only need to bet $400 more — that is 4x the pot. With TPTK on a dry board, you are ahead of your opponent's calling range often enough to justify this commitment. At higher SPR values (say 15+), you would need a much stronger hand."></div>
+    <h3>SPR Comprehension</h3>
+    <p>The pot is $200 and you have $600 behind. What is the SPR, and what does it imply?</p>
+    <button class="quiz-option" data-correct="false">SPR = 0.33 &mdash; You should fold most hands</button>
+    <button class="quiz-option" data-correct="true">SPR = 3 &mdash; You can commit with one pair or better; the game is relatively shallow</button>
+    <button class="quiz-option" data-correct="false">SPR = 6 &mdash; Deep play, need two pair+ to commit</button>
+    <button class="quiz-option" data-correct="false">SPR = 200 &mdash; Extremely deep, need the nuts</button>
+    <div class="quiz-feedback" data-correct="Correct! SPR = 600/200 = 3. At SPR 3, you are in a shallow situation. One pair hands are strong enough to commit. One or two bets gets you all-in." data-incorrect="SPR = Effective Stack / Pot = 600/200 = 3. At SPR 3, you are in a shallow game where one pair hands are strong enough to commit."></div>
   </div>
 
   <!-- ===== QUIZ 2 ===== -->
   <div class="quiz-box">
     <h3>Geometric Sizing</h3>
-    <p>Why is geometric bet sizing considered optimal for getting all the money in across multiple streets?</p>
-    <button class="quiz-option" data-correct="false">Because bigger bets always put more pressure on opponents</button>
-    <button class="quiz-option" data-correct="false">Because it minimizes the total amount bet across all streets</button>
-    <button class="quiz-option" data-correct="true">Because it maintains a consistent pot fraction on each street, keeping SPR constant and ensuring the stack is exactly exhausted by the final street</button>
-    <button class="quiz-option" data-correct="false">Because it always results in a 100% pot-sized bet on each street</button>
-    <div class="quiz-feedback" data-correct="Correct! Geometric sizing bets the same fraction of the pot on each street, which naturally gets all the money in by the final street without over- or under-betting. It keeps the SPR constant across streets, meaning your commitment decisions are consistent. And it avoids the common problem of betting too large early (leaving an awkward stack) or too small (failing to get full value from strong hands)." data-incorrect="Geometric sizing is optimal because it bets a consistent fraction of the current pot on each street, ensuring the effective stack is exactly exhausted by the last street. This maintains constant SPR across streets (so your hand-strength requirements do not change) and avoids awkward stack sizes. It is NOT about maximizing pressure or minimizing cost — it is about smooth, consistent bet sizing across the full trajectory of the hand."></div>
+    <p>You want to get all-in over 3 streets with SPR = 8. Using geometric sizing, approximately what fraction of the pot should you bet each street?</p>
+    <button class="quiz-option" data-correct="false">25% pot</button>
+    <button class="quiz-option" data-correct="false">33% pot</button>
+    <button class="quiz-option" data-correct="true">55% pot</button>
+    <button class="quiz-option" data-correct="false">100% pot (pot-size bet)</button>
+    <div class="quiz-feedback" data-correct="Correct! With SPR = 8: (1+2r)^3 = 9, so 1+2r = 9^(1/3) = 2.08, so r = 0.54, approximately 55% pot." data-incorrect="Use the formula: (1+2r)^N = SPR+1. With SPR=8, N=3: (1+2r)^3 = 9, so 1+2r = 2.08, r = 0.54, about 55% pot."></div>
+  </div>
+
+  <!-- ===== QUIZ 3 ===== -->
+  <div class="quiz-box">
+    <h3>Multi-Street Planning</h3>
+    <p>You c-bet the flop as a bluff and get called. The turn is a blank. What is the BEST approach?</p>
+    <button class="quiz-option" data-correct="false">Always barrel the turn &mdash; you committed to the bluff</button>
+    <button class="quiz-option" data-correct="false">Always give up &mdash; they called, so they are strong</button>
+    <button class="quiz-option" data-correct="true">Follow your pre-planned strategy: barrel on favorable turn cards, check-fold on unfavorable ones</button>
+    <button class="quiz-option" data-correct="false">Check-raise the turn to maximize fold equity</button>
+    <div class="quiz-feedback" data-correct="Correct! Multi-street theory teaches us to plan ahead. Before betting the flop, you should have identified which turn cards you will barrel on and which you will give up on." data-incorrect="Multi-street theory emphasizes pre-planning. Decide BEFORE betting the flop which turn cards you will continue on and which you will give up on."></div>
   </div>
 
   <!-- ===== KEY CONCEPTS ===== -->
   <div class="key-concepts">
     <h2>Key Concepts</h2>
     <ul>
-      <li><strong>Multiple streets add exponential complexity.</strong> Each additional betting round multiplies the game tree. Decisions on early streets must account for the consequences on later streets.</li>
-      <li><strong>Static multi-street games</strong> isolate the effect of multiple betting rounds without changing hand values. They reveal how stack depth and bet sizing across streets shape strategy.</li>
-      <li><strong>SPR (Stack-to-Pot Ratio)</strong> is the most important metric for multi-street play. Low SPR (&lt; 4) = commit with top pair. Medium SPR (4-13) = need strong hands. High SPR (&gt; 13) = need premium holdings.</li>
-      <li><strong>Multi-barrel bluffing</strong> is expensive and must be used selectively. Some bluffs should be abandoned on later streets; the bluff-to-value ratio narrows as the pot grows.</li>
-      <li><strong>Geometric bet sizing</strong> distributes bets evenly across streets to exactly exhaust the stack by the river. It keeps SPR constant, maintaining consistent commitment thresholds.</li>
-      <li><strong>Plan ahead.</strong> Every bet should be part of a multi-street plan. Ask: "What is my plan if called? If raised? On the next street?" Single-street thinking is a hallmark of weak play.</li>
-      <li><strong>Stack depth determines hand value.</strong> The same hand (e.g., top pair) can be a monster at low SPR or a marginal holding at high SPR. Always evaluate hand strength relative to SPR.</li>
+      <li><strong>SPR = Effective Stack / Pot.</strong> The most important number for post-flop planning. Low SPR = simple, commit-or-fold. High SPR = complex, multi-street maneuvering.</li>
+      <li><strong>Geometric bet sizing:</strong> r = [(SPR+1)<sup>1/N</sup> &minus; 1] / 2. Bet this fraction of the pot each street to get all-in by the final street with consistent pot odds.</li>
+      <li><strong>Multi-street bluffing compounds fold equity.</strong> A 40% per-street fold rate yields ~78% cumulative fold equity over three streets.</li>
+      <li><strong>Backward induction</strong> solves multi-street games: solve the last street first, then work backward.</li>
+      <li><strong>Plan ahead.</strong> Before betting any street, know your plan for future streets. Which cards will you barrel? When will you give up?</li>
+      <li><strong>Static models isolate multi-street effects.</strong> Holding hand values constant reveals that multiple betting rounds alone create enormous strategic complexity.</li>
     </ul>
   </div>
 
@@ -393,43 +337,54 @@
 // ===== SPR Calculator =====
 function calcSPR() {
   const pot = parseFloat(document.getElementById('sprPot').value) || 100;
-  const stack = parseFloat(document.getElementById('sprStack').value) || 400;
+  const stack = parseFloat(document.getElementById('sprStack').value) || 500;
   const spr = stack / pot;
 
-  let category, color, commitment, examples;
-  if (spr < 4) {
-    category = 'Low SPR';
-    color = 'var(--accent)';
-    commitment = 'Top pair and overpairs are strong enough to commit. Many decisions simplify to "all-in or fold." Less room for postflop maneuvering.';
-    examples = 'Typical in: 3-bet/4-bet pots, short-stacked tournament play, re-raised pots.';
-  } else if (spr <= 13) {
-    category = 'Medium SPR';
-    color = 'var(--gold)';
-    commitment = 'Need strong top pair (top pair top kicker) or better to comfortably commit. Two pair and sets are ideal stacking hands. Room for multi-street play and bluffing.';
-    examples = 'Typical in: standard single-raised pots at 100bb, most cash game situations.';
+  let category, color, advice;
+  if (spr < 3) {
+    category = 'Very Low'; color = 'var(--accent)';
+    advice = 'Commit with top pair+. All-in is viable. Bluffing is expensive. Focus on hand strength over position.';
+  } else if (spr < 7) {
+    category = 'Low'; color = 'var(--gold)';
+    advice = 'One-pair hands can commit. Two streets of betting gets you all-in. Position matters moderately.';
+  } else if (spr < 15) {
+    category = 'Medium'; color = 'var(--green)';
+    advice = 'Need two pair+ to comfortably stack off. Multi-street planning crucial. Draws have good implied odds. Position is important.';
   } else {
-    category = 'High SPR';
-    color = 'var(--green)';
-    commitment = 'One-pair hands are rarely strong enough to stack off. Need two pair, sets, straights, or better. Implied odds become very important — speculative hands (small pairs, suited connectors) gain value.';
-    examples = 'Typical in: deep-stacked cash games, limped pots, very deep tournaments.';
+    category = 'High'; color = 'var(--accent-hi)';
+    advice = 'Very deep play. Need sets/straights/flushes to stack off. Position extremely valuable. Complex multi-street games.';
+  }
+
+  let geoRows = '';
+  for (let n = 1; n <= 3; n++) {
+    const r = (Math.pow(spr + 1, 1/n) - 1) / 2;
+    const betSize = r * pot;
+    geoRows += `<tr>
+      <td>${n} street${n>1?'s':''}</td>
+      <td>${(r * 100).toFixed(1)}% pot</td>
+      <td>$${betSize.toFixed(0)}</td>
+    </tr>`;
   }
 
   document.getElementById('sprResult').innerHTML = `
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
       <div>
-        <span class="result-label">Stack-to-Pot Ratio:</span><br>
-        <span class="result-value" style="color:${color};">${spr.toFixed(1)}</span>
+        <span class="result-label">SPR:</span><br>
+        <span class="result-value" style="color:${color}; font-size:1.5rem;">${spr.toFixed(1)}</span>
       </div>
       <div>
         <span class="result-label">Category:</span><br>
         <span class="result-value" style="color:${color};">${category}</span>
       </div>
     </div>
-    <div style="margin-top:0.75rem; padding:0.75rem; background:rgba(255,255,255,0.03); border-radius:6px;">
-      <strong style="color:${color};">Commitment Threshold:</strong>
-      <p style="margin:0.5rem 0 0; line-height:1.6;">${commitment}</p>
+    <div style="margin:0.75rem 0; padding:0.75rem; background:var(--surface); border-radius:6px;">
+      <span class="result-label">Strategic Advice:</span><br>
+      ${advice}
     </div>
-    <div style="margin-top:0.5rem; color:var(--muted); font-size:0.85rem;">${examples}</div>
+    <table class="data-table" style="margin-top:0.75rem; font-size:0.85rem;">
+      <tr><th>Streets to All-In</th><th>Geometric Bet Size</th><th>First Bet Amount</th></tr>
+      ${geoRows}
+    </table>
   `;
 }
 
@@ -438,59 +393,64 @@ function calcGeometric() {
   const pot = parseFloat(document.getElementById('geoPot').value) || 100;
   const stack = parseFloat(document.getElementById('geoStack').value) || 400;
   const streets = parseInt(document.getElementById('geoStreets').value) || 3;
+  const spr = stack / pot;
 
-  // r = ((P + 2S)/P)^(1/n) - 1) / 2
-  const ratio = (pot + 2 * stack) / pot;
-  const nthRoot = Math.pow(ratio, 1 / streets);
-  const r = (nthRoot - 1) / 2;
-  const pctPot = (r * 100);
+  const r = (Math.pow(spr + 1, 1/streets) - 1) / 2;
 
-  // Build street-by-street breakdown
-  const streetNames = ['River', 'Turn', 'River', 'Flop', 'Turn', 'River'];
-  let startIndex = 3 - streets; // 0 for 3 streets, 1 for 2, 2 for 1
   let currentPot = pot;
-  let totalBet = 0;
-  let breakdownHTML = '<table class="data-table" style="margin-top:0.75rem;"><tr><th>Street</th><th>Pot</th><th>Bet Size</th><th>Bet as % Pot</th><th>Cumulative Wagered</th></tr>';
+  let remainingStack = stack;
+  let streetDetails = '';
+  const streetNames = ['Flop', 'Turn', 'River'];
+  const startIdx = 3 - streets;
 
   for (let i = 0; i < streets; i++) {
-    const betSize = currentPot * r;
-    totalBet += betSize;
-    const streetName = streets === 3 ? ['Flop', 'Turn', 'River'][i] : streets === 2 ? ['Turn', 'River'][i] : 'River';
-    breakdownHTML += `<tr>
-      <td><strong>${streetName}</strong></td>
-      <td>$${currentPot.toFixed(0)}</td>
-      <td>$${betSize.toFixed(0)}</td>
-      <td>${pctPot.toFixed(1)}%</td>
-      <td>$${totalBet.toFixed(0)}</td>
-    </tr>`;
-    currentPot = currentPot + 2 * betSize; // pot after call
+    const betAmount = Math.min(r * currentPot, remainingStack);
+    const potAfter = currentPot + 2 * betAmount;
+    const bluffRatio = betAmount / (currentPot + betAmount);
+
+    streetDetails += `
+      <tr>
+        <td><strong>${streetNames[startIdx + i] || 'Street ' + (i+1)}</strong></td>
+        <td>$${currentPot.toFixed(0)}</td>
+        <td>$${betAmount.toFixed(0)} (${(r*100).toFixed(1)}%)</td>
+        <td>$${potAfter.toFixed(0)}</td>
+        <td>${(bluffRatio*100).toFixed(1)}%</td>
+      </tr>`;
+
+    currentPot = potAfter;
+    remainingStack -= betAmount;
   }
-  breakdownHTML += '</table>';
 
   document.getElementById('geoResult').innerHTML = `
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem;">
       <div>
-        <span class="result-label">Optimal Bet Size:</span><br>
-        <span class="result-value">${pctPot.toFixed(1)}% pot</span>
+        <span class="result-label">SPR:</span><br>
+        <span class="result-value">${spr.toFixed(1)}</span>
       </div>
       <div>
-        <span class="result-label">SPR:</span><br>
-        <span class="result-value">${(stack / pot).toFixed(1)}</span>
+        <span class="result-label">Geometric Bet Size:</span><br>
+        <span class="result-value" style="color:var(--gold);">${(r*100).toFixed(1)}% pot</span>
       </div>
       <div>
         <span class="result-label">Streets:</span><br>
         <span class="result-value">${streets}</span>
       </div>
     </div>
-    ${breakdownHTML}
-    <div style="margin-top:0.75rem; color:var(--muted); font-size:0.85rem;">
-      By betting <strong>${pctPot.toFixed(1)}%</strong> of the pot on each street, you will wager a total of <strong>$${totalBet.toFixed(0)}</strong> across ${streets} street${streets > 1 ? 's' : ''} (effective stack: $${stack.toFixed(0)}).
-      ${Math.abs(totalBet - stack) < 2 ? '<span style="color:var(--green);">Stack perfectly exhausted!</span>' : `<span style="color:var(--gold);">Difference from stack: $${Math.abs(totalBet - stack).toFixed(0)}</span>`}
+    <table class="data-table" style="margin-top:1rem; font-size:0.85rem;">
+      <tr><th>Street</th><th>Pot Before</th><th>Bet</th><th>Pot After</th><th>Bluff Ratio</th></tr>
+      ${streetDetails}
+    </table>
+    <div style="margin-top:0.75rem; padding:0.75rem; background:var(--surface); border-radius:6px; font-size:0.85rem;">
+      <strong>Final pot:</strong> $${currentPot.toFixed(0)} &ensp;|&ensp;
+      <strong>Stack remaining:</strong> $${Math.max(0, remainingStack).toFixed(0)} &ensp;|&ensp;
+      <strong>All-in:</strong> ${remainingStack < 1 ? '<span style="color:var(--green);">Yes</span>' : '<span style="color:var(--accent);">No ($' + remainingStack.toFixed(0) + ' left)</span>'}
+    </div>
+    <div style="margin-top:0.5rem; color:var(--muted); font-size:0.85rem;">
+      By betting ${(r*100).toFixed(1)}% of the pot on each street, you deploy your stack evenly across ${streets} street${streets>1?'s':''}. Pot odds remain constant on every street.
     </div>
   `;
 }
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
   calcSPR();
   calcGeometric();
