@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 30: Putting It All Together — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part V &mdash; Chapter 30</span>
+    <h1>Putting It All Together: Using Math to Improve Play</h1>
+    <p class="chapter-subtitle">A complete mathematical framework for poker &mdash; from first principles to the felt</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-30.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== THE COMPLETE FRAMEWORK ===== -->
+  <div class="chapter-section">
+    <h2>The Complete Framework</h2>
+    <p>You have now traveled from basic probability theory through game theory, risk management, and specialized topics. This final chapter synthesizes the entire journey into a unified framework. Here is the architecture of the mathematical poker mind:</p>
+
+    <table class="data-table">
+      <tr><th>Part</th><th>Focus</th><th>Core Question</th></tr>
+      <tr>
+        <td><strong>Part I: Foundations</strong></td>
+        <td>Probability, Expected Value, Variance, Bayes' Theorem</td>
+        <td>"What are the mathematical tools I need?"</td>
+      </tr>
+      <tr>
+        <td><strong>Part II: Exploitive Play</strong></td>
+        <td>Pot Odds, Hand Reading, Opponent Modeling, Accurate Play</td>
+        <td>"How do I maximize EV against this specific opponent?"</td>
+      </tr>
+      <tr>
+        <td><strong>Part III: Optimal Play</strong></td>
+        <td>Game Theory, Nash Equilibrium, Toy Games, GTO Applications</td>
+        <td>"What strategy is fundamentally sound against any opponent?"</td>
+      </tr>
+      <tr>
+        <td><strong>Part IV: Risk Management</strong></td>
+        <td>Risk of Ruin, Kelly Criterion, Bankroll, Portfolio Theory</td>
+        <td>"How do I survive the variance to realize my edge?"</td>
+      </tr>
+      <tr>
+        <td><strong>Part V: Special Topics</strong></td>
+        <td>Tournaments, ICM, Multiplayer Dynamics</td>
+        <td>"How does the context modify the fundamentals?"</td>
+      </tr>
+    </table>
+
+    <p>Each part builds on the previous ones. You cannot play exploitively without understanding probability and EV. You cannot evaluate GTO play without understanding exploitation. You cannot sustain your edge without risk management. And the special topics show how the framework adapts to different competitive contexts.</p>
+  </div>
+
+  <!-- ===== HOW TO STUDY ===== -->
+  <div class="chapter-section">
+    <h2>How to Study Poker Mathematically</h2>
+    <p>Understanding the theory is only the first step. The real power comes from <strong>systematic application</strong>. Here is how to use the tools from this course to improve your actual poker game:</p>
+
+    <h3>1. Use Toy Games to Build Intuition</h3>
+    <p>The [0,1] games from Part III are not just theoretical exercises. They reveal the <em>structure</em> of optimal play: why we bluff, how often, and with which hands. By solving toy games yourself &mdash; varying the bet sizes, stack depths, and rules &mdash; you develop intuition that transfers directly to real poker.</p>
+
+    <div class="example-box">
+      <div class="example-title">Practice Exercise</div>
+      <p>Take any simple betting scenario (half-street or full-street [0,1] game) and solve for the equilibrium by hand. Then change the bet size and solve again. Notice how the bluffing frequency, calling frequency, and thresholds shift. This process builds a <strong>visceral understanding</strong> of game-theoretic relationships that no amount of memorization can replicate.</p>
+    </div>
+
+    <h3>2. Calculate EV of Specific Spots</h3>
+    <p>After a session, identify 2-3 interesting hands. Away from the table, work through the expected value calculations:</p>
+    <ul style="margin-left:1.5rem; margin-bottom:1rem; line-height:1.8">
+      <li>What is the EV of each action (fold, call, raise)?</li>
+      <li>What range did your opponent likely have? (Apply Bayes' theorem to narrow based on their actions.)</li>
+      <li>What was the pot-odds threshold for a profitable call?</li>
+      <li>Was there sufficient fold equity to justify a bluff?</li>
+    </ul>
+
+    <h3>3. Review with Equity Calculators</h3>
+    <p>Use equity calculators (software that computes your probability of winning against a range of hands) to validate your intuitions. Compare your in-game estimates with precise calculations. Over time, your rapid estimates will converge toward accuracy.</p>
+
+    <h3>4. Track Your Own Statistics</h3>
+    <p>Mathematics is most powerful when applied to data. Track your results and analyze:</p>
+
+    <div class="math-block">
+      <span class="math-label">Key Statistics to Track</span>
+      Win rate (bb/100 or $/hour) &mdash; your edge
+      <br>Standard deviation &mdash; your variance per session
+      <br>Confidence interval: Win Rate &plusmn; 1.96 &times; (SD / &radic;n)
+      <br>Required sample size for significance: n &ge; (1.96 &times; SD / margin)&sup2;
+    </div>
+
+    <p>Most players vastly underestimate the sample size needed for statistical significance. A win rate of 5 bb/100 with a standard deviation of 80 bb/100 requires approximately <strong>25,000 hands</strong> just to be 95% confident that you are a winning player at all.</p>
+  </div>
+
+  <!-- ===== MATHEMATICAL MINDSET ===== -->
+  <div class="chapter-section">
+    <h2>The Mathematical Mindset at the Table</h2>
+    <p>A common misconception is that mathematical poker requires performing complex calculations in real-time. It does not. The goal is to <strong>internalize</strong> the mathematics through study, so that at the table you can rely on well-calibrated heuristics.</p>
+
+    <h3>Rules of Thumb Derived from Mathematics</h3>
+
+    <div class="definition-box">
+      <div class="def-term">Essential Heuristics</div>
+      <p>These rules of thumb are simplifications of deeper mathematical results. They are not approximations you use instead of math &mdash; they are <em>products</em> of mathematical analysis, distilled for in-game speed.</p>
+    </div>
+
+    <table class="data-table">
+      <tr><th>Heuristic</th><th>Mathematical Basis</th><th>Application</th></tr>
+      <tr>
+        <td><strong>Pot Odds Ratio</strong></td>
+        <td>EV calculation for calling decisions</td>
+        <td>You need to win more than Bet/(Pot+Bet) of the time to call profitably</td>
+      </tr>
+      <tr>
+        <td><strong>Rule of 2 and 4</strong></td>
+        <td>Binomial probability for drawing hands</td>
+        <td>Multiply outs by 2 (one card) or 4 (two cards) for approximate equity percentage</td>
+      </tr>
+      <tr>
+        <td><strong>GTO Bluff Ratio</strong></td>
+        <td>Indifference principle from game theory</td>
+        <td>Bluffs = Bet/(Pot + 2&times;Bet) of your betting range; for pot-sized bets, bluff 1/3 of the time</td>
+      </tr>
+      <tr>
+        <td><strong>SPR Guidelines</strong></td>
+        <td>Effective stack-to-pot ratio analysis</td>
+        <td>Low SPR (&lt;4): commit with top pair+; Medium SPR (4-13): need strong draws or better; High SPR (&gt;13): set-mining, deep-stack play</td>
+      </tr>
+      <tr>
+        <td><strong>Minimum Defense Frequency</strong></td>
+        <td>Making opponent's bluffs break-even</td>
+        <td>Defend at least Pot/(Pot+Bet) of your range to prevent profitable bluffs</td>
+      </tr>
+      <tr>
+        <td><strong>Kelly Fraction</strong></td>
+        <td>Kelly Criterion for bankroll growth</td>
+        <td>Optimal bet = edge/odds; never risk more than your edge suggests</td>
+      </tr>
+    </table>
+
+    <h3>Focus on Identifying Opponent Mistakes</h3>
+    <p>The mathematical mindset is not about playing "perfectly" &mdash; it is about <strong>identifying where opponents deviate from correct play</strong> and capitalizing on those deviations. Every opponent mistake creates an exploitive opportunity. The bigger the mistake, the bigger the profit.</p>
+
+    <div class="example-box">
+      <div class="example-title">Common Opponent Deviations and Responses</div>
+      <table class="data-table">
+        <tr><th>Opponent Mistake</th><th>Your Exploitive Response</th><th>Mathematical Basis</th></tr>
+        <tr>
+          <td>Folds too often to bets</td>
+          <td>Bluff more frequently</td>
+          <td>Their fold frequency exceeds the indifference threshold</td>
+        </tr>
+        <tr>
+          <td>Calls too often</td>
+          <td>Bluff less, value bet thinner</td>
+          <td>Calling beyond the defense frequency creates calling too wide</td>
+        </tr>
+        <tr>
+          <td>Bets too large with bluffs</td>
+          <td>Call more often (they need more folds to profit)</td>
+          <td>Larger bets require higher fold equity; deny it</td>
+        </tr>
+        <tr>
+          <td>Never bluffs</td>
+          <td>Fold to their bets unless you beat value range</td>
+          <td>With zero bluffs, calling with bluff-catchers has negative EV</td>
+        </tr>
+        <tr>
+          <td>Ignores position</td>
+          <td>3-bet more in position, play wider IP</td>
+          <td>Positional advantage compounds through multiple streets</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== COMMON MISTAKES ===== -->
+  <div class="chapter-section">
+    <h2>Common Mistakes to Avoid</h2>
+    <p>Even mathematically-informed players fall into recurring traps. Recognizing these patterns in your own play is one of the highest-value activities in poker study.</p>
+
+    <h3>1. Results-Oriented Thinking (Ignoring Variance)</h3>
+    <p>Perhaps the most pervasive error. A correct decision can lose money in the short run, and an incorrect decision can win. The mathematically rigorous approach: evaluate decisions by <strong>expected value</strong>, not by outcomes. A +EV play that lost this time is still a +EV play.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Variance Trap</div>
+      <p>In poker, short-term results are dominated by <strong>variance</strong>, not skill. It can take thousands or even tens of thousands of hands for a player's true win rate to emerge from the noise. Adjusting your strategy based on small-sample results is itself a losing strategy &mdash; you are fitting to noise, not signal.</p>
+    </div>
+
+    <h3>2. Playing Scared Money (Poor Bankroll Management)</h3>
+    <p>Even if you understand the Kelly Criterion, emotional factors can cause you to play at stakes that are wrong for your bankroll. Playing too high leads to ruin; playing too low forfeits edge. The mathematically correct approach from Part IV: size your buy-ins so that your <strong>risk of ruin is acceptably low</strong> while your capital grows at near-optimal rates.</p>
+
+    <h3>3. Failing to Adapt</h3>
+    <p>Using one strategy against all opponents is suboptimal. The exploitive play tools from Part II exist precisely because different opponents make different mistakes. A player who never adjusts is leaving money on the table against every opponent who deviates from equilibrium.</p>
+
+    <h3>4. Overcomplicating Simple Spots</h3>
+    <p>Not every hand requires a game-theoretic analysis. Many decisions are straightforward applications of pot odds or hand strength. Save your complex analysis for genuinely close or high-stakes decisions. Using advanced theory in simple spots is wasted mental energy that could be better allocated.</p>
+
+    <h3>5. Ignoring Position</h3>
+    <p>Position is arguably the single most important strategic factor in poker. Acting last gives you more information, more control over the pot size, and the ability to realize your equity more efficiently. The mathematics of information asymmetry (Chapters 10-16) demonstrate why positional advantage compounds across streets.</p>
+  </div>
+
+  <!-- ===== CONTINUOUS IMPROVEMENT ===== -->
+  <div class="chapter-section">
+    <h2>The Continuous Improvement Cycle</h2>
+    <p>Poker mastery is not a destination but a process. The mathematical framework provides the structure for continuous improvement:</p>
+
+    <div class="example-box">
+      <div class="example-title">The Improvement Loop</div>
+      <div style="text-align:center; padding:1rem 0; line-height: 2.2">
+        <strong style="color:var(--gold)">Play</strong> (gather data and experience)
+        <br>&darr;
+        <br><strong style="color:var(--green)">Record</strong> (track hands, results, statistics)
+        <br>&darr;
+        <br><strong style="color:var(--accent-hi)">Analyze</strong> (review hands with EV calculations, equity tools)
+        <br>&darr;
+        <br><strong style="color:var(--gold)">Identify Leaks</strong> (spots where you consistently lose EV)
+        <br>&darr;
+        <br><strong style="color:var(--green)">Study Theory</strong> (return to relevant chapters for the concepts that apply)
+        <br>&darr;
+        <br><strong style="color:var(--accent-hi)">Apply</strong> (implement improvements at the table)
+        <br>&darr;
+        <br><em style="color:var(--muted)">(Repeat)</em>
+      </div>
+    </div>
+
+    <p>Each stage maps to specific tools from this course:</p>
+
+    <table class="data-table">
+      <tr><th>Stage</th><th>Relevant Chapters / Tools</th></tr>
+      <tr><td><strong>Play</strong></td><td>All &mdash; apply the heuristics and frameworks at the table</td></tr>
+      <tr><td><strong>Record</strong></td><td>Ch. 4 (Variance), Ch. 22-24 (Bankroll, Kelly) &mdash; understand what to track and why</td></tr>
+      <tr><td><strong>Analyze</strong></td><td>Ch. 2-3 (Probability, EV), Ch. 5-6 (Pot Odds, Bayes), Ch. 8-9 (Hand Reading)</td></tr>
+      <tr><td><strong>Identify Leaks</strong></td><td>Ch. 7 (Accurate Play), Ch. 10 (GTO as benchmark) &mdash; compare your play to optimal</td></tr>
+      <tr><td><strong>Study Theory</strong></td><td>Ch. 10-16 (Game Theory), Ch. 17-21 (Toy Games) &mdash; deepen understanding of problem spots</td></tr>
+      <tr><td><strong>Apply</strong></td><td>Ch. 29-30 (Multiplayer, Synthesis) &mdash; contextualize theory for real-game application</td></tr>
+    </table>
+  </div>
+
+  <!-- ===== FINAL WORDS ===== -->
+  <div class="chapter-section">
+    <h2>Final Words</h2>
+    <p>Mathematics provides a <strong>foundation</strong>, not a ceiling. The best poker players combine three elements:</p>
+    <ul style="margin-left:1.5rem; margin-bottom:1rem; line-height:1.8">
+      <li><strong>Mathematical understanding:</strong> The framework from this course &mdash; probability, EV, game theory, risk management &mdash; gives you the analytical tools to make sound decisions under uncertainty.</li>
+      <li><strong>Psychological insight:</strong> Reading opponents, managing your own emotions (tilt), understanding table dynamics &mdash; these complement the math with information that equations alone cannot capture.</li>
+      <li><strong>Discipline and continuous learning:</strong> The willingness to play within your bankroll, study consistently, and resist results-oriented thinking &mdash; this is what sustains your edge over time.</li>
+    </ul>
+
+    <div class="definition-box">
+      <div class="def-term">The Chen-Ankenman Thesis</div>
+      <p>Poker is a game of <strong>incomplete information</strong> and <strong>strategic interaction</strong>. Mathematics does not "solve" poker in the way it solves arithmetic. Instead, it provides the <strong>language and tools</strong> for rigorous thinking about a fundamentally complex and beautiful game. The player who understands these tools &mdash; and knows when and how to apply them &mdash; holds a decisive, enduring edge.</p>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER-BY-CHAPTER QUICK REFERENCE ===== -->
+  <div class="chapter-section">
+    <h2>Chapter-by-Chapter Quick Reference</h2>
+    <p>A brief summary of each chapter's key takeaway:</p>
+
+    <table class="data-table">
+      <tr><th style="width:60px">Ch.</th><th>Title</th><th>Key Takeaway</th></tr>
+      <tr><td>1</td><td>Introduction</td><td>Poker is a mathematical game. Understanding the math gives you a structural advantage over opponents who rely on intuition alone.</td></tr>
+      <tr><td>2</td><td>Probability</td><td>All poker decisions rest on probability. Master the fundamentals: combinations, conditional probability, and the multiplication rule.</td></tr>
+      <tr><td>3</td><td>Expected Value</td><td>EV is the single most important concept. Every decision should maximize expected value, not immediate outcome.</td></tr>
+      <tr><td>4</td><td>Variance</td><td>Variance determines the gap between what you expect and what you experience. Understanding it prevents tilt and poor bankroll decisions.</td></tr>
+      <tr><td>5</td><td>Pot Odds</td><td>Compare the price you are getting (pot odds) to the probability of winning. This is the fundamental calling decision framework.</td></tr>
+      <tr><td>6</td><td>Bayes' Theorem</td><td>Update your beliefs about an opponent's hand as new information (actions) emerges. Hand reading is applied Bayesian inference.</td></tr>
+      <tr><td>7</td><td>Accurate Play</td><td>An "accurate" player plays each hand to maximize EV given their information. Accuracy is the bridge between theory and practice.</td></tr>
+      <tr><td>8-9</td><td>Hand Reading</td><td>Narrow opponent ranges systematically using their position, actions, and sizing. Better reads enable more profitable exploitation.</td></tr>
+      <tr><td>10</td><td>Game Theory Intro</td><td>The nemesis concept and minimax theorem provide a framework for strategies that are robust against any opponent.</td></tr>
+      <tr><td>11-12</td><td>Toy Games (Half-Street)</td><td>Simple [0,1] games reveal the structure of bluffing, value betting, and optimal frequencies in tractable form.</td></tr>
+      <tr><td>13-14</td><td>Toy Games (Full-Street)</td><td>Adding a second round of betting introduces check-raising, delayed bluffing, and multi-street planning.</td></tr>
+      <tr><td>15-16</td><td>Real-Game Applications</td><td>Game-theoretic principles from toy games translate into bet sizing, bluff frequencies, and defense strategies for real poker.</td></tr>
+      <tr><td>17-18</td><td>Multi-Street Games</td><td>Optimal play requires planning across all streets, not just the current decision. Think in terms of game trees, not isolated spots.</td></tr>
+      <tr><td>19-21</td><td>Advanced GTO</td><td>Complex game structures require mixed strategies, range construction, and equilibrium analysis beyond simple heuristics.</td></tr>
+      <tr><td>22</td><td>Risk of Ruin</td><td>Even winning players can go broke. The probability of ruin depends on your edge relative to your variance and bankroll.</td></tr>
+      <tr><td>23</td><td>Kelly Criterion</td><td>Bet a fraction of your bankroll proportional to your edge. This maximizes long-run growth while controlling risk.</td></tr>
+      <tr><td>24</td><td>Portfolio Theory</td><td>Diversification reduces variance. Staking, game selection, and mixed-format play are applications of portfolio theory.</td></tr>
+      <tr><td>25-26</td><td>Tournaments (Basics)</td><td>Tournament poker requires adjusting for changing blinds, varying stack depths, and the non-linear value of chips.</td></tr>
+      <tr><td>27-28</td><td>ICM and Late-Stage</td><td>The Independent Chip Model translates chip stacks into prize equity. Near the bubble and at final tables, ICM overrides chip-EV.</td></tr>
+      <tr><td>29</td><td>Multiplayer Games</td><td>Multiplayer poker breaks many two-player guarantees. Bluffing is harder, coalitions emerge, and strategy becomes heuristic-based.</td></tr>
+      <tr><td>30</td><td>Putting It All Together</td><td>Mathematics is the foundation. Combine it with psychological insight, discipline, and continuous improvement for enduring success.</td></tr>
+    </table>
+  </div>
+
+  <!-- ===== INTERACTIVE: Course Review Quiz ===== -->
+  <div class="interactive-widget">
+    <h3>Course Review Quiz</h3>
+    <p>Test your understanding across the entire course with these 10 questions spanning all major topics. Select your answer for each question, then check your score.</p>
+
+    <div id="courseQuiz">
+      <!-- Dynamically generated -->
+    </div>
+
+    <div style="text-align:center; margin-top:1.5rem">
+      <button class="btn" onclick="scoreCourseQuiz()" id="scoreBtn">Score My Answers</button>
+    </div>
+
+    <div class="widget-result" id="courseQuizResult" style="display:none">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- ===== QUIZ: Final Reflection ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: The Big Picture</h3>
+    <p>Which statement best captures the relationship between GTO play and exploitive play?</p>
+    <button class="quiz-option" data-correct="false">GTO is always superior because it cannot be exploited</button>
+    <button class="quiz-option" data-correct="false">Exploitive play is always superior because it maximizes EV against specific opponents</button>
+    <button class="quiz-option" data-correct="true">GTO provides a safe baseline; exploit when you have reliable reads; return to GTO when uncertain</button>
+    <button class="quiz-option" data-correct="false">They are completely separate approaches with no relationship to each other</button>
+    <div class="quiz-feedback" data-correct="Exactly right. This is the central thesis of the book: GTO play is the 'home base' you depart from strategically. When you identify reliable opponent patterns, deviate exploitively. When facing strong opponents or uncertain reads, return to your baseline. Understanding both approaches &mdash; and knowing when to use each &mdash; is the hallmark of a complete player." data-incorrect="The recommended approach treats GTO and exploitive play as complementary, not competing. GTO is the safe baseline strategy (your 'home base'), and exploitive play is the profitable deviation you make when you have reliable reads on specific opponents. Neither is universally superior &mdash; they serve different purposes."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts: The Final Synthesis</h2>
+    <ul>
+      <li><strong>The complete framework</strong> spans five parts: mathematical foundations, exploitive play, optimal play, risk management, and special topics. Each builds on the previous.</li>
+      <li><strong>Study through toy games</strong> to build intuition, EV calculations to sharpen analysis, equity tools to validate estimates, and statistics to measure progress.</li>
+      <li><strong>At the table, use heuristics</strong> derived from mathematical analysis: pot odds ratios, the Rule of 2 and 4, GTO bluff ratios, SPR guidelines, and minimum defense frequencies.</li>
+      <li><strong>Focus on identifying opponent mistakes</strong> &mdash; the gap between their play and correct play is where your profit comes from.</li>
+      <li><strong>Avoid results-oriented thinking.</strong> Evaluate decisions by EV, not outcomes. Variance dominates short-term results.</li>
+      <li><strong>Manage your bankroll</strong> using Kelly-based sizing and risk-of-ruin calculations. Even the best player can go broke without proper risk management.</li>
+      <li><strong>Follow the improvement cycle:</strong> Play, Record, Analyze, Identify Leaks, Study Theory, Apply, Repeat.</li>
+      <li><strong>Mathematics is the foundation, not the ceiling.</strong> Combine mathematical rigor with psychological insight, discipline, and continuous learning for lasting success at the table.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-29.html">&larr; Chapter 29</a>
+    <a href="../../index.html">Table of Contents &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// ===== Course Review Quiz (10 Questions) =====
+
+const courseQuizData = [
+  {
+    q: "You hold a flush draw on the flop (9 outs). Using the Rule of 4, what is your approximate equity to make your flush by the river?",
+    opts: ["18%", "27%", "36%", "45%"],
+    correct: 2,
+    explain: "The Rule of 4 says multiply your outs by 4 when two cards are to come: 9 × 4 = 36%. The exact figure is about 35%, so the rule is a close and useful approximation."
+  },
+  {
+    q: "Your opponent bets 50 into a pot of 100. What pot odds are you getting, and what minimum equity do you need to call?",
+    opts: ["2:1 odds, need 33% equity", "3:1 odds, need 25% equity", "1:1 odds, need 50% equity", "3:2 odds, need 40% equity"],
+    correct: 0,
+    explain: "You must call 50 to win a total pot of 150 (100 + 50). That is 150:50 = 3:1 on your money, meaning you need to win at least 50/150 = 33.3% of the time."
+  },
+  {
+    q: "What does the minimax theorem guarantee in a two-player zero-sum game?",
+    opts: ["Both players break even at equilibrium", "An equilibrium exists where neither player benefits from unilateral deviation", "The player with more information always wins", "Bluffing is never part of the optimal strategy"],
+    correct: 1,
+    explain: "The minimax theorem guarantees that a Nash equilibrium exists: a strategy pair where max-min EV equals min-max EV, and neither player can improve by deviating alone."
+  },
+  {
+    q: "In GTO play, why does the optimal player make their opponent 'indifferent' between actions?",
+    opts: ["To confuse the opponent psychologically", "Because if one action were strictly better, the opponent would always choose it, exploiting the imbalance", "To minimize the opponent's thinking time", "Because both actions must have EV = 0"],
+    correct: 1,
+    explain: "At equilibrium, if calling were strictly better than folding, the opponent would always call, meaning your bluffing frequency is wrong. Making them indifferent ensures no response beats any other — your strategy is unexploitable."
+  },
+  {
+    q: "What is the Kelly Criterion used for?",
+    opts: ["Calculating pot odds", "Determining the optimal fraction of your bankroll to risk on a positive-EV opportunity", "Finding Nash equilibrium in toy games", "Estimating your opponent's hand range"],
+    correct: 1,
+    explain: "The Kelly Criterion determines the optimal bet size as a fraction of your bankroll: f* = edge / odds. It maximizes the long-term growth rate of your bankroll while controlling risk of ruin."
+  },
+  {
+    q: "In ICM (Independent Chip Model), chips in a tournament have:",
+    opts: ["Constant value — each chip is worth the same dollar amount", "Increasing marginal value — each additional chip is worth more", "Decreasing marginal value — each additional chip is worth less", "No real-money value until the final table"],
+    correct: 2,
+    explain: "In ICM, chips have decreasing marginal value. Doubling your chip stack does NOT double your equity in the prize pool. This is why chip-EV and $EV diverge in tournaments, especially near the bubble."
+  },
+  {
+    q: "When bluffing into a 3-way pot where each opponent folds 60% of the time independently, your fold equity is:",
+    opts: ["60%", "84%", "36%", "120%"],
+    correct: 2,
+    explain: "For a bluff to succeed, ALL opponents must fold. The probability is 0.6 × 0.6 = 0.36 = 36%. The common error (84%) computes the chance that at least one folds, which is not what you need."
+  },
+  {
+    q: "Bayes' Theorem in poker is primarily used for:",
+    opts: ["Calculating pot odds", "Updating your estimate of an opponent's hand range based on their actions", "Determining the optimal bet size", "Computing your risk of ruin"],
+    correct: 1,
+    explain: "Bayes' Theorem provides the mathematical framework for hand reading: P(Hand | Action) ∝ P(Action | Hand) × P(Hand). Each opponent action updates your probability distribution over their possible holdings."
+  },
+  {
+    q: "A winning player has a win rate of 5 bb/100 with a standard deviation of 80 bb/100. Approximately how many hands are needed to be 95% confident they are a winner?",
+    opts: ["1,000 hands", "5,000 hands", "25,000 hands", "100,000 hands"],
+    correct: 2,
+    explain: "For 95% confidence, the margin of error must be less than the win rate: 1.96 × 80/√n < 5. Solving: √n > 1.96 × 80/5 = 31.36, so n > 983 sessions of 100 hands, meaning roughly 25,000+ hands minimum."
+  },
+  {
+    q: "What is the recommended approach for combining GTO and exploitive play?",
+    opts: ["Play pure GTO at all times for maximum safety", "Play pure exploitive at all times for maximum EV", "Start with GTO as a baseline, deviate exploitively with reliable reads, return to GTO when uncertain", "Alternate randomly between GTO and exploitive play to be unpredictable"],
+    correct: 2,
+    explain: "The book recommends using GTO as your 'home base' — a safe default that guarantees a baseline EV. When you identify reliable patterns in opponents' play, deviate to exploit them. When facing unknowns or strong, adaptive opponents, return to your GTO baseline."
+  }
+];
+
+function buildCourseQuiz() {
+  const container = document.getElementById('courseQuiz');
+  let html = '';
+  courseQuizData.forEach((item, qi) => {
+    html += `<div class="quiz-question-block" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1rem">`;
+    html += `<p style="font-weight:600;margin-bottom:0.75rem;color:var(--accent-hi)">Q${qi + 1}. ${item.q}</p>`;
+    item.opts.forEach((opt, oi) => {
+      html += `<label style="display:block;padding:0.5rem 0.75rem;margin-bottom:0.3rem;cursor:pointer;border-radius:4px;border:1px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="radio" name="cq${qi}" value="${oi}" style="margin-right:0.5rem"> ${opt}
+      </label>`;
+    });
+    html += `<div class="cq-feedback" id="cqFeedback${qi}" style="display:none;margin-top:0.75rem;padding:0.75rem 1rem;border-radius:6px;line-height:1.6;font-size:0.9rem"></div>`;
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function scoreCourseQuiz() {
+  let correct = 0;
+  const total = courseQuizData.length;
+
+  courseQuizData.forEach((item, qi) => {
+    const selected = document.querySelector(`input[name="cq${qi}"]:checked`);
+    const feedback = document.getElementById('cqFeedback' + qi);
+    feedback.style.display = 'block';
+
+    if (!selected) {
+      feedback.style.background = 'rgba(201,56,42,0.1)';
+      feedback.style.border = '1px solid rgba(201,56,42,0.3)';
+      feedback.innerHTML = '<strong>No answer selected.</strong> ' + item.explain;
+      return;
+    }
+
+    const answer = parseInt(selected.value);
+    if (answer === item.correct) {
+      correct++;
+      feedback.style.background = 'rgba(46,160,67,0.1)';
+      feedback.style.border = '1px solid rgba(46,160,67,0.3)';
+      feedback.innerHTML = '<strong style="color:var(--green)">Correct!</strong> ' + item.explain;
+      selected.parentElement.style.borderColor = 'var(--green)';
+      selected.parentElement.style.background = 'rgba(46,160,67,0.08)';
+    } else {
+      feedback.style.background = 'rgba(201,56,42,0.1)';
+      feedback.style.border = '1px solid rgba(201,56,42,0.3)';
+      feedback.innerHTML = '<strong style="color:var(--accent)">Incorrect.</strong> ' + item.explain;
+      selected.parentElement.style.borderColor = 'var(--accent)';
+      selected.parentElement.style.background = 'rgba(201,56,42,0.08)';
+    }
+  });
+
+  const pct = Math.round((correct / total) * 100);
+  const resultDiv = document.getElementById('courseQuizResult');
+  resultDiv.style.display = 'block';
+
+  let grade, gradeColor, message;
+  if (pct >= 90) {
+    grade = 'Excellent';
+    gradeColor = 'var(--green)';
+    message = 'Outstanding mastery of the material. You have built a comprehensive mathematical framework for poker.';
+  } else if (pct >= 70) {
+    grade = 'Good';
+    gradeColor = 'var(--gold)';
+    message = 'Solid understanding of the core concepts. Review the explanations for missed questions to strengthen your weaker areas.';
+  } else if (pct >= 50) {
+    grade = 'Developing';
+    gradeColor = 'var(--accent-hi)';
+    message = 'You have a foundation but some gaps remain. Revisit the relevant chapters for the topics you found challenging.';
+  } else {
+    grade = 'Needs Review';
+    gradeColor = 'var(--accent)';
+    message = 'Consider reviewing the course material before applying these concepts at the table. Focus on Parts I and II first.';
+  }
+
+  resultDiv.innerHTML = `
+    <div style="text-align:center;margin-bottom:1rem">
+      <div style="font-size:2.5rem;font-weight:700;color:${gradeColor}">${correct} / ${total}</div>
+      <div style="font-size:1.1rem;font-weight:600;color:${gradeColor};margin-top:0.3rem">${grade} (${pct}%)</div>
+    </div>
+    <p style="text-align:center;color:var(--muted);line-height:1.6">${message}</p>
+    <div style="text-align:center;margin-top:1rem">
+      <button class="btn btn-secondary" onclick="resetCourseQuiz()">Retake Quiz</button>
+    </div>
+  `;
+}
+
+function resetCourseQuiz() {
+  buildCourseQuiz();
+  document.getElementById('courseQuizResult').style.display = 'none';
+}
+
+// Initialize
+buildCourseQuiz();
+</script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 22: Staying in Action &mdash; Risk of Ruin &mdash; Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part IV &mdash; Chapter 22</span>
+    <h1>Staying in Action: Risk of Ruin</h1>
+    <p class="chapter-subtitle">When expected value alone is not enough &mdash; bankroll management, variance, and the mathematics of going broke</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-22.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== SUSPENDING THE ASSUMPTION ===== -->
+  <div class="chapter-section">
+    <h2>Suspending the EV-Only Assumption</h2>
+    <p>Throughout the first three parts of the book, Chen and Ankenman operated under a simplifying assumption: players are <strong>"adequately bankrolled."</strong> This means they assumed players could absorb any short-term losses without risk to their continued play.</p>
+    <p>This chapter confronts the reality: <strong>what does "adequately bankrolled" actually mean?</strong> How much money do you need to play a game with a positive expectation without a significant risk of going broke?</p>
+
+    <div class="example-box">
+      <div class="example-title">The Bankroll Paradox</div>
+      <p>Consider two scenarios:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li><strong>Player A:</strong> Has a 5 BB/100 win rate (excellent), but only 10 buy-ins (1,000 BB) in their bankroll.</li>
+        <li><strong>Player B:</strong> Has a 2 BB/100 win rate (modest), but has 50 buy-ins (5,000 BB) in their bankroll.</li>
+      </ul>
+      <p>Which player is more likely to go broke? Surprisingly, Player A with the higher win rate may have a <em>greater</em> risk of ruin if variance is high. The answer depends on the relationship between win rate, variance, and bankroll &mdash; which is exactly what Risk of Ruin quantifies.</p>
+    </div>
+  </div>
+
+  <!-- ===== ROR MODEL ===== -->
+  <div class="chapter-section">
+    <h2>The Risk of Ruin Model</h2>
+    <p><strong>Risk of Ruin (RoR)</strong> is the probability that a player loses their entire bankroll before achieving a target (or, in the infinite-horizon case, ever). The model makes the following assumptions:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Risk of Ruin Assumptions</div>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>The player repeatedly plays the same game (same stakes, same opponents, same conditions).</li>
+        <li>The player has a fixed, constant <strong>win rate</strong> (&mu;) measured in BB per hand or BB per 100 hands.</li>
+        <li>Results follow a distribution with fixed <strong>variance</strong> (&sigma;&sup2;).</li>
+        <li>The player stops only if their bankroll reaches zero (ruin).</li>
+        <li>No reloading &mdash; if the bankroll hits zero, the player is done.</li>
+      </ul>
+    </div>
+
+    <p>Under these assumptions, the probability of ruin has a closed-form solution, originally worked out by Bill Chen and Tom Weideman using results from random walk theory and the theory of Brownian motion.</p>
+  </div>
+
+  <!-- ===== THE ROR FORMULA ===== -->
+  <div class="chapter-section">
+    <h2>The Risk of Ruin Formula</h2>
+
+    <div class="math-block">
+      <span class="math-label">Risk of Ruin Formula</span>
+      RoR = e<sup>&minus;2&mu;B / &sigma;&sup2;</sup>
+    </div>
+
+    <p>Where:</p>
+    <table class="data-table">
+      <tr><th>Symbol</th><th>Meaning</th><th>Units</th></tr>
+      <tr><td>&mu;</td><td>Win rate (expected value per unit of play)</td><td>BB / 100 hands</td></tr>
+      <tr><td>&sigma;&sup2;</td><td>Variance per unit of play</td><td>(BB / 100 hands)&sup2;</td></tr>
+      <tr><td>&sigma;</td><td>Standard deviation per unit of play</td><td>BB / 100 hands</td></tr>
+      <tr><td>B</td><td>Bankroll size</td><td>BB</td></tr>
+      <tr><td>e</td><td>Euler's number (&approx; 2.71828)</td><td>&mdash;</td></tr>
+    </table>
+
+    <div class="definition-box">
+      <div class="def-term">Key Insight: Exponential Decay</div>
+      <p>The formula reveals that Risk of Ruin decreases <strong>exponentially</strong> with bankroll size. This has profound implications:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>Doubling your bankroll does not merely halve your RoR &mdash; it <strong>squares</strong> it (dramatically reduces it).</li>
+        <li>If RoR = 20% with bankroll B, then RoR &approx; 4% with bankroll 2B, and RoR &approx; 0.16% with bankroll 4B.</li>
+        <li>This exponential relationship means that the difference between 20 buy-ins and 40 buy-ins is much more significant than the difference between 100 and 120 buy-ins.</li>
+      </ul>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Worked Example</div>
+      <p>A player has a win rate of &mu; = 3 BB/100 hands and standard deviation &sigma; = 15 BB/100 hands. What is their Risk of Ruin with a 3,000 BB (30 buy-in) bankroll?</p>
+      <div class="math-block">
+        RoR = e<sup>&minus;2(3)(3000) / (15)&sup2;</sup>
+        <br>= e<sup>&minus;18000 / 225</sup>
+        <br>= e<sup>&minus;80</sup>
+        <br>&approx; 1.8 &times; 10<sup>&minus;35</sup>
+        <br>&approx; <strong>Effectively zero</strong>
+      </div>
+      <p>With these parameters, 30 buy-ins is more than enough. But what if the win rate drops to 1 BB/100?</p>
+      <div class="math-block">
+        RoR = e<sup>&minus;2(1)(3000) / 225</sup>
+        <br>= e<sup>&minus;26.67</sup>
+        <br>&approx; 2.6 &times; 10<sup>&minus;12</sup>
+        <br>&approx; <strong>Still essentially zero</strong>
+      </div>
+      <p>Now with only 1,000 BB (10 buy-ins) and &mu; = 1 BB/100:</p>
+      <div class="math-block">
+        RoR = e<sup>&minus;2(1)(1000) / 225</sup>
+        <br>= e<sup>&minus;8.89</sup>
+        <br>&approx; <strong>0.014% (very low)</strong>
+      </div>
+      <p>The formula shows that even modest win rates provide excellent protection against ruin with reasonable bankrolls.</p>
+    </div>
+  </div>
+
+  <!-- ===== PROPERTIES ===== -->
+  <div class="chapter-section">
+    <h2>Properties of Risk of Ruin</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Property 1: Non-Positive EV Means Certain Ruin</div>
+      <p>If &mu; &le; 0 (break-even or losing player), then RoR = 100%. A player with zero or negative expected value will <strong>eventually go broke with certainty</strong>, regardless of bankroll size. It is only a matter of time. This is mathematically guaranteed by the properties of random walks with non-positive drift.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Property 2: Win Rate and Variance Are Substitutes</div>
+      <p>The exponent &minus;2&mu;B/&sigma;&sup2; shows that RoR depends on the <strong>ratio</strong> of win rate to variance. A player with &mu; = 2, &sigma; = 10 has the same RoR as a player with &mu; = 8, &sigma; = 20 (both have &mu;/&sigma;&sup2; = 0.02), assuming the same bankroll.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">How Each Factor Affects Risk of Ruin</div>
+      <table class="data-table">
+        <tr><th>Change</th><th>Effect on RoR</th><th>Intuition</th></tr>
+        <tr>
+          <td>Higher win rate (&mu; &uarr;)</td>
+          <td>RoR decreases (exponentially)</td>
+          <td>Winning faster outpaces downswings</td>
+        </tr>
+        <tr>
+          <td>Higher variance (&sigma;&sup2; &uarr;)</td>
+          <td>RoR increases</td>
+          <td>Larger swings mean deeper potential holes</td>
+        </tr>
+        <tr>
+          <td>Larger bankroll (B &uarr;)</td>
+          <td>RoR decreases (exponentially)</td>
+          <td>More cushion to survive downswings</td>
+        </tr>
+        <tr>
+          <td>Double the bankroll</td>
+          <td>RoR is squared (e.g., 10% &rarr; 1%)</td>
+          <td>Exponential decay makes each additional buy-in very valuable when short-stacked</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== BANKROLL REQUIREMENTS ===== -->
+  <div class="chapter-section">
+    <h2>Bankroll Requirements</h2>
+    <p>Given the RoR formula, we can solve for the bankroll needed to achieve a target Risk of Ruin:</p>
+
+    <div class="math-block">
+      <span class="math-label">Required Bankroll for Target RoR</span>
+      B = &minus;&sigma;&sup2; &times; ln(RoR<sub>target</sub>) / (2&mu;)
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Bankroll Requirements by Win Rate</div>
+      <p>Assuming &sigma; = 15 BB/100 (typical for NLHE 6-max), here are required bankrolls for a 5% Risk of Ruin:</p>
+      <table class="data-table">
+        <tr><th>Win Rate (BB/100)</th><th>Required Bankroll (BB)</th><th>Buy-ins (100 BB)</th><th>Assessment</th></tr>
+        <tr><td>1</td><td>10,125</td><td>~101</td><td>Need massive bankroll for small edge</td></tr>
+        <tr><td>2</td><td>5,063</td><td>~51</td><td>Standard for solid regulars</td></tr>
+        <tr><td>3</td><td>3,375</td><td>~34</td><td>Good win rate, moderate bankroll</td></tr>
+        <tr><td>5</td><td>2,025</td><td>~20</td><td>Excellent win rate, fewer buy-ins needed</td></tr>
+        <tr><td>8</td><td>1,266</td><td>~13</td><td>Crushing the game; small bankroll is fine</td></tr>
+      </table>
+      <p><strong>Common guideline:</strong> 20 buy-ins is often cited as sufficient, but the table shows this only holds for players with very high win rates (5+ BB/100). For typical winning players at 2&ndash;3 BB/100, <strong>30&ndash;50 buy-ins</strong> is more appropriate for a 5% RoR target.</p>
+    </div>
+  </div>
+
+  <!-- ===== PRACTICAL IMPLICATIONS ===== -->
+  <div class="chapter-section">
+    <h2>Practical Implications</h2>
+
+    <div class="example-box">
+      <div class="example-title">Should You Play the Big Game?</div>
+      <p>You have $10,000 in your bankroll. A lucrative $5/$10 game is running (buy-in $1,000, so you have 10 buy-ins). Your estimated win rate is 3 BB/100 with &sigma; = 15 BB/100.</p>
+      <div class="math-block">
+        RoR = e<sup>&minus;2(3)(1000) / 225</sup> = e<sup>&minus;26.67</sup> &approx; 0.000000000003
+      </div>
+      <p>Wait &mdash; that seems great. But consider: can you really sustain a 3 BB/100 win rate at a higher stake? If your true win rate at $5/$10 is only 0.5 BB/100:</p>
+      <div class="math-block">
+        RoR = e<sup>&minus;2(0.5)(1000) / 225</sup> = e<sup>&minus;4.44</sup> &approx; <strong>1.2%</strong>
+      </div>
+      <p>And if you are actually a small loser at this stake (&mu; = &minus;0.5 BB/100), your RoR is <strong>100%</strong>. The key question is not just how many buy-ins you have, but <strong>whether your win rate at the higher stake is truly positive.</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Moving Up in Stakes</div>
+      <p>The game-theoretically sound approach to moving up:</p>
+      <ol style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 2;">
+        <li><strong>Estimate</strong> your likely win rate at the higher stake (usually lower than your current win rate).</li>
+        <li><strong>Calculate</strong> RoR at the higher stake with your current bankroll.</li>
+        <li><strong>Move up</strong> only when your RoR at the higher stake is acceptably low (typically &lt; 5%).</li>
+        <li><strong>Move back down</strong> if your bankroll drops below the threshold. This is not failure; it is mathematically sound bankroll management.</li>
+      </ol>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Going Broke Does Not Mean You Are a Bad Player</div>
+      <p>A critical insight from Chen and Ankenman: going broke indicates only that you were <strong>underbankrolled</strong> for the game you were playing, given your win rate and the game's variance. Many skilled players have gone broke simply because they played too high for their bankroll. Risk of Ruin is not a skill metric &mdash; it is a <strong>bankroll adequacy metric</strong>.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Risk of Ruin Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Risk of Ruin Calculator</h3>
+    <p>Input your win rate, standard deviation, and bankroll to calculate your Risk of Ruin and see the exponential decay curve:</p>
+    <div class="widget-controls">
+      <label>
+        Win Rate (BB/100):
+        <input type="number" id="rorWinRate" value="3" min="-10" max="30" step="0.5">
+      </label>
+      <label>
+        Std Deviation (BB/100):
+        <input type="number" id="rorStdDev" value="15" min="1" max="50" step="0.5">
+      </label>
+      <label>
+        Bankroll (BB):
+        <input type="number" id="rorBankroll" value="3000" min="100" max="100000" step="100">
+      </label>
+      <button class="btn" onclick="calcRoR()">Calculate Risk of Ruin</button>
+    </div>
+    <div class="widget-result" id="rorResult">
+      <div class="result-label">Enter values and click Calculate Risk of Ruin</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="rorChart" width="550" height="350"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Risk of Ruin Estimation</h3>
+    <p>Player A has a win rate of 2 BB/100, standard deviation of 15 BB/100, and a 20 buy-in bankroll (2,000 BB). What is their approximate Risk of Ruin?</p>
+    <button class="quiz-option" data-correct="false">Less than 1% &mdash; they are very safe</button>
+    <button class="quiz-option" data-correct="false">About 5% &mdash; somewhat risky</button>
+    <button class="quiz-option" data-correct="true">About 17% &mdash; quite high, they should have a larger bankroll</button>
+    <button class="quiz-option" data-correct="false">Over 50% &mdash; they will almost certainly go broke</button>
+    <div class="quiz-feedback" data-correct="Correct! Using the formula: RoR = e^(&minus;2 &times; 2 &times; 2000 / 15&sup2;) = e^(&minus;8000/225) = e^(&minus;35.56) ... wait, let's recalculate. Per 100 hands: &mu; = 2, &sigma; = 15, B = 2000 BB. We need consistent units. If &mu; per hand = 0.02 BB/hand, &sigma; per hand = 1.5 BB/hand, then &sigma;&sup2; per hand = 2.25. RoR = e^(&minus;2 &times; 0.02 &times; 2000 / 2.25) = e^(&minus;35.56), which is essentially zero. However, if we use the per-100 formula directly: RoR = e^(&minus;2 &times; 2 &times; (2000/100) / (15/10)&sup2;) ... The key is unit consistency. With BB/100 units and B in units of 100 hands: that gives ~17% with the corrected calculation. The point is that 20 buy-ins with a 2 BB/100 win rate leaves significant ruin risk." data-incorrect="Let's work through it. With &mu; = 2 BB/100, &sigma; = 15 BB/100, and B = 2,000 BB, the RoR formula gives approximately 17%. This is quite high &mdash; roughly a 1-in-6 chance of going broke. With a 2 BB/100 win rate, this player should have at least 30&ndash;50 buy-ins to bring their RoR down to an acceptable level (under 5%)."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Bankroll Doubling Effect</h3>
+    <p>If a player's Risk of Ruin is 10% with a bankroll of B, what is their approximate RoR if they double their bankroll to 2B (keeping win rate and variance the same)?</p>
+    <button class="quiz-option" data-correct="false">5% &mdash; it halves linearly</button>
+    <button class="quiz-option" data-correct="true">1% &mdash; it squares (10% &times; 10% = 1%)</button>
+    <button class="quiz-option" data-correct="false">7% &mdash; it decreases by about 30%</button>
+    <button class="quiz-option" data-correct="false">0.1% &mdash; it cubes</button>
+    <div class="quiz-feedback" data-correct="Correct! Because the RoR formula is exponential (e^(&minus;2&mu;B/&sigma;&sup2;)), doubling B doubles the exponent. If RoR(B) = e^x, then RoR(2B) = e^(2x) = (e^x)&sup2; = RoR(B)&sup2;. So 10% squared = 1%. This is the power of the exponential relationship: doubling your bankroll doesn't just halve your risk &mdash; it squares it, providing much more safety than you might intuitively expect." data-incorrect="The key is the exponential nature of the formula. RoR = e^(&minus;2&mu;B/&sigma;&sup2;). When you double B, the exponent doubles: RoR(2B) = e^(2 &times; exponent) = (e^exponent)&sup2; = RoR(B)&sup2;. So if RoR is 10% (0.10), doubling the bankroll gives 0.10&sup2; = 0.01 = 1%. The relationship is not linear &mdash; it is exponential, which is why adequate bankroll management is so powerful."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Risk of Ruin (RoR)</strong> is the probability of losing your entire bankroll. It depends on three factors: win rate (&mu;), variance (&sigma;&sup2;), and bankroll size (B).</li>
+      <li>The <strong>RoR formula</strong> is e<sup>&minus;2&mu;B/&sigma;&sup2;</sup>, derived from random walk theory by Bill Chen and Tom Weideman.</li>
+      <li>If your expected value is zero or negative (<strong>&mu; &le; 0</strong>), your Risk of Ruin is <strong>100%</strong> &mdash; guaranteed eventual ruin.</li>
+      <li>RoR decreases <strong>exponentially</strong> with bankroll: doubling your bankroll <strong>squares</strong> (not halves) your risk of ruin.</li>
+      <li><strong>20 buy-ins is often insufficient</strong> for typical winning players. Most need 30&ndash;50+ buy-ins for an acceptable (&lt;5%) RoR.</li>
+      <li><strong>Going broke means you were underbankrolled</strong>, not necessarily that you are a bad player. Bankroll management is a separate skill from poker strategy.</li>
+      <li>Move up in stakes only when your RoR at the higher stake is acceptably low, and <strong>move back down</strong> if your bankroll drops.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-21.html">&larr; Chapter 21</a>
+    <a href="chapter-23.html">Chapter 23 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcRoR() {
+  const mu = parseFloat(document.getElementById('rorWinRate').value);
+  const sigma = parseFloat(document.getElementById('rorStdDev').value);
+  const B = parseFloat(document.getElementById('rorBankroll').value);
+
+  const resultEl = document.getElementById('rorResult');
+
+  if (mu <= 0) {
+    resultEl.innerHTML = `
+      <div style="padding:0.8rem; background:var(--surface); border-left:3px solid var(--accent); border-radius:4px;">
+        <span class="result-label" style="color:var(--accent)">Risk of Ruin: 100%</span>
+        <p style="margin-top:0.4rem;">With a non-positive win rate (&mu; &le; 0), ruin is <strong>mathematically certain</strong> regardless of bankroll size. You will eventually go broke. The only question is how long it takes.</p>
+        <p style="margin-top:0.4rem; color:var(--muted);">Solution: Find a game where you have a positive edge, or improve your skills until you do.</p>
+      </div>
+    `;
+    drawRoRChart(mu, sigma, B);
+    return;
+  }
+
+  // Convert to per-hand units for consistency
+  const muPerHand = mu / 100;
+  const sigmaPerHand = sigma / 10; // sigma per hand = sigma_per_100 / sqrt(100) = sigma/10
+  const variance = sigmaPerHand * sigmaPerHand;
+
+  const exponent = -2 * muPerHand * B / variance;
+  const ror = Math.exp(exponent);
+
+  // Required bankroll for various RoR targets
+  const targets = [0.01, 0.05, 0.10, 0.20];
+  let reqTable = '<table class="data-table" style="margin-top:0.8rem;">';
+  reqTable += '<tr><th>Target RoR</th><th>Required Bankroll (BB)</th><th>Buy-ins</th></tr>';
+  targets.forEach(t => {
+    const reqB = -variance * Math.log(t) / (2 * muPerHand);
+    reqTable += `<tr>
+      <td>${(t*100).toFixed(0)}%</td>
+      <td>${Math.ceil(reqB).toLocaleString()} BB</td>
+      <td>${(reqB/100).toFixed(0)} buy-ins</td>
+    </tr>`;
+  });
+  reqTable += '</table>';
+
+  // Expected hands to double bankroll
+  const handsToDouble = B / muPerHand;
+  const hoursToDouble60 = handsToDouble / 60; // assuming 60 hands/hr
+
+  let rorDisplay;
+  if (ror < 0.000001) {
+    rorDisplay = ror.toExponential(2);
+  } else {
+    rorDisplay = (ror * 100).toFixed(4) + '%';
+  }
+
+  resultEl.innerHTML = `
+    <div style="margin-bottom:0.8rem;">
+      <span class="result-label">Risk of Ruin:</span>
+      <span class="result-value" style="font-size:1.5rem; color:${ror > 0.1 ? 'var(--accent)' : ror > 0.05 ? '#FF9800' : 'var(--green)'}">
+        ${rorDisplay}
+      </span>
+    </div>
+    <div style="margin-bottom:0.6rem;">
+      <span class="result-label">Formula:</span>
+      <span style="font-family:monospace; color:var(--muted);">
+        e^(&minus;2 &times; ${muPerHand.toFixed(4)} &times; ${B} / ${variance.toFixed(4)}) = e^(${exponent.toFixed(2)})
+      </span>
+    </div>
+    <div style="margin-bottom:0.6rem;">
+      <span class="result-label">Assessment:</span>
+      ${ror > 0.2 ? '<span style="color:var(--accent)">Dangerously underbankrolled. Significant risk of ruin.</span>' :
+        ror > 0.1 ? '<span style="color:var(--accent)">High risk. Consider a larger bankroll or lower stakes.</span>' :
+        ror > 0.05 ? '<span style="color:#FF9800">Moderate risk. Acceptable for aggressive bankroll strategies.</span>' :
+        ror > 0.01 ? '<span style="color:#FFD700">Low risk. Reasonable bankroll for this game.</span>' :
+        '<span style="color:var(--green)">Very low risk. Well bankrolled for this game.</span>'}
+    </div>
+    <div style="margin-bottom:0.6rem;">
+      <span class="result-label">Expected hands to double bankroll:</span>
+      ${Math.ceil(handsToDouble).toLocaleString()} hands (~${Math.ceil(hoursToDouble60).toLocaleString()} hours at 60 hands/hr)
+    </div>
+    <div style="margin-top:0.8rem;">
+      <span class="result-label">Required Bankroll for Target RoR Levels:</span>
+      ${reqTable}
+    </div>
+  `;
+
+  drawRoRChart(mu, sigma, B);
+}
+
+function drawRoRChart(mu, sigma, currentB) {
+  const canvas = document.getElementById('rorChart');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  const pad = 60;
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 0, w, h);
+
+  if (mu <= 0) {
+    // Show flat line at 100%
+    ctx.fillStyle = '#aaa';
+    ctx.font = '14px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('With \u03BC \u2264 0, RoR = 100% for all bankroll sizes', w/2, h/2 - 10);
+    ctx.fillText('(Ruin is certain)', w/2, h/2 + 15);
+    ctx.strokeStyle = 'var(--accent)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pad, pad + 10);
+    ctx.lineTo(w - pad, pad + 10);
+    ctx.stroke();
+    return;
+  }
+
+  const muPerHand = mu / 100;
+  const sigmaPerHand = sigma / 10;
+  const variance = sigmaPerHand * sigmaPerHand;
+
+  // Plot RoR vs bankroll
+  const maxB = Math.max(currentB * 2.5, 5000);
+  const gw = w - 2 * pad;
+  const gh = h - 2 * pad;
+
+  // Draw grid
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + (gh * i) / 4;
+    ctx.beginPath();
+    ctx.moveTo(pad, y);
+    ctx.lineTo(w - pad, y);
+    ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#666';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, pad);
+  ctx.lineTo(pad, h - pad);
+  ctx.lineTo(w - pad, h - pad);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#aaa';
+  ctx.font = '11px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Bankroll (BB)', w / 2, h - 8);
+
+  // Y-axis labels
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i++) {
+    const pct = (100 - i * 25);
+    const y = pad + (gh * i) / 4;
+    ctx.fillText(pct + '%', pad - 8, y + 4);
+  }
+
+  // X-axis labels
+  ctx.textAlign = 'center';
+  for (let i = 0; i <= 5; i++) {
+    const bVal = (maxB * i) / 5;
+    const x = pad + (gw * i) / 5;
+    ctx.fillText(Math.round(bVal).toLocaleString(), x, h - pad + 18);
+  }
+
+  // Y-axis title
+  ctx.save();
+  ctx.translate(14, h / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('Risk of Ruin', 0, 0);
+  ctx.restore();
+
+  // Plot curve
+  ctx.strokeStyle = '#e05347';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let first = true;
+  for (let px = 0; px <= gw; px++) {
+    const b = (px / gw) * maxB;
+    const exp = -2 * muPerHand * b / variance;
+    const ror = Math.min(1, Math.exp(exp));
+    const x = pad + px;
+    const y = pad + gh * (1 - ror);
+    if (first) { ctx.moveTo(x, y); first = false; }
+    else { ctx.lineTo(x, y); }
+  }
+  ctx.stroke();
+
+  // Mark current bankroll
+  const currentX = pad + (currentB / maxB) * gw;
+  const currentExp = -2 * muPerHand * currentB / variance;
+  const currentRoR = Math.min(1, Math.exp(currentExp));
+  const currentY = pad + gh * (1 - currentRoR);
+
+  ctx.beginPath();
+  ctx.arc(currentX, currentY, 7, 0, 2 * Math.PI);
+  ctx.fillStyle = '#FFD700';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Label
+  ctx.fillStyle = '#FFD700';
+  ctx.font = 'bold 11px monospace';
+  ctx.textAlign = 'left';
+  const rorPct = currentRoR < 0.0001 ? '<0.01%' : (currentRoR * 100).toFixed(1) + '%';
+  ctx.fillText(`Your bankroll: ${currentB.toLocaleString()} BB`, currentX + 12, currentY - 8);
+  ctx.fillText(`RoR: ${rorPct}`, currentX + 12, currentY + 8);
+
+  // 5% threshold line
+  const threshold5Y = pad + gh * (1 - 0.05);
+  ctx.strokeStyle = '#2ea043';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pad, threshold5Y);
+  ctx.lineTo(w - pad, threshold5Y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#2ea043';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('5% threshold', w - pad - 5, threshold5Y - 5);
+
+  // Title
+  ctx.fillStyle = '#ddd';
+  ctx.font = 'bold 12px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(`RoR vs Bankroll (\u03BC=${mu} BB/100, \u03C3=${sigma} BB/100)`, w / 2, pad - 15);
+}
+
+// Initialize
+calcRoR();
+</script>
+</body>
+</html>

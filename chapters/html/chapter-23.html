@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 23: Adding Uncertainty — Risk of Ruin with Uncertain Win Rates — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part IV &mdash; Chapter 23</span>
+    <h1>Adding Uncertainty: Risk of Ruin with Uncertain Win Rates</h1>
+    <p class="chapter-subtitle">What happens when you don't even know if you're a winning player?</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-23.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== THE UNCERTAINTY PROBLEM ===== -->
+  <div class="chapter-section">
+    <h2>The Uncertainty Problem</h2>
+    <p>In Chapter 22, we developed the risk of ruin formula under a critical assumption: that we <em>know</em> our exact win rate. We plugged in a precise value for &mu; (our expected win rate) and computed the probability of going broke.</p>
+    <p>But here is the uncomfortable truth: <strong>we don't know our true win rate</strong>. All we have is a <em>sample estimate</em> &mdash; a noisy measurement derived from a finite number of hands played. The win rate we calculate from our database is not our true win rate; it is merely our best guess.</p>
+    <p>This distinction matters enormously. A player who has won at 3 BB/100 over 50,000 hands might actually be a 5 BB/100 winner, a 1 BB/100 winner, or even a losing player who ran well. The uncertainty about the true win rate introduces an entirely new layer of risk that must be accounted for.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Sample Win Rate vs. True Win Rate</div>
+      <p>The <strong>sample win rate</strong> (<span style="font-family:monospace;">&mu;&#770;</span>) is the win rate observed over a finite number of hands. The <strong>true win rate</strong> (&mu;) is the theoretical long-run average that we would observe over an infinite number of hands. We can never know &mu; exactly; we can only estimate it from <span style="font-family:monospace;">&mu;&#770;</span>.</p>
+    </div>
+  </div>
+
+  <!-- ===== COMPOUND UNCERTAINTY ===== -->
+  <div class="chapter-section">
+    <h2>Compound Uncertainty: Two Layers of Risk</h2>
+    <p>When we account for win rate uncertainty, we must deal with two distinct sources of randomness simultaneously:</p>
+
+    <div class="example-box">
+      <div class="example-title">Layer 1: Session Variance (Normal Poker Variance)</div>
+      <p>Even if your true win rate is exactly 3 BB/100, you will experience wide swings session to session. This is the variance we addressed in Chapter 22 &mdash; the natural randomness of poker outcomes. Your results fluctuate around your true win rate with a standard deviation determined by your playing style and game type.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Layer 2: Win Rate Uncertainty</div>
+      <p>On top of session variance, you don't know where the "center" of your distribution actually is. Maybe your true win rate is 3 BB/100, or maybe it's 1 BB/100, or maybe it's &minus;0.5 BB/100. This uncertainty about the mean itself creates an additional layer of risk that compounds with the session variance.</p>
+    </div>
+
+    <p>The combination of these two layers makes the actual risk of ruin substantially higher than the naive calculation would suggest. You are uncertain not only about whether you will run bad (Layer 1) but also about whether "running normally" is even good enough (Layer 2).</p>
+  </div>
+
+  <!-- ===== BAYESIAN WIN RATE ESTIMATION ===== -->
+  <div class="chapter-section">
+    <h2>Bayesian Win Rate Estimation</h2>
+    <p>To handle win rate uncertainty rigorously, we use <strong>Bayesian inference</strong>. Instead of treating the win rate as a single number, we treat it as a probability distribution &mdash; a range of possible values, each with an associated likelihood.</p>
+
+    <h3>The Prior Distribution</h3>
+    <p>Before playing any hands, we start with a <strong>prior belief</strong> about our win rate. This might be based on:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>General population statistics (most players lose)</li>
+      <li>Self-assessment of skill level</li>
+      <li>Results at similar stakes or games</li>
+      <li>Coaching or study background</li>
+    </ul>
+    <p>A reasonable prior for a player new to a stake might be a normal distribution centered at 0 BB/100 with a standard deviation of 5 BB/100, reflecting genuine uncertainty about whether they are a winner or loser at this level.</p>
+
+    <h3>Updating with Observed Data</h3>
+    <p>As we accumulate hands, we update our belief. If we observe a win rate of <span style="font-family:monospace;">&mu;&#770;</span> over <em>n</em> hands with a per-hand standard deviation of &sigma;, the standard error of our sample mean is:</p>
+    <div class="math-block">
+      <span class="math-label">Standard Error of the Sample Win Rate</span>
+      SE = &sigma; / &radic;n
+    </div>
+    <p>The more hands we play, the smaller SE becomes, and the more confident we can be that our sample win rate is close to our true win rate.</p>
+
+    <h3>The Posterior Distribution</h3>
+    <p>Using Bayes' theorem, we combine the prior with the observed data to produce the <strong>posterior distribution</strong> &mdash; our refined belief about the true win rate after seeing our results.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Posterior Win Rate Distribution (Normal-Normal Model)</div>
+      <p>If the prior is Normal(&mu;<sub>0</sub>, &sigma;<sub>0</sub>&sup2;) and the data yields sample mean <span style="font-family:monospace;">&mu;&#770;</span> with variance &sigma;&sup2;/n, the posterior is:</p>
+      <div class="math-block">
+        <span class="math-label">Posterior Mean and Variance</span>
+        &mu;<sub>post</sub> = (&mu;<sub>0</sub>/&sigma;<sub>0</sub>&sup2; + n&middot;<span style="font-family:monospace;">&mu;&#770;</span>/&sigma;&sup2;) / (1/&sigma;<sub>0</sub>&sup2; + n/&sigma;&sup2;)<br><br>
+        &sigma;<sub>post</sub>&sup2; = 1 / (1/&sigma;<sub>0</sub>&sup2; + n/&sigma;&sup2;)
+      </div>
+      <p>The posterior mean is a precision-weighted average of the prior mean and the sample mean. With more data, the posterior pulls toward the sample mean; with less data, the prior dominates.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Example: Updating Your Win Rate Belief</div>
+      <p>Suppose your prior is &mu;<sub>0</sub> = 0 BB/100, &sigma;<sub>0</sub> = 5 BB/100. You play 50,000 hands with &sigma; = 80 BB/100 and observe <span style="font-family:monospace;">&mu;&#770;</span> = 3 BB/100.</p>
+      <p>Standard error: SE = 80/&radic;50,000 = 80/223.6 &asymp; 0.358 BB/100</p>
+      <p>The posterior mean will be pulled toward 3 BB/100, and the posterior standard deviation will be much smaller than the prior &mdash; but still meaningfully nonzero. There remains genuine uncertainty about whether your true win rate is 2, 3, or 4 BB/100.</p>
+    </div>
+  </div>
+
+  <!-- ===== EFFECTIVE RISK OF RUIN ===== -->
+  <div class="chapter-section">
+    <h2>Effective Risk of Ruin</h2>
+    <p>Now we arrive at the key result. Instead of computing RoR at a single point estimate, we <strong>integrate</strong> the risk of ruin over all possible true win rates, weighted by their posterior probability:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Effective Risk of Ruin</div>
+      <div class="math-block">
+        <span class="math-label">The Effective RoR Formula</span>
+        Effective RoR = &int; RoR(&mu;) &times; p(&mu;) d&mu;
+      </div>
+      <p>Where RoR(&mu;) is the risk of ruin formula from Chapter 22 evaluated at win rate &mu;, and p(&mu;) is the posterior probability density of &mu; being the true win rate.</p>
+    </div>
+
+    <h3>Why Effective RoR Is Always Higher</h3>
+    <p>This is the central insight of the chapter: <strong>the effective RoR is always greater than or equal to the RoR computed from the point estimate alone</strong>.</p>
+    <p>The reason is mathematical: the risk of ruin function RoR(&mu;) is <em>convex</em> in &mu;. By Jensen's inequality:</p>
+    <div class="math-block">
+      <span class="math-label">Jensen's Inequality Applied</span>
+      E[RoR(&mu;)] &ge; RoR(E[&mu;])
+    </div>
+    <p>In practical terms: the scenarios where your true win rate is <em>worse</em> than estimated contribute disproportionately to the effective RoR. A small probability of being a losing player can dramatically increase your overall ruin risk.</p>
+
+    <div class="example-box">
+      <div class="example-title">The Asymmetry of Uncertainty</div>
+      <p>Consider a player with estimated &mu; = 3 BB/100 and &sigma; = 80 BB/100 with a 30 buy-in bankroll (3,000 BB).</p>
+      <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+        <li>Naive RoR (at &mu;=3): approximately 5%</li>
+        <li>If true &mu; = 4: RoR drops to ~2%</li>
+        <li>If true &mu; = 2: RoR rises to ~14%</li>
+        <li>If true &mu; = 0: RoR = 100% (certain ruin!)</li>
+      </ul>
+      <p>Notice the asymmetry: being 1 BB/100 worse than estimated hurts <em>much more</em> than being 1 BB/100 better helps. This is why uncertainty always increases effective risk.</p>
+    </div>
+  </div>
+
+  <!-- ===== THE "AM I A WINNER?" PROBLEM ===== -->
+  <div class="chapter-section">
+    <h2>The "Am I a Winner?" Problem</h2>
+    <p>Perhaps the most sobering aspect of win rate uncertainty is this: even after a substantial sample of hands, there may be a <strong>meaningful probability that your true win rate is negative</strong>.</p>
+
+    <div class="example-box">
+      <div class="example-title">Sample Size and Confidence</div>
+      <p>With a typical win rate of 3 BB/100 and standard deviation of 80 BB/100:</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Hands Played</th>
+            <th>Standard Error</th>
+            <th>95% Confidence Interval</th>
+            <th>P(true &mu; &lt; 0)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>10,000</td><td>0.80 BB/100</td><td>[1.43, 4.57]</td><td>~0.01%</td></tr>
+          <tr><td>25,000</td><td>0.51 BB/100</td><td>[2.01, 3.99]</td><td>~0%</td></tr>
+          <tr><td>50,000</td><td>0.36 BB/100</td><td>[2.30, 3.70]</td><td>~0%</td></tr>
+          <tr><td>100,000</td><td>0.25 BB/100</td><td>[2.50, 3.50]</td><td>~0%</td></tr>
+        </tbody>
+      </table>
+      <p>Note: These confidence intervals assume the sample win rate is exactly 3 BB/100. In practice, a smaller observed win rate (e.g., 1 BB/100) with high variance can easily yield a meaningful probability of being a losing player, even after 100,000 hands.</p>
+    </div>
+
+    <p>When the probability of being a loser is nontrivial, the effective RoR increases dramatically because RoR(&mu;) = 100% for any &mu; &le; 0. Even a 5% chance of being a break-even or losing player can push the effective RoR well above what the naive estimate suggests.</p>
+
+    <h3>The Confidence Trap</h3>
+    <p>Many players fall into a dangerous pattern: they observe a positive sample win rate, compute the naive RoR, and conclude they are safe. But if they haven't accounted for the possibility that their true win rate might be lower (or negative), they are systematically underestimating their risk.</p>
+  </div>
+
+  <!-- ===== PRACTICAL IMPLICATIONS ===== -->
+  <div class="chapter-section">
+    <h2>Practical Implications</h2>
+
+    <h3>New Players: Be Conservative</h3>
+    <p>A player who has played only 20,000&ndash;50,000 hands has very wide confidence intervals around their true win rate. The uncertainty-adjusted bankroll requirements are substantially higher than the naive calculation suggests.</p>
+    <div class="math-block">
+      <span class="math-label">Rule of Thumb</span>
+      With limited data (&lt;50k hands), consider adding 50&ndash;100% to your naive bankroll requirement to account for win rate uncertainty.
+    </div>
+
+    <h3>Established Players: More Confidence, Less Padding</h3>
+    <p>A player with 500,000+ hands at a stake has narrow confidence intervals. Their effective RoR will be much closer to the naive RoR, and they can be more aggressive with bankroll decisions.</p>
+
+    <h3>Even Winners Can Go Broke</h3>
+    <p>If you underestimate your uncertainty, you might be playing at stakes that are too high for your actual edge. The risk of ruin formulas from Chapter 22 are only as reliable as the win rate estimate you feed into them. Garbage in, garbage out.</p>
+
+    <h3>Moving Between Stakes</h3>
+    <p>When you move to a new stake, your uncertainty about your win rate at that level <em>resets</em>. You might be a proven 4 BB/100 winner at $1/$2, but you have very little data at $2/$5. The higher uncertainty at the new stake demands a larger bankroll cushion than the naive RoR would indicate.</p>
+
+    <div class="example-box">
+      <div class="example-title">Moving Up in Stakes</div>
+      <p>A $1/$2 regular moves to $2/$5. They have:</p>
+      <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+        <li>200,000 hands at $1/$2 with 4 BB/100 win rate (high confidence)</li>
+        <li>5,000 hands at $2/$5 with 2 BB/100 win rate (very low confidence)</li>
+      </ul>
+      <p>At $2/$5, the standard error is 80/&radic;5,000 &asymp; 1.13 BB/100. The 95% confidence interval for the $2/$5 win rate is roughly [&minus;0.2, 4.2] &mdash; they might not even be a winner at this level! The bankroll requirement should reflect this massive uncertainty.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Bayesian Win Rate Widget ===== -->
+  <div class="interactive-widget">
+    <h3>Bayesian Win Rate &amp; Effective Risk of Ruin Calculator</h3>
+    <p>Enter your observed results to see the posterior distribution of your true win rate and the resulting effective risk of ruin.</p>
+    <div class="widget-controls">
+      <label>
+        Observed Win Rate (BB/100):
+        <input type="number" id="obsWinRate" value="3" min="-10" max="20" step="0.5">
+      </label>
+      <label>
+        Std Dev (BB/100):
+        <input type="number" id="obsSigma" value="80" min="10" max="200" step="5">
+      </label>
+      <label>
+        Hands Played:
+        <input type="number" id="obsHands" value="50000" min="1000" max="2000000" step="5000">
+      </label>
+      <label>
+        Bankroll (BB):
+        <input type="number" id="obsBankroll" value="3000" min="500" max="50000" step="500">
+      </label>
+      <button class="btn" onclick="calcBayesianRoR()">Calculate</button>
+    </div>
+    <div class="widget-result" id="bayesResult">
+      <div class="result-label">Enter your data and click Calculate</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="posteriorChart" width="700" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>Why is the effective risk of ruin (accounting for win rate uncertainty) <em>always</em> higher than the naive risk of ruin calculated from the point estimate?</p>
+    <button class="quiz-option" data-correct="false">Because the Bayesian prior always assumes you are a losing player</button>
+    <button class="quiz-option" data-correct="false">Because the standard deviation increases when you account for uncertainty</button>
+    <button class="quiz-option" data-correct="true">Because there's a chance your true win rate is worse than estimated, and those scenarios dominate the RoR calculation (Jensen's inequality)</button>
+    <button class="quiz-option" data-correct="false">Because Bayesian statistics always produce more conservative estimates than frequentist statistics</button>
+    <div class="quiz-feedback" data-correct="Correct! The RoR function is convex in the win rate. By Jensen's inequality, the expected value of a convex function is always greater than or equal to the function evaluated at the expected value. In practical terms, the scenarios where your true win rate is worse than estimated contribute disproportionately to the effective RoR because the RoR function is exponentially sensitive to decreases in win rate." data-incorrect="Not quite. The key reason is Jensen's inequality applied to the convex RoR function. Because RoR(&mu;) is convex, the scenarios where &mu; is worse than your point estimate have a disproportionately large effect on the overall expected RoR. A small probability of being a losing player (where RoR = 100%) dramatically raises the effective RoR."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Application Problem</h3>
+    <p>Player A has played 200,000 hands with a 3 BB/100 win rate. Player B has played 20,000 hands with a 3 BB/100 win rate. Both have the same standard deviation. Who should have a larger bankroll relative to their naive RoR calculation?</p>
+    <button class="quiz-option" data-correct="false">Player A, because they have more data to lose</button>
+    <button class="quiz-option" data-correct="true">Player B, because their win rate estimate is less certain and their effective RoR is higher</button>
+    <button class="quiz-option" data-correct="false">Both should have the same bankroll since they have the same observed win rate</button>
+    <button class="quiz-option" data-correct="false">Neither needs adjustment; the naive RoR is sufficient for both</button>
+    <div class="quiz-feedback" data-correct="Correct! Player B has far less data, so their confidence interval around the true win rate is much wider. There's a higher probability that Player B's true win rate is significantly different from 3 BB/100 (possibly even negative). This uncertainty increases the effective RoR, so Player B needs a larger bankroll cushion." data-incorrect="Player B needs the larger cushion. With only 20,000 hands, the standard error of their win rate estimate is much larger than Player A's (who has 200,000 hands). Player B has much more uncertainty about their true win rate, meaning their effective RoR is meaningfully higher than the naive calculation."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>We never know our <strong>true win rate</strong> &mdash; we only have a sample estimate with an associated standard error.</li>
+      <li>Risk of ruin must account for <strong>two layers of uncertainty</strong>: normal session variance and uncertainty about the true win rate itself.</li>
+      <li><strong>Bayesian inference</strong> provides a principled way to express our uncertainty as a posterior distribution over possible win rates.</li>
+      <li>The <strong>effective RoR</strong> integrates over all possible win rates: Effective RoR = &int; RoR(&mu;) &times; p(&mu;) d&mu;.</li>
+      <li>Effective RoR is <strong>always higher</strong> than naive RoR due to the convexity of the RoR function (Jensen's inequality).</li>
+      <li>Players with <strong>limited data</strong> should maintain larger bankrolls to compensate for win rate uncertainty.</li>
+      <li>Moving to a <strong>new stake</strong> resets your uncertainty, requiring more conservative bankroll management.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-22.html">&larr; Chapter 22: Risk of Ruin</a>
+    <a href="chapter-24.html">Chapter 24: The Kelly Criterion &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcBayesianRoR() {
+  const mu_hat = parseFloat(document.getElementById('obsWinRate').value);
+  const sigma = parseFloat(document.getElementById('obsSigma').value);
+  const n = parseInt(document.getElementById('obsHands').value);
+  const bankroll = parseFloat(document.getElementById('obsBankroll').value);
+
+  // Prior: mu_0 = 0, sigma_0 = 5
+  const mu0 = 0;
+  const sigma0 = 5;
+
+  // Standard error of sample mean (per 100 hands)
+  const n100 = n / 100;
+  const se = sigma / Math.sqrt(n100);
+
+  // Posterior parameters (Normal-Normal conjugate)
+  const priorPrec = 1 / (sigma0 * sigma0);
+  const dataPrec = n100 / (sigma * sigma);
+  const postPrec = priorPrec + dataPrec;
+  const postVar = 1 / postPrec;
+  const postSigma = Math.sqrt(postVar);
+  const postMean = (mu0 * priorPrec + mu_hat * dataPrec) / postPrec;
+
+  // P(true mu < 0)
+  const zNeg = (0 - postMean) / postSigma;
+  const pNegative = normalCDF(zNeg);
+
+  // Naive RoR at point estimate
+  function ror(mu, sig, br) {
+    if (mu <= 0) return 1.0;
+    const sigPer100 = sig;
+    return Math.exp(-2 * mu * br / (sigPer100 * sigPer100));
+  }
+
+  const naiveRoR = ror(mu_hat, sigma, bankroll);
+
+  // Effective RoR: numerical integration over posterior
+  // Integrate from postMean - 6*postSigma to postMean + 6*postSigma
+  const steps = 500;
+  const lo = postMean - 6 * postSigma;
+  const hi = postMean + 6 * postSigma;
+  const dx = (hi - lo) / steps;
+  let effectiveRoR = 0;
+  for (let i = 0; i <= steps; i++) {
+    const x = lo + i * dx;
+    const weight = normalPDF(x, postMean, postSigma);
+    const r = ror(x, sigma, bankroll);
+    const mult = (i === 0 || i === steps) ? 0.5 : 1;
+    effectiveRoR += r * weight * dx * mult;
+  }
+  effectiveRoR = Math.min(effectiveRoR, 1.0);
+
+  const color_naive = naiveRoR < 0.05 ? 'var(--green)' : naiveRoR < 0.2 ? 'var(--gold)' : 'var(--accent)';
+  const color_eff = effectiveRoR < 0.05 ? 'var(--green)' : effectiveRoR < 0.2 ? 'var(--gold)' : 'var(--accent)';
+
+  document.getElementById('bayesResult').innerHTML = `
+    <div><span class="result-label">Posterior Win Rate:</span> <span class="result-value">${postMean.toFixed(2)} BB/100</span> &plusmn; ${postSigma.toFixed(2)} BB/100</div>
+    <div style="margin-top:0.5rem"><span class="result-label">95% Credible Interval:</span> <span class="result-value">[${(postMean - 1.96*postSigma).toFixed(2)}, ${(postMean + 1.96*postSigma).toFixed(2)}]</span> BB/100</div>
+    <div style="margin-top:0.5rem"><span class="result-label">P(true win rate &lt; 0):</span> <span class="result-value" style="color:${pNegative > 0.05 ? 'var(--accent)' : 'var(--green)'}">${(pNegative*100).toFixed(2)}%</span></div>
+    <div style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--border)">
+      <span class="result-label">Naive RoR (at point estimate):</span> <span class="result-value" style="color:${color_naive}">${(naiveRoR*100).toFixed(2)}%</span>
+    </div>
+    <div style="margin-top:0.5rem"><span class="result-label">Effective RoR (uncertainty-adjusted):</span> <span class="result-value" style="color:${color_eff}">${(effectiveRoR*100).toFixed(2)}%</span></div>
+    <div style="margin-top:0.5rem; color:var(--muted); font-size:0.85rem">
+      The effective RoR is ${((effectiveRoR/naiveRoR - 1)*100).toFixed(0)}% higher than the naive estimate.
+    </div>
+  `;
+
+  // Draw posterior distribution
+  drawPosteriorChart(postMean, postSigma);
+}
+
+function drawPosteriorChart(mu, sigma) {
+  const canvas = document.getElementById('posteriorChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const pad = { top: 25, right: 20, bottom: 45, left: 55 };
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#161b22';
+  ctx.fillRect(0, 0, W, H);
+
+  const xMin = mu - 4.5 * sigma;
+  const xMax = mu + 4.5 * sigma;
+  const yMax = normalPDF(mu, mu, sigma) * 1.2;
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  // Shade negative region (mu < 0)
+  if (xMin < 0) {
+    ctx.fillStyle = 'rgba(201, 56, 42, 0.25)';
+    ctx.beginPath();
+    const zeroPx = pad.left + ((0 - xMin) / (xMax - xMin)) * chartW;
+    ctx.moveTo(pad.left, H - pad.bottom);
+    for (let px = pad.left; px <= Math.min(zeroPx, W - pad.right); px++) {
+      const x = xMin + ((px - pad.left) / chartW) * (xMax - xMin);
+      const y = normalPDF(x, mu, sigma);
+      const yPx = H - pad.bottom - (y / yMax) * chartH;
+      ctx.lineTo(px, yPx);
+    }
+    ctx.lineTo(Math.min(zeroPx, W - pad.right), H - pad.bottom);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Shade positive region
+  ctx.fillStyle = 'rgba(46, 160, 67, 0.2)';
+  ctx.beginPath();
+  const zeroPx = Math.max(pad.left, pad.left + ((0 - xMin) / (xMax - xMin)) * chartW);
+  ctx.moveTo(zeroPx, H - pad.bottom);
+  for (let px = zeroPx; px <= W - pad.right; px++) {
+    const x = xMin + ((px - pad.left) / chartW) * (xMax - xMin);
+    const y = normalPDF(x, mu, sigma);
+    const yPx = H - pad.bottom - (y / yMax) * chartH;
+    ctx.lineTo(px, yPx);
+  }
+  ctx.lineTo(W - pad.right, H - pad.bottom);
+  ctx.closePath();
+  ctx.fill();
+
+  // Draw the curve
+  ctx.strokeStyle = '#e05347';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let px = pad.left; px <= W - pad.right; px++) {
+    const x = xMin + ((px - pad.left) / chartW) * (xMax - xMin);
+    const y = normalPDF(x, mu, sigma);
+    const yPx = H - pad.bottom - (y / yMax) * chartH;
+    if (px === pad.left) ctx.moveTo(px, yPx);
+    else ctx.lineTo(px, yPx);
+  }
+  ctx.stroke();
+
+  // Zero line
+  if (0 >= xMin && 0 <= xMax) {
+    const zPx = pad.left + ((0 - xMin) / (xMax - xMin)) * chartW;
+    ctx.strokeStyle = '#8b949e';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(zPx, pad.top);
+    ctx.lineTo(zPx, H - pad.bottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('0 (break-even)', zPx, pad.top - 5);
+  }
+
+  // X-axis
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, H - pad.bottom);
+  ctx.lineTo(W - pad.right, H - pad.bottom);
+  ctx.stroke();
+
+  // X labels
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  const step = sigma;
+  for (let s = -4; s <= 4; s++) {
+    const v = mu + s * step;
+    if (v >= xMin && v <= xMax) {
+      const px = pad.left + ((v - xMin) / (xMax - xMin)) * chartW;
+      ctx.fillText(v.toFixed(1), px, H - pad.bottom + 16);
+    }
+  }
+  ctx.fillText('BB/100', W / 2, H - 5);
+
+  // Title
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Posterior Distribution of True Win Rate', W / 2, 15);
+
+  // Legend
+  ctx.font = '11px sans-serif';
+  ctx.fillStyle = 'rgba(201,56,42,0.8)';
+  ctx.fillRect(W - pad.right - 140, pad.top + 5, 10, 10);
+  ctx.fillStyle = '#8b949e';
+  ctx.textAlign = 'left';
+  ctx.fillText('Losing region', W - pad.right - 125, pad.top + 14);
+  ctx.fillStyle = 'rgba(46,160,67,0.6)';
+  ctx.fillRect(W - pad.right - 140, pad.top + 22, 10, 10);
+  ctx.fillStyle = '#8b949e';
+  ctx.fillText('Winning region', W - pad.right - 125, pad.top + 31);
+}
+</script>
+</body>
+</html>

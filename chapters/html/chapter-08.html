@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 8: Playing Accurately, Part II — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part II &mdash; Chapter 8</span>
+    <h1>Playing Accurately, Part II: Hand vs. Distribution</h1>
+    <p class="chapter-subtitle">Moving from face-up play to real poker &mdash; playing your known hand against a range of possible opponent hands</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-08.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== FROM EXPOSED TO HIDDEN ===== -->
+  <div class="chapter-section">
+    <h2>From Exposed Cards to Hidden Information</h2>
+    <p>In Chapter 7, we analyzed play with both hands exposed. In real poker, of course, we don&rsquo;t see the opponent&rsquo;s cards. Instead, we estimate what they might hold based on their actions &mdash; this estimate is their <strong>hand distribution</strong> (or <em>range</em>).</p>
+    <p>The &ldquo;hand vs. distribution&rdquo; framework represents the first step toward real poker analysis: <strong>we know our own hand exactly, and we model the opponent&rsquo;s hand as a probability distribution</strong> over all possible holdings.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Hand Distribution (Range)</div>
+      <p>A probability-weighted set of all hands an opponent could hold given the information available. As the hand progresses and the opponent takes actions (betting, checking, raising, folding), we update the distribution using Bayesian reasoning (Chapter 3).</p>
+    </div>
+  </div>
+
+  <!-- ===== EV AGAINST A DISTRIBUTION ===== -->
+  <div class="chapter-section">
+    <h2>Expected Value Against a Distribution</h2>
+
+    <p>To evaluate an action (bet, call, check, fold, raise) against an opponent whose hand is unknown, we compute the <strong>weighted average EV</strong> across all hands in their distribution:</p>
+
+    <div class="math-block">
+      <span class="math-label">Equation 8.1 &mdash; EV Against a Distribution</span>
+      &lt;A, B&gt; = &Sigma;<sub>i</sub> p(hand<sub>i</sub>) &times; EV(A vs hand<sub>i</sub>)
+    </div>
+
+    <p>where <em>A</em> is our action, <em>B</em> is the opponent&rsquo;s distribution, <em>p(hand<sub>i</sub>)</em> is the probability of each hand in B, and <em>EV(A vs hand<sub>i</sub>)</em> is the expected value of taking action A against that specific hand.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Process</div>
+      <p>For each possible action:<br>
+      1. Enumerate every hand in the opponent&rsquo;s range.<br>
+      2. Calculate EV against each hand (as if cards were exposed).<br>
+      3. Multiply each EV by the probability of that hand.<br>
+      4. Sum all terms.<br>
+      Choose the action with the highest total EV.</p>
+    </div>
+  </div>
+
+  <!-- ===== RIVER EXAMPLE ===== -->
+  <div class="chapter-section">
+    <h2>Example: River Value Bet Decision</h2>
+
+    <div class="example-box">
+      <div class="example-title">Top Pair on the River</div>
+      <p>You hold <span class="poker-card black">A&spades;</span><span class="poker-card red">K&hearts;</span> on a board of <span class="poker-card black">K&spades;</span><span class="poker-card red">9&hearts;</span><span class="poker-card black">4&clubs;</span><span class="poker-card red">2&diams;</span><span class="poker-card black">7&clubs;</span>. The pot is $200.</p>
+      <p>You estimate your opponent&rsquo;s distribution as:</p>
+      <table class="data-table">
+        <tr><th>Hand Category</th><th>Probability</th><th>Your Result if You Bet $100</th></tr>
+        <tr><td>Sets (KK, 99, 44)</td><td>10%</td><td>They raise; you lose $100</td></tr>
+        <tr><td>Two pair (K9, K4)</td><td>15%</td><td>They call; you lose $100</td></tr>
+        <tr><td>Top pair, weaker kicker (KQ, KJ, KT)</td><td>40%</td><td>They call; you win $100</td></tr>
+        <tr><td>Missed draws (flush/straight draws)</td><td>35%</td><td>They fold; you win $0 extra</td></tr>
+      </table>
+    </div>
+
+    <h3>EV Calculation: Bet $100</h3>
+    <div class="math-block">
+      <span class="math-label">EV(Bet) Breakdown</span>
+      vs Sets (10%): 0.10 &times; (-$100) = -$10.00<br>
+      vs Two pair (15%): 0.15 &times; (-$100) = -$15.00<br>
+      vs Weaker top pair (40%): 0.40 &times; (+$100) = +$40.00<br>
+      vs Missed draws (35%): 0.35 &times; ($0) = $0.00<br><br>
+      <strong>EV(Bet) = -$10 - $15 + $40 + $0 = +$15.00</strong>
+    </div>
+
+    <h3>EV Calculation: Check</h3>
+    <div class="math-block">
+      <span class="math-label">EV(Check)</span>
+      If you check, you win the $200 pot whenever you have the best hand (75% of the time).<br>
+      But you would have won those hands anyway. The question is about the <em>marginal</em> EV.<br>
+      Marginal EV(Check) = <strong>$0</strong> (no additional money gained or lost beyond the pot)
+    </div>
+
+    <p>Since EV(Bet) = +$15 &gt; EV(Check) = $0, you should bet. This is a <strong>thin value bet</strong> &mdash; you lose to 25% of the opponent&rsquo;s range but still profit from betting.</p>
+  </div>
+
+  <!-- ===== THIN VALUE ===== -->
+  <div class="chapter-section">
+    <h2>Thin Value Betting</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Thin Value Bet</div>
+      <p>A bet made for value when you beat <em>some</em> but not all of the opponent&rsquo;s range. The bet is correct whenever EV(bet) &gt; EV(check), which depends on:</p>
+      <ul style="margin: 0.5rem 0 0 1.5rem;">
+        <li>What fraction of the range <strong>calls</strong> (vs. folds or raises)</li>
+        <li>What fraction of the <strong>calling range</strong> you beat</li>
+        <li>The bet size relative to the pot</li>
+      </ul>
+    </div>
+
+    <p>The key mathematical condition for a profitable thin value bet:</p>
+    <div class="math-block">
+      <span class="math-label">Thin Value Bet Condition</span>
+      EV(bet) &gt; 0 when: (% of calling range you beat) &gt; 50%<br><br>
+      More precisely: p(call and you win) &times; betsize &gt; p(call and you lose) &times; betsize + p(raise and you fold) &times; betsize
+    </div>
+
+    <p>Notice that hands that <em>fold</em> to your bet are irrelevant to the value calculation &mdash; you win nothing extra from them whether you bet or check. The entire value-betting decision comes down to how you fare against the portion of the range that <strong>calls or raises</strong>.</p>
+  </div>
+
+  <!-- ===== COMBINATORICS ===== -->
+  <div class="chapter-section">
+    <h2>The Importance of Combinatorics</h2>
+
+    <p>When constructing an opponent&rsquo;s distribution, it&rsquo;s critical to account for the number of <strong>combinations</strong> each holding represents. Not all hand categories are equally likely.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Hand Combinations</div>
+      <div class="math-block">
+        Pocket pair (e.g., AA): C(4,2) = <strong>6 combos</strong><br>
+        Suited hand (e.g., AKs): 4 suits = <strong>4 combos</strong><br>
+        Offsuit hand (e.g., AKo): 4 &times; 3 = <strong>12 combos</strong><br>
+        Total AK combos: 4 + 12 = <strong>16 combos</strong>
+      </div>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Why Combinatorics Matter</div>
+      <p>Suppose you know your opponent holds either AA or AK. Naively, you might think it&rsquo;s 50-50. But combinatorics say otherwise:</p>
+      <div class="math-block">
+        AA: 6 combos &nbsp;&nbsp;|&nbsp;&nbsp; AK: 16 combos &nbsp;&nbsp;|&nbsp;&nbsp; Total: 22 combos<br><br>
+        P(AA) = 6/22 = <strong>27.3%</strong><br>
+        P(AK) = 16/22 = <strong>72.7%</strong>
+      </div>
+      <p>Your opponent is nearly <strong>three times more likely</strong> to hold AK than AA. Ignoring combinatorics leads to systematically biased EV calculations.</p>
+    </div>
+
+    <h3>Card Removal Effects</h3>
+    <p>Combinatorics also interact with <strong>card removal</strong> (also called &ldquo;blockers&rdquo;). If you hold an ace, the number of AA combos your opponent can have drops from 6 to 3, and AK combos drop from 16 to 12. Your own cards directly affect the opponent&rsquo;s distribution.</p>
+  </div>
+
+  <!-- ===== DEFAULT DISTRIBUTIONS ===== -->
+  <div class="chapter-section">
+    <h2>Playing Against Unknown Opponents</h2>
+
+    <p>When facing an opponent with no history, we use a <strong>default distribution</strong> based on general population tendencies. For example, a default preflop raising range from early position might be approximately {AA-TT, AKs-AJs, AKo-AQo} &mdash; roughly the top 8% of hands.</p>
+
+    <p>As we observe more actions, we refine the distribution using Bayes&rsquo; theorem (Chapter 3). Each action narrows or reshapes the range:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Preflop raise</strong> &rarr; narrows to strong starting hands</li>
+      <li><strong>Continuation bet on flop</strong> &rarr; maintains most of the preflop range</li>
+      <li><strong>Checks flop</strong> &rarr; removes strongest hands from the range</li>
+      <li><strong>Raises the turn</strong> &rarr; heavily weights toward strong made hands and semi-bluffs</li>
+    </ul>
+
+    <p>The better we model the opponent&rsquo;s distribution, the more accurately we can calculate EV. This is the essence of hand reading as a mathematical exercise.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Distribution EV Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Distribution EV Calculator</h3>
+    <p>Set up a simplified opponent range and compare the EV of betting vs. checking on the river:</p>
+    <div class="widget-controls">
+      <label>
+        Pot size ($):
+        <input type="number" id="distPot" value="200" min="10" step="10">
+      </label>
+      <label>
+        Your bet size ($):
+        <input type="number" id="distBet" value="100" min="1" step="10">
+      </label>
+    </div>
+    <p style="margin-top:0.75rem; color: var(--muted); font-size: 0.9rem;">Opponent&rsquo;s range (probabilities must sum to 100%):</p>
+    <div class="widget-controls" style="flex-wrap:wrap;">
+      <label style="min-width:200px;">
+        Hands that beat you &amp; raise (%):
+        <input type="number" id="distRaise" value="10" min="0" max="100" step="1">
+      </label>
+      <label style="min-width:200px;">
+        Hands that beat you &amp; call (%):
+        <input type="number" id="distBeatCall" value="15" min="0" max="100" step="1">
+      </label>
+      <label style="min-width:200px;">
+        Hands you beat that call (%):
+        <input type="number" id="distLoseCall" value="40" min="0" max="100" step="1">
+      </label>
+      <label style="min-width:200px;">
+        Hands that fold (%):
+        <input type="number" id="distFold" value="35" min="0" max="100" step="1">
+      </label>
+      <button class="btn" onclick="calcDistEV()">Compare Bet vs. Check</button>
+    </div>
+    <div class="widget-result" id="distResult">
+      <div class="result-label">Configure the range and click Compare</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>You bet $100 into a $200 pot on the river. Your opponent&rsquo;s range is 30% hands that beat you (all call) and 70% hands you beat (half call, half fold). What is the EV of your bet?</p>
+    <button class="quiz-option" data-correct="false">-$30 (you lose more than you win)</button>
+    <button class="quiz-option" data-correct="true">+$5 (a thin but profitable value bet)</button>
+    <button class="quiz-option" data-correct="false">+$40 (large profit from value)</button>
+    <button class="quiz-option" data-correct="false">$0 (break even)</button>
+    <div class="quiz-feedback" data-correct="Correct! EV = 0.30 &times; (-$100) + 0.35 &times; (+$100) + 0.35 &times; ($0) = -$30 + $35 + $0 = +$5. Even though 30% of the range beats you, enough worse hands call to make the bet profitable." data-incorrect="Calculate: Beats you and calls (30%) &rarr; you lose $100. You beat them and they call (35%) &rarr; you win $100. They fold (35%) &rarr; you win $0 extra. EV = 0.30(-$100) + 0.35(+$100) + 0.35($0) = -$30 + $35 = +$5."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Combinatorics Question</h3>
+    <p>Why might it be correct to bet even when more than 50% of your opponent&rsquo;s <em>total</em> range beats you?</p>
+    <button class="quiz-option" data-correct="false">It&rsquo;s never correct to bet when the majority of the range beats you.</button>
+    <button class="quiz-option" data-correct="true">Because the hands that beat you might fold (e.g., you&rsquo;re bluffing), or the worse hands that call provide enough value to offset losses to the better hands.</button>
+    <button class="quiz-option" data-correct="false">Because combinatorics always favor the bettor.</button>
+    <button class="quiz-option" data-correct="false">Because variance will even things out.</button>
+    <div class="quiz-feedback" data-correct="Correct! If you're bluffing, hands that beat you might fold, which makes the bluff profitable. For value bets, what matters is not the total range but the calling range &mdash; if enough worse hands call relative to better hands that call or raise, betting is still +EV." data-incorrect="There are two scenarios where betting is correct despite the majority of the range beating you: (1) Bluffing &mdash; better hands might fold. (2) The hands that beat you don't all call &mdash; what matters is how you fare against the calling/raising portion of the range, not the total range."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>In real poker, we play our <strong>known hand</strong> against the opponent&rsquo;s <strong>hand distribution</strong> (range).</li>
+      <li><strong>EV against a distribution</strong> is the probability-weighted sum of EVs against each hand in the range.</li>
+      <li>A <strong>thin value bet</strong> is profitable when you beat enough of the calling range, even if some hands in the total range beat you.</li>
+      <li><strong>Combinatorics</strong> determine the relative likelihood of each hand: AA has 6 combos, AKs has 4, AKo has 12.</li>
+      <li><strong>Card removal</strong> (blockers) affects the opponent&rsquo;s distribution &mdash; your own cards reduce their possible holdings.</li>
+      <li>Against unknown opponents, start with a <strong>default distribution</strong> and refine it with Bayesian updates as new information arrives.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-07.html">&larr; Chapter 7: Cards Exposed</a>
+    <a href="chapter-09.html">Chapter 9: Distribution vs. Distribution &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcDistEV() {
+  const pot = parseFloat(document.getElementById('distPot').value);
+  const bet = parseFloat(document.getElementById('distBet').value);
+  const pRaise = parseFloat(document.getElementById('distRaise').value) / 100;
+  const pBeatCall = parseFloat(document.getElementById('distBeatCall').value) / 100;
+  const pLoseCall = parseFloat(document.getElementById('distLoseCall').value) / 100;
+  const pFold = parseFloat(document.getElementById('distFold').value) / 100;
+
+  const total = pRaise + pBeatCall + pLoseCall + pFold;
+
+  if (Math.abs(total - 1.0) > 0.01) {
+    document.getElementById('distResult').innerHTML = `
+      <div style="color:var(--accent)"><strong>Error:</strong> Probabilities sum to ${(total * 100).toFixed(0)}% &mdash; they must sum to 100%.</div>
+    `;
+    return;
+  }
+
+  // EV of betting
+  const evVsRaise = pRaise * (-bet);  // simplified: they raise, we fold, lose our bet
+  const evVsBeatCall = pBeatCall * (-bet);
+  const evVsLoseCall = pLoseCall * (bet);
+  const evVsFold = pFold * 0;
+
+  const evBet = evVsRaise + evVsBeatCall + evVsLoseCall + evVsFold;
+  const evCheck = 0; // marginal EV baseline
+
+  const callingRange = pRaise + pBeatCall + pLoseCall;
+  const pctCallingYouBeat = callingRange > 0 ? (pLoseCall / callingRange * 100).toFixed(1) : '0.0';
+
+  const betColor = evBet >= 0 ? 'var(--green)' : 'var(--accent)';
+  const recommendation = evBet > evCheck ? 'BET for value' : evBet < evCheck ? 'CHECK' : 'INDIFFERENT';
+  const recColor = evBet > evCheck ? 'var(--green)' : evBet < evCheck ? 'var(--accent)' : 'var(--muted)';
+
+  document.getElementById('distResult').innerHTML = `
+    <div><span class="result-label">EV(Bet $${bet}):</span>
+      <span class="result-value" style="color:${betColor}">${evBet >= 0 ? '+' : ''}$${evBet.toFixed(2)}</span></div>
+    <div style="margin-top:0.3rem"><span class="result-label">EV(Check):</span>
+      <span class="result-value">$0.00</span> <span style="color:var(--muted)">(baseline)</span></div>
+    <div style="margin-top:0.6rem; color: var(--muted); font-size: 0.85rem;">
+      Breakdown: Raises(-$${bet}): ${(pRaise*100).toFixed(0)}% &rarr; $${evVsRaise.toFixed(2)} |
+      Calls &amp; beats you: ${(pBeatCall*100).toFixed(0)}% &rarr; $${evVsBeatCall.toFixed(2)} |
+      Calls &amp; loses: ${(pLoseCall*100).toFixed(0)}% &rarr; +$${evVsLoseCall.toFixed(2)} |
+      Folds: ${(pFold*100).toFixed(0)}% &rarr; $0
+    </div>
+    <div style="margin-top:0.4rem"><span class="result-label">% of calling range you beat:</span>
+      <span class="result-value">${pctCallingYouBeat}%</span></div>
+    <div style="margin-top:0.6rem; font-weight:bold; color:${recColor}">
+      Recommendation: ${recommendation}
+    </div>
+  `;
+}
+</script>
+</body>
+</html>

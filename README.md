@@ -1,5 +1,7 @@
 # Poker Math Course
 
+**[View the Course](https://rexjensen.github.io/Poker_Math_Course/)**
+
 A structured online course based on *The Mathematics of Poker* by Bill Chen and Jerrod Ankenman.
 
 ## About the Course
@@ -14,14 +16,26 @@ This course covers the mathematical foundations of poker strategy, organized int
 
 ## Getting Started
 
-Open `index.html` in your browser to view the course table of contents and navigate to individual chapters.
+Visit **https://rexjensen.github.io/Poker_Math_Course/** to view the course online, or open `index.html` locally in your browser.
+
+Each chapter includes:
+- Detailed concept explanations faithful to the book
+- Mathematical formulas and worked examples
+- Interactive calculators and simulators
+- Multiple-choice quizzes with feedback
+- Key concepts summary
 
 ## Structure
 
 - `index.html` — Main course page with full table of contents
-- `css/` — Stylesheets
-- `js/` — JavaScript for interactivity
+- `css/` — Stylesheets (base + chapter page styles)
+- `js/` — JavaScript (progress bar, quiz system, chart drawing, calculators)
+- `chapters/html/` — 30 interactive chapter teaching pages
 - `chapters/` — Individual chapter PDFs
+
+## Deployment
+
+This site is deployed via [GitHub Pages](https://pages.github.com/) from the root of the repository. No build step is required — it's a fully static site.
 
 ## License
 

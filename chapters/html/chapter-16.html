@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 16: No-Fold [0,1] Games — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 16</span>
+    <h1>Small Bets, Big Pots: No-Fold [0,1] Games</h1>
+    <p class="chapter-subtitle">A continuous hand distribution reveals the pure mathematics of when to bet &mdash; even when the opponent always calls</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-16.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== INTRO ===== -->
+  <div class="chapter-section">
+    <h2>Beyond Discrete Hands</h2>
+    <p>The AKQ game gave us powerful insights, but it has only three possible hands. Real poker has many more, and the discrete nature of three cards limits the depth of our analysis. To go deeper, Chen and Ankenman introduce a brilliant simplification: the <strong>[0,1] game</strong>.</p>
+    <p>Instead of dealing cards from a deck, each player is dealt a <strong>real number uniformly distributed on the interval [0,1]</strong>. Higher numbers are better hands. This continuous distribution eliminates the combinatorial complexity of real poker while preserving its essential mathematical structure: uncertainty about the opponent's hand, and the decision of whether and how much to bet.</p>
+    <p>In this chapter, we study the simplest version: the <strong>no-fold [0,1] game</strong>, where players cannot fold. This constraint might seem to eliminate all the interesting strategic decisions, but as we will see, the question of <em>when to bet</em> remains rich and surprising.</p>
+  </div>
+
+  <!-- ===== THE FRAMEWORK ===== -->
+  <div class="chapter-section">
+    <h2>The [0,1] Game Framework</h2>
+
+    <div class="definition-box">
+      <div class="def-term">The [0,1] Game</div>
+      <p>Each player is dealt a "hand" &mdash; a real number drawn uniformly from the interval [0,1]. Higher numbers are stronger hands. The hand value 0 is the worst possible hand, and 1 is the best possible hand.</p>
+      <div class="math-block">
+        Hand value x ~ Uniform[0, 1]<br>
+        P(hand &le; x) = x &nbsp;&nbsp;&nbsp; for all x &isin; [0, 1]
+      </div>
+      <p>The probability of being dealt a hand less than or equal to any value x is simply x itself. This elegant property makes the mathematics tractable.</p>
+    </div>
+
+    <h3>Key Properties of the Uniform Distribution</h3>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Median hand:</strong> 0.5 (exactly half the possible hands are better, half are worse)</li>
+      <li><strong>Percentile interpretation:</strong> A hand of 0.75 beats 75% of all possible hands</li>
+      <li><strong>Symmetry:</strong> Both players draw from the same distribution, so neither has an inherent advantage from the deal</li>
+      <li><strong>No ties:</strong> The probability of both players having exactly the same hand is zero (a property of continuous distributions)</li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">Thinking in [0,1] Terms</div>
+      <p>Consider mapping real poker hands to the [0,1] interval. If you hold a hand that beats 80% of all possible hands, your [0,1] value is approximately 0.80. A hand that beats only 30% of hands maps to 0.30.</p>
+      <p>The beauty of this framework is that we do not need to worry about suits, card combinations, or board textures. All of that complexity is abstracted into a single number representing hand strength.</p>
+    </div>
+  </div>
+
+  <!-- ===== NO-FOLD CONDITION ===== -->
+  <div class="chapter-section">
+    <h2>The No-Fold Condition</h2>
+    <p>In this variant of the [0,1] game, <strong>players cannot fold</strong>. They can only bet or check (as the first player), and call or check (as the second player). If a bet is made, the opponent must call.</p>
+
+    <div class="definition-box">
+      <div class="def-term">No-Fold [0,1] Game Setup</div>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>Both players ante, creating a pot of size P</li>
+        <li>Each player receives a hand from Uniform[0,1]</li>
+        <li>Player 1 can <strong>bet b</strong> or <strong>check</strong></li>
+        <li>If Player 1 bets, Player 2 <strong>must call</strong> (no folding allowed)</li>
+        <li>If Player 1 checks, Player 2 can bet b or check</li>
+        <li>If Player 2 bets after a check, Player 1 must call</li>
+        <li>Highest hand wins the pot (plus any bets)</li>
+      </ul>
+    </div>
+
+    <h3>Why Study No-Fold Games?</h3>
+    <p>This might seem unrealistic &mdash; who plays poker without the option to fold? But the no-fold game models important real situations:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Huge pot, tiny bet:</strong> When the pot is very large relative to the bet size, folding is almost always wrong because the pot odds are so favorable. The no-fold game is the limiting case.</li>
+      <li><strong>Last street with committed stacks:</strong> When players have already committed most of their stacks, the remaining bet is small relative to the pot, making folding incorrect.</li>
+      <li><strong>Isolating the betting decision:</strong> By removing the fold option, we can study the pure question of when betting adds value compared to checking.</li>
+    </ul>
+  </div>
+
+  <!-- ===== WHEN TO BET ===== -->
+  <div class="chapter-section">
+    <h2>When to Bet: The Core Question</h2>
+    <p>Even though the opponent always calls, betting is <strong>not always correct</strong>. This is a crucial insight. Let us examine why.</p>
+
+    <h3>Expected Value of Betting vs. Checking</h3>
+    <p>Suppose you hold hand x and the pot is P. If you check, your EV depends only on whether your hand is better than the opponent's (which happens with probability x, since your opponent's hand is uniform on [0,1]):</p>
+    <div class="math-block">
+      <span class="math-label">EV of Checking</span>
+      EV(check | hand = x) = x &times; P &minus; (1 &minus; x) &times; 0 = x &times; P<br><br>
+      (You win the pot P with probability x, and win nothing otherwise.<br>
+      We measure EV relative to the current pot contribution.)
+    </div>
+
+    <p>If you bet b and the opponent must call:</p>
+    <div class="math-block">
+      <span class="math-label">EV of Betting (opponent always calls)</span>
+      EV(bet | hand = x) = x &times; (P + b) &minus; (1 &minus; x) &times; b<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= x &times; P + x &times; b &minus; b + x &times; b<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= x &times; P + (2x &minus; 1) &times; b
+    </div>
+
+    <p>The difference between betting and checking is:</p>
+    <div class="math-block">
+      <span class="math-label">EV(bet) &minus; EV(check)</span>
+      &Delta;EV = (2x &minus; 1) &times; b
+    </div>
+
+    <p>This is the key equation. The sign of &Delta;EV depends entirely on whether x is above or below 0.5:</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Betting Threshold</div>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>If x > 0.5 (above median): &Delta;EV > 0, so <strong>betting is better than checking</strong></li>
+        <li>If x = 0.5 (exactly median): &Delta;EV = 0, so <strong>betting and checking are equivalent</strong></li>
+        <li>If x < 0.5 (below median): &Delta;EV < 0, so <strong>checking is better than betting</strong></li>
+      </ul>
+      <p style="margin-top: 0.75rem;">In the simple no-fold game where only one player can bet, the <strong>optimal threshold is x = 0.5</strong>. Bet with the top half of your range, check with the bottom half.</p>
+    </div>
+
+    <h3>Intuition Behind the Threshold</h3>
+    <p>When you hold hand 0.7 and bet, you win the extra bet b from the 70% of hands you beat, but lose the extra bet b to the 30% of hands that beat you. Net gain: (0.7 &minus; 0.3) &times; b = +0.4b. Betting is clearly profitable.</p>
+    <p>When you hold hand 0.3 and bet, you win the extra bet from only 30% of hands but lose it to 70%. Net: (0.3 &minus; 0.7) &times; b = &minus;0.4b. Betting costs you money even though the opponent cannot fold.</p>
+    <p>The median hand (0.5) is the exact break-even point: you beat as many hands as beat you, so the extra bet neither helps nor hurts.</p>
+  </div>
+
+  <!-- ===== TWO-PLAYER DYNAMICS ===== -->
+  <div class="chapter-section">
+    <h2>The Full Game: Both Players Can Bet</h2>
+    <p>When both players can act (Player 1 bets or checks, then Player 2 responds), the analysis becomes more complex. The key insight is that the <strong>strategies interact</strong>.</p>
+
+    <h3>Sequential Decision Making</h3>
+    <p>If Player 1 bets, Player 2 must call (no-fold condition). But if Player 1 checks, Player 2 faces the same decision: bet or check? Player 2's optimal threshold may differ from Player 1's because the check from Player 1 provides <strong>information</strong>.</p>
+
+    <div class="example-box">
+      <div class="example-title">Information from Checking</div>
+      <p>If Player 1 uses the threshold strategy (bet with x > 0.5, check with x &le; 0.5), then when Player 1 checks, Player 2 <em>knows</em> that Player 1's hand is at most 0.5. This information shifts Player 2's optimal strategy.</p>
+      <p>Against a range capped at 0.5, Player 2's threshold for betting profitably drops below 0.5. Player 2 can bet thinner because the opponent's range is weaker.</p>
+    </div>
+
+    <h3>Equilibrium Considerations</h3>
+    <p>Finding the full equilibrium requires both players to optimize simultaneously. Player 1 must account for the fact that checking reveals information (which Player 2 exploits), while Player 2 must account for the information content of Player 1's check.</p>
+    <p>The mathematical solution involves solving <strong>difference equations</strong> (covered in the appendix to this chapter). The key qualitative results are:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Player 1 (out of position) bets with slightly more than just the top half of hands</li>
+      <li>Player 2 (in position) exploits checks by betting with a wider range</li>
+      <li>The equilibrium strategies depend on the ratio of bet size to pot size (b/P)</li>
+    </ul>
+  </div>
+
+  <!-- ===== MATHEMATICAL SOLUTION ===== -->
+  <div class="chapter-section">
+    <h2>The Mathematical Solution</h2>
+    <p>The optimal betting threshold can be derived precisely. For the simplest case where only one player can bet (half-street no-fold game):</p>
+
+    <div class="math-block">
+      <span class="math-label">Half-Street No-Fold Threshold</span>
+      Bet if x > 1/2<br>
+      Check if x &le; 1/2<br><br>
+      This threshold is <strong>independent of bet size</strong> in the no-fold game.
+    </div>
+
+    <p>This remarkable result means that regardless of whether the bet is tiny or enormous, you should bet exactly when your hand is above the median. The reason: the no-fold condition means the bet size only scales the magnitude of the gain or loss, not its sign.</p>
+
+    <h3>Value of Betting Optimally</h3>
+    <p>The expected gain from following the optimal strategy (compared to always checking) can be computed by integrating the gain over all hands above the threshold:</p>
+    <div class="math-block">
+      <span class="math-label">Expected Gain from Optimal Betting</span>
+      &int;<sub>1/2</sub><sup>1</sup> (2x &minus; 1) &times; b &times; dx = b &times; [x&sup2; &minus; x]<sub>1/2</sub><sup>1</sup> = b &times; (0 &minus; (&minus;1/4)) = <strong>b/4</strong>
+    </div>
+    <p>On average, the ability to selectively bet (rather than always checking) is worth <strong>b/4</strong> to the bettor per hand. This quantifies the value of having the option to bet, even when the opponent always calls.</p>
+
+    <h3>Difference Equations</h3>
+    <p>For the full two-player game, the solution involves difference equations rather than simple algebra. The appendix to this chapter develops the mathematical machinery. The key concept: each player's optimal strategy is a <em>function</em> (not just a single number), mapping hand values to betting probabilities. These functions are determined by a system of equations that encode the optimality conditions.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Difference Equations in Game Theory</div>
+      <p>A difference equation relates the value of a function at one point to its value at neighboring points. In the [0,1] game, the optimal strategy at hand value x depends on the strategies at nearby hand values, creating a system that must be solved simultaneously.</p>
+      <p>The solutions to these equations yield the equilibrium strategies and the game's value (expected payoff under optimal play).</p>
+    </div>
+  </div>
+
+  <!-- ===== CONNECTION TO REAL POKER ===== -->
+  <div class="chapter-section">
+    <h2>Connection to Real Poker</h2>
+    <p>The no-fold [0,1] game, despite its simplicity, teaches several lessons that apply directly to real poker:</p>
+
+    <h3>Lesson 1: Selective Betting Has Value</h3>
+    <p>Even when the opponent always calls, you should not bet every hand. <strong>Below-median hands lose more by betting than by checking.</strong> This contradicts the naive intuition that "if they always call, I should always bet my good hands." The subtlety is that betting bad hands is actively harmful.</p>
+
+    <h3>Lesson 2: The Threshold is at the Median</h3>
+    <p>The optimal betting threshold is where your hand beats exactly half the opponent's range. In real poker, this translates to: bet when you are more likely than not to have the best hand against the opponent's calling range.</p>
+
+    <h3>Lesson 3: Information Leaks from Checking</h3>
+    <p>When you check, the opponent learns something about your hand (it is probably not very strong). In the [0,1] game, this information is precise and exploitable. In real poker, the same principle applies: checking reveals weakness, which the in-position player can exploit.</p>
+
+    <h3>Lesson 4: Large Pot, Small Bet Situations</h3>
+    <p>The no-fold game perfectly models situations where the pot is enormous relative to the remaining bet. In these spots, folding is essentially never correct, and the entire strategic question reduces to: should you bet or check? The answer: bet with the top portion of your range.</p>
+
+    <div class="example-box">
+      <div class="example-title">Real Poker Application</div>
+      <p>The pot is $500 on the river and both players have only $25 remaining. Neither player should fold &mdash; the pot odds of $525 to $25 (21:1) mean you need less than 5% equity to call. This is essentially a no-fold game.</p>
+      <p>In this spot, bet your $25 when you believe your hand is above the median of your opponent's range. Check otherwise. Do not bet "because they'll call anyway" with a below-median hand &mdash; that costs you EV.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: [0,1] Game Visualizer ===== -->
+  <div class="interactive-widget">
+    <h3>[0,1] Game Visualizer</h3>
+    <p>Draw a random hand and see the EV of betting vs. checking. Adjust pot and bet sizes to see how they affect the optimal threshold.</p>
+    <div class="widget-controls">
+      <label>
+        Pot Size (P):
+        <input type="number" id="gamePot" value="100" min="1" max="10000" step="10">
+      </label>
+      <label>
+        Bet Size (b):
+        <input type="number" id="gameBet" value="50" min="1" max="10000" step="10">
+      </label>
+      <button class="btn" onclick="drawHand()">Draw Random Hand</button>
+      <button class="btn btn-secondary" onclick="drawGraph()">Show EV Graph</button>
+    </div>
+    <div class="widget-result" id="gameResult">
+      <div class="result-label">Click "Draw Random Hand" for a single hand analysis, or "Show EV Graph" for the full picture</div>
+    </div>
+    <div class="chart-container" style="display:none;" id="evChartContainer">
+      <canvas id="evChart" width="700" height="350"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>In a no-fold [0,1] game, should you bet with hand value 0.5 (exactly the median)?</p>
+    <button class="quiz-option" data-correct="false">Yes &mdash; you beat half the hands, so betting is profitable</button>
+    <button class="quiz-option" data-correct="false">No &mdash; you should only bet with hands above 0.7</button>
+    <button class="quiz-option" data-correct="true">It does not matter &mdash; the EV of betting and checking are exactly equal at x = 0.5</button>
+    <button class="quiz-option" data-correct="false">It depends on the pot size but not the bet size</button>
+    <div class="quiz-feedback" data-correct="Correct! At x = 0.5, the EV difference is (2(0.5) - 1) &times; b = 0. Betting and checking produce exactly the same expected value. You beat exactly as many hands as beat you, so the extra bet neither gains nor loses money. The threshold for profitable betting is strictly above 0.5." data-incorrect="At x = 0.5, the formula gives &Delta;EV = (2(0.5) - 1) &times; b = 0. Betting and checking are exactly equivalent. This is because you beat 50% of hands and lose to 50%, so the additional bet is a break-even proposition. The optimal threshold is exactly 0.5 &mdash; bet above, check below, and at exactly 0.5 it makes no difference."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Applied Problem</h3>
+    <p>You hold hand value 0.65 in a no-fold [0,1] game with pot P = $200 and bet size b = $100. What is the EV gain from betting compared to checking?</p>
+    <button class="quiz-option" data-correct="false">+$10</button>
+    <button class="quiz-option" data-correct="true">+$30</button>
+    <button class="quiz-option" data-correct="false">+$65</button>
+    <button class="quiz-option" data-correct="false">+$100</button>
+    <div class="quiz-feedback" data-correct="Correct! &Delta;EV = (2x - 1) &times; b = (2(0.65) - 1) &times; 100 = (1.30 - 1) &times; 100 = 0.30 &times; 100 = +$30. Your hand beats 65% of the opponent's range and loses to 35%, so you gain an extra $100 from the 65% and lose $100 to the 35%. Net: (0.65 - 0.35) &times; $100 = +$30." data-incorrect="Use the formula: &Delta;EV = (2x - 1) &times; b. With x = 0.65 and b = $100: &Delta;EV = (2(0.65) - 1) &times; 100 = (0.30) &times; 100 = +$30. You beat 65% of hands (gaining $100 each) and lose to 35% (losing $100 each), for a net of (0.65 - 0.35) &times; $100 = +$30."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>The <strong>[0,1] game</strong> uses continuously distributed hand values on [0,1], simplifying analysis while preserving poker's essential structure.</li>
+      <li>In the <strong>no-fold variant</strong>, players cannot fold &mdash; they can only bet or check/call. This models large-pot, small-bet situations.</li>
+      <li>Even when the opponent always calls, <strong>selective betting is optimal</strong>. Below-median hands lose EV by betting.</li>
+      <li>The EV gain from betting is <strong>&Delta;EV = (2x &minus; 1) &times; b</strong>, which is positive only when x > 0.5.</li>
+      <li>The betting threshold of <strong>x = 0.5 is independent of bet size</strong> in the no-fold game &mdash; only the magnitude of the gain scales with b.</li>
+      <li>The optimal betting strategy has value <strong>b/4</strong> compared to always checking, quantifying the value of selective aggression.</li>
+      <li>The full two-player solution requires <strong>difference equations</strong>, but the qualitative lesson is clear: bet strong hands, check weak ones, even if the opponent never folds.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-15.html">&larr; Chapter 15: Full-Street Games</a>
+    <a href="chapter-17.html">Chapter 17: Finite Pot [0,1] Games &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function drawHand() {
+  const P = parseFloat(document.getElementById('gamePot').value) || 100;
+  const b = parseFloat(document.getElementById('gameBet').value) || 50;
+  const x = Math.random();
+  const threshold = 0.5;
+
+  const evCheck = x * P;
+  const evBet = x * (P + b) - (1 - x) * b;
+  const deltaEV = (2 * x - 1) * b;
+  const shouldBet = x > threshold;
+
+  const barWidth = Math.round(x * 100);
+  const barColor = x > 0.5 ? 'var(--green)' : 'var(--accent)';
+
+  document.getElementById('gameResult').innerHTML = `
+    <div style="margin-bottom:1rem;">
+      <div class="result-label">Your Hand Value</div>
+      <div class="result-value" style="font-size:1.5rem;">${x.toFixed(4)}</div>
+      <div style="background:var(--bg); border-radius:4px; height:20px; margin-top:0.5rem; overflow:hidden; border:1px solid var(--border);">
+        <div style="width:${barWidth}%; height:100%; background:${barColor}; transition:width 0.3s;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--muted); margin-top:0.2rem;">
+        <span>0 (worst)</span>
+        <span>0.5 (median)</span>
+        <span>1 (best)</span>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+      <div>
+        <div class="result-label">EV of Checking</div>
+        <div class="result-value" style="font-size:1.1rem;">$${evCheck.toFixed(2)}</div>
+      </div>
+      <div>
+        <div class="result-label">EV of Betting $${b.toFixed(0)}</div>
+        <div class="result-value" style="font-size:1.1rem;">$${evBet.toFixed(2)}</div>
+      </div>
+      <div>
+        <div class="result-label">EV Difference</div>
+        <div class="result-value" style="font-size:1.1rem; color:${deltaEV >= 0 ? 'var(--green)' : 'var(--accent)'};">${deltaEV >= 0 ? '+' : ''}$${deltaEV.toFixed(2)}</div>
+      </div>
+    </div>
+    <div style="padding:0.75rem 1rem; border-radius:6px; background:${shouldBet ? 'rgba(46,160,67,0.1)' : 'rgba(201,56,42,0.1)'}; border:1px solid ${shouldBet ? 'rgba(46,160,67,0.3)' : 'rgba(201,56,42,0.3)'};">
+      <strong>Optimal Action: ${shouldBet ? 'BET' : 'CHECK'}</strong><br>
+      <span style="font-size:0.9rem; color:var(--muted);">
+        ${shouldBet
+          ? `Your hand (${x.toFixed(3)}) is above the 0.5 threshold. You beat ${(x*100).toFixed(1)}% of hands and lose to ${((1-x)*100).toFixed(1)}%. Betting gains you an extra $${deltaEV.toFixed(2)}.`
+          : `Your hand (${x.toFixed(3)}) is below the 0.5 threshold. You beat only ${(x*100).toFixed(1)}% of hands and lose to ${((1-x)*100).toFixed(1)}%. Betting would cost you $${Math.abs(deltaEV).toFixed(2)}.`
+        }
+      </span>
+    </div>
+  `;
+}
+
+function drawGraph() {
+  const P = parseFloat(document.getElementById('gamePot').value) || 100;
+  const b = parseFloat(document.getElementById('gameBet').value) || 50;
+
+  const container = document.getElementById('evChartContainer');
+  container.style.display = 'block';
+
+  const canvas = document.getElementById('evChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const pad = { top: 35, right: 30, bottom: 50, left: 70 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#161b22';
+  ctx.fillRect(0, 0, W, H);
+
+  // Compute EV values
+  const maxEV = Math.max(P + b, P);
+  const minEV = -b;
+  const evRange = maxEV - minEV;
+
+  function xToPx(x) { return pad.left + x * chartW; }
+  function evToPx(ev) { return pad.top + chartH - ((ev - minEV) / evRange) * chartH; }
+
+  // Grid lines
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 0.5;
+  const gridSteps = 5;
+  for (let i = 0; i <= gridSteps; i++) {
+    const y = pad.top + (chartH * i / gridSteps);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    const val = maxEV - (evRange * i / gridSteps);
+    ctx.fillText('$' + val.toFixed(0), pad.left - 8, y + 4);
+  }
+
+  // X-axis labels
+  for (let x = 0; x <= 1; x += 0.1) {
+    const px = xToPx(x);
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(x.toFixed(1), px, H - pad.bottom + 18);
+
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(px, pad.top);
+    ctx.lineTo(px, H - pad.bottom);
+    ctx.stroke();
+  }
+
+  // Zero line
+  const zeroY = evToPx(0);
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, zeroY);
+  ctx.lineTo(W - pad.right, zeroY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // EV(check) line
+  ctx.strokeStyle = '#8b949e';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i <= 100; i++) {
+    const x = i / 100;
+    const ev = x * P;
+    const px = xToPx(x);
+    const py = evToPx(ev);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // EV(bet) line
+  ctx.strokeStyle = '#e05347';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i <= 100; i++) {
+    const x = i / 100;
+    const ev = x * (P + b) - (1 - x) * b;
+    const px = xToPx(x);
+    const py = evToPx(ev);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // Shade the region where betting is better
+  ctx.fillStyle = 'rgba(46, 160, 67, 0.15)';
+  ctx.beginPath();
+  // Start at threshold
+  const threshPx = xToPx(0.5);
+  const threshEv = 0.5 * P;
+  ctx.moveTo(threshPx, evToPx(threshEv));
+  for (let i = 50; i <= 100; i++) {
+    const x = i / 100;
+    const evBet = x * (P + b) - (1 - x) * b;
+    ctx.lineTo(xToPx(x), evToPx(evBet));
+  }
+  for (let i = 100; i >= 50; i--) {
+    const x = i / 100;
+    const evChk = x * P;
+    ctx.lineTo(xToPx(x), evToPx(evChk));
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  // Shade where checking is better
+  ctx.fillStyle = 'rgba(201, 56, 42, 0.1)';
+  ctx.beginPath();
+  ctx.moveTo(xToPx(0), evToPx(0));
+  for (let i = 0; i <= 50; i++) {
+    const x = i / 100;
+    const evChk = x * P;
+    ctx.lineTo(xToPx(x), evToPx(evChk));
+  }
+  for (let i = 50; i >= 0; i--) {
+    const x = i / 100;
+    const evBet = x * (P + b) - (1 - x) * b;
+    ctx.lineTo(xToPx(x), evToPx(evBet));
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  // Threshold marker
+  ctx.strokeStyle = 'var(--gold)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 3]);
+  ctx.beginPath();
+  ctx.moveTo(threshPx, pad.top);
+  ctx.lineTo(threshPx, H - pad.bottom);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Legend
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'left';
+
+  ctx.fillStyle = '#8b949e';
+  ctx.fillRect(pad.left + 10, pad.top + 10, 16, 3);
+  ctx.fillText('EV(check)', pad.left + 32, pad.top + 16);
+
+  ctx.fillStyle = '#e05347';
+  ctx.fillRect(pad.left + 10, pad.top + 28, 16, 3);
+  ctx.fillText('EV(bet)', pad.left + 32, pad.top + 34);
+
+  ctx.fillStyle = '#d4a017';
+  ctx.fillText('Threshold = 0.5', threshPx + 6, pad.top + 52);
+
+  // Title
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`EV of Bet vs Check (P=$${P}, b=$${b})`, W / 2, 18);
+
+  // Axis labels
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Hand Value (x)', W / 2, H - 5);
+
+  ctx.save();
+  ctx.translate(14, H / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Expected Value ($)', 0, 0);
+  ctx.restore();
+
+  // Update result text
+  document.getElementById('gameResult').innerHTML = `
+    <div style="line-height:1.7;">
+      <strong>Graph:</strong> The gray line shows EV of checking; the red line shows EV of betting $${b.toFixed(0)} into a $${P.toFixed(0)} pot.
+      The two lines cross at x = 0.5 (the <span style="color:var(--gold);">gold threshold</span>).
+      The <span style="color:var(--green);">green region</span> shows where betting is more profitable;
+      the <span style="color:var(--accent);">red region</span> shows where checking is better.
+      <br><br>
+      <strong>Value of optimal betting:</strong> $${(b/4).toFixed(2)} per hand (= b/4 = ${b}/4).
+    </div>
+  `;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Front Matter</span>
+    <h1>Introduction</h1>
+    <p class="chapter-subtitle">&ldquo;If you think the math isn&rsquo;t important, you don&rsquo;t know the right math.&rdquo; &mdash; Chris &ldquo;Jesus&rdquo; Ferguson</p>
+    <p style="margin-top: 1rem;"><a href="../front-matter.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Front Matter PDF</a></p>
+  </div>
+
+  <!-- ===== THE REVOLUTION ===== -->
+  <div class="chapter-section">
+    <h2>A Revolution in Strategic Thinking</h2>
+    <p>In the late 1970s and early 1980s, bond and option markets were dominated by traders who learned their craft by experience. They believed their intuition was a renewable edge. By the mid-1990s, a revolution had occurred: the old-school traders had been replaced by quantitative analysts who applied mathematics to the &ldquo;art&rdquo; of trading, making of it a science.</p>
+    <p>A similar transformation happened in backgammon. Programs based on neural network technology and mathematical analysis would have been mocked as &ldquo;overaggressive and weak&rdquo; by 1970s experts. Today, computer analyses are considered the final word on backgammon play.</p>
+    <p>Chen and Ankenman argue that <strong>poker is undergoing the same revolution</strong>. A new breed of players, applying computer science, mathematics, and Internet-based information sharing, has challenged many assumptions underlying traditional approaches to the game.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Book&rsquo;s Mission</div>
+      <p>To provide an introduction to quantitative techniques as applied to poker, and to demonstrate that a mathematical approach can be applied even in situations where it seems impossible &mdash; reading hands, adapting to opponents, and choosing creative plays.</p>
+    </div>
+  </div>
+
+  <!-- ===== MISCONCEPTIONS ===== -->
+  <div class="chapter-section">
+    <h2>Common Misconceptions About Math and Poker</h2>
+    <p>The authors identify and address several widespread misconceptions:</p>
+
+    <div class="example-box">
+      <div class="example-title">Misconception 1: &ldquo;There&rsquo;s always one mathematically correct play&rdquo;</div>
+      <p>In reality, the mathematically correct play depends on the <em>model</em> we use. Different assumptions about an opponent&rsquo;s strategy lead to different correct actions. Math provides the framework for converting assumptions into optimal responses &mdash; it doesn&rsquo;t always yield a single universal answer.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Misconception 2: &ldquo;Mathematical play is predictable and lacks creativity&rdquo;</div>
+      <p>An optimal strategy incorporates a precisely calibrated mixture of bluffs, semi-bluffs, and value bets that make it appear entirely unpredictable. &ldquo;Predictable&rdquo; connotes &ldquo;exploitable,&rdquo; but this is not necessarily true. A player who always raises with aces is not exploitable <em>as long as he also raises with some other hands</em>. This concept of <strong>balance</strong> is central to Part III of the book.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Misconception 3: &ldquo;Sometimes the numbers go out the window&rdquo;</div>
+      <p>This stems from a narrow definition of &ldquo;mathematical play.&rdquo; Incorporating new information &mdash; reads, tells, betting patterns &mdash; into opponent models <em>is</em> mathematical. Bayes&rsquo; theorem (Chapter 3) provides the precise tool for quantifying how new information should update our beliefs.</p>
+    </div>
+  </div>
+
+  <!-- ===== PSYCHOLOGY ===== -->
+  <div class="chapter-section">
+    <h2>Mathematics and Psychology</h2>
+    <p>The authors do <em>not</em> claim that psychology is without value. Quite the opposite: <strong>the psychology of poker is an invaluable tool for exploitive play</strong>. Reads, tells, and opponent profiling all feed into the assumptions that drive mathematical models.</p>
+    <p>The key insight is that once we have characterized an opponent&rsquo;s tendencies into assumptions, <strong>the methods of mathematics take over</strong> and intuition fails as a guide to proper play. Mathematics tells us <em>what to do</em> with the information our intuition provides.</p>
+    <p>The book also addresses what to do when such information is unavailable &mdash; the domain of <strong>optimal (game-theoretic) play</strong> covered in Part III.</p>
+  </div>
+
+  <!-- ===== ORGANIZATION ===== -->
+  <div class="chapter-section">
+    <h2>How This Course Is Organized</h2>
+    <p>The book (and this course) is divided into five parts:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Part I: Basics</div>
+      <p>Foundational concepts &mdash; probability, expected value, variance, and Bayes&rsquo; theorem. These tools apply to all forms of gambling and strategic decision-making.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Part II: Exploitive Play</div>
+      <p>Using information about opponents to deviate from default strategy and increase profit. Topics include pot odds, hand reading, online tells, and playing accurately against known opponent tendencies.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Part III: Optimal Play</div>
+      <p>Game theory and its application to poker. Through a series of simplified &ldquo;toy games,&rdquo; the book develops principles of bet sizing, bluffing frequency, and multi-street strategy.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Part IV: Risk</div>
+      <p>Bankroll management, risk of ruin, the Kelly criterion, and backing arrangements. Winning players still go broke if they don&rsquo;t manage risk properly.</p>
+    </div>
+
+    <div class="definition-box">
+      <div class="def-term">Part V: Other Topics</div>
+      <p>Tournament strategy (chip value differs from cash value), multiplayer games, and a synthesis chapter on applying everything together.</p>
+    </div>
+  </div>
+
+  <!-- ===== WHO IS THIS FOR ===== -->
+  <div class="chapter-section">
+    <h2>Who This Course Is For</h2>
+    <p>As Chen and Ankenman write, the book targets a wide range of players:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Computer scientists and options traders</strong> who have recently taken up poker</li>
+      <li><strong>Solid, winning players</strong> who feel existing literature lacks the insight to raise their game</li>
+      <li><strong>World-class players</strong> &mdash; holders of multiple bracelets who play in the biggest games</li>
+    </ul>
+    <p>The one prerequisite is some poker experience. If you have never played, the authors recommend gaining experience first before diving into the mathematics.</p>
+    <p>The mathematical level is kept accessible &mdash; high school algebra and basic probability are sufficient for most of the material. Where advanced techniques appear, intuitive supplemental arguments are provided.</p>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="chapter-section key-concepts">
+    <h2>Key Takeaways</h2>
+    <ul>
+      <li><strong>Mathematics is the strongest foundation</strong> for poker decision-making, just as quantitative methods transformed trading and backgammon</li>
+      <li><strong>There is no single &ldquo;correct play&rdquo;</strong> independent of assumptions &mdash; math provides the framework for converting assumptions into optimal responses</li>
+      <li><strong>Optimal play is not predictable</strong> &mdash; balanced strategies with calibrated bluffing frequencies are inherently unexploitable</li>
+      <li><strong>Psychology and mathematics complement each other</strong> &mdash; reads provide the assumptions; math determines the actions</li>
+      <li><strong>Expected value (EV)</strong> is the primary metric for evaluating poker decisions</li>
+      <li><strong>Risk management matters</strong> &mdash; even winning players can go broke without proper bankroll management</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAV ===== -->
+  <div class="chapter-nav">
+    <a href="../../index.html">&larr; Table of Contents</a>
+    <a href="chapter-01.html">Chapter 1: Probability &amp; Expectation &rarr;</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+</body>
+</html>

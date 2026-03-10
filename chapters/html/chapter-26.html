@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 26: Doubling Up — Tournaments, Part I — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part V &mdash; Chapter 26</span>
+    <h1>Doubling Up: Tournaments, Part I</h1>
+    <p class="chapter-subtitle">Why doubling your chips doesn&rsquo;t double your equity &mdash; the fundamental economics of tournament poker</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-26.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== SECTION 1: Tournament vs Cash Game Fundamentals ===== -->
+  <div class="chapter-section">
+    <h2>Tournament vs Cash Game Fundamentals</h2>
+    <p>In a cash game, the relationship between chips and money is perfectly linear: if you have $200 in chips, you have $200 in value. You can leave the table at any time and exchange your chips for exactly their face value. This makes chip-EV (expected value measured in chips) and dollar-EV identical.</p>
+    <p>Tournaments are fundamentally different. When you buy into a tournament, your chips become a <strong>medium of competition</strong> rather than direct representations of money. The prize pool is fixed &mdash; it doesn&rsquo;t grow because someone accumulates more chips. This creates a profound asymmetry:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>In a cash game, winning 5,000 chips gains you exactly $5,000 of value.</li>
+      <li>In a tournament, winning 5,000 chips gains you <em>less</em> than the value you&rsquo;d lose if you lost 5,000 chips.</li>
+    </ul>
+    <p>This is the principle of <strong>diminishing marginal value</strong> of tournament chips. Each additional chip you accumulate is worth slightly less than the previous one, because having all the chips only wins you first-place prize money &mdash; not the entire prize pool.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Diminishing Marginal Chip Value</div>
+      <p>In tournament poker, each additional chip added to your stack is worth less in real-dollar equity than the previous chip. This occurs because the prize pool is fixed and distributed across multiple finishing positions. Having 100% of the chips earns you only the first-place prize (often 25&ndash;35% of the prize pool), not 100%.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Cash Game vs Tournament: A Concrete Example</div>
+      <p>Consider a 10-player tournament with $100 buy-ins ($1,000 prize pool) paying 50/30/20 to the top 3. Each player starts with 10,000 chips (100,000 total).</p>
+      <p><strong>Cash game logic:</strong> 10,000 chips = $100 of value (1 chip = $0.01)</p>
+      <p><strong>Tournament reality:</strong></p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>10,000 chips (your starting stack) = $100 equity (your buy-in)</li>
+        <li>If you double to 20,000 chips &mdash; your equity might be ~$150, not $200</li>
+        <li>If someone has all 100,000 chips &mdash; their equity is $500 (1st prize), not $1,000</li>
+      </ul>
+      <p>The player with all the chips owns $500 of equity, but in a cash game those chips would be worth $1,000. The &ldquo;missing&rdquo; $500 is distributed as guaranteed equity to the other finishers.</p>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2: The Independent Chip Model (ICM) ===== -->
+  <div class="chapter-section">
+    <h2>The Independent Chip Model (ICM)</h2>
+    <p>The <strong>Independent Chip Model</strong> is the standard mathematical framework for converting tournament chip stacks into real-dollar equity. ICM answers the question: &ldquo;Given the current chip distribution and prize structure, what is each player&rsquo;s share of the prize pool worth?&rdquo;</p>
+
+    <div class="definition-box">
+      <div class="def-term">Independent Chip Model (ICM)</div>
+      <p>A mathematical model that estimates each player&rsquo;s tournament equity by calculating the probability of finishing in each position based on chip stacks, then multiplying by the corresponding prize. The model assumes each player&rsquo;s probability of finishing first is proportional to their chip stack, and subsequent finishing probabilities are computed recursively.</p>
+    </div>
+
+    <h3>How ICM Works</h3>
+    <p>ICM proceeds in several steps:</p>
+    <ol style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Probability of finishing 1st:</strong> Each player&rsquo;s probability of winning is proportional to their chip stack. If you have 20% of the chips, you have a 20% chance of finishing 1st.</li>
+      <li><strong>Probability of finishing 2nd:</strong> For each possible 1st-place finisher, remove that player, recalculate the remaining players&rsquo; chip proportions, and compute 2nd-place probabilities. Weight by the probability of each 1st-place scenario.</li>
+      <li><strong>Continue recursively</strong> for 3rd, 4th, etc. through all paid positions.</li>
+      <li><strong>Compute equity:</strong> Multiply each finishing probability by the prize for that position, then sum across all positions.</li>
+    </ol>
+
+    <div class="math-block">
+      <span class="math-label">ICM Equity Formula</span>
+      Equity(player i) = &sum; P(player i finishes in position k) &times; Prize(k)
+      <br><br>
+      where k ranges over all paid positions
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">ICM Calculation: 3-Player Example</div>
+      <p>Three players remain. Prize pool: $50 / $30 / $20. Chip stacks:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem;">
+        <li>Player A: 5,000 chips (50%)</li>
+        <li>Player B: 3,000 chips (30%)</li>
+        <li>Player C: 2,000 chips (20%)</li>
+      </ul>
+      <p><strong>Step 1 &mdash; P(1st):</strong> A = 50%, B = 30%, C = 20%</p>
+      <p><strong>Step 2 &mdash; P(2nd):</strong></p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; font-size: 0.95rem;">
+        <li>If A wins 1st (50%): B gets 2nd with prob 3/5 = 60%, C gets 2nd with prob 2/5 = 40%</li>
+        <li>If B wins 1st (30%): A gets 2nd with prob 5/7 &asymp; 71.4%, C gets 2nd with prob 2/7 &asymp; 28.6%</li>
+        <li>If C wins 1st (20%): A gets 2nd with prob 5/8 = 62.5%, B gets 2nd with prob 3/8 = 37.5%</li>
+      </ul>
+      <p><strong>Player A&rsquo;s 2nd-place probability:</strong> 0.30 &times; 0.714 + 0.20 &times; 0.625 = 0.214 + 0.125 = 0.339</p>
+      <p><strong>Player A&rsquo;s equity:</strong> 0.50 &times; $50 + 0.339 &times; $30 + 0.161 &times; $20 = $25.00 + $10.17 + $3.22 = <strong>$38.39</strong></p>
+      <p>Note: In a cash game, 50% of the chips would be worth $50. But ICM gives A only $38.39. The &ldquo;missing&rdquo; equity is distributed to the smaller stacks as their guaranteed survival equity.</p>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 3: ICM Implications ===== -->
+  <div class="chapter-section">
+    <h2>ICM Implications for Strategy</h2>
+    <p>ICM creates strategic distortions that don&rsquo;t exist in cash games. Understanding these distortions is essential for optimal tournament play.</p>
+
+    <h3>The Asymmetry of Gains and Losses</h3>
+    <p>The most important consequence of ICM is that <strong>gaining chips is worth less than losing the same number of chips</strong>. This asymmetry has profound implications:</p>
+
+    <div class="math-block">
+      <span class="math-label">ICM Asymmetry</span>
+      &Delta;Equity(winning X chips) &lt; |&Delta;Equity(losing X chips)|
+      <br><br>
+      The magnitude of equity lost from a chip loss always exceeds
+      <br>
+      the magnitude of equity gained from an equal chip gain.
+    </div>
+
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Risk aversion is rational:</strong> Unlike cash games where risk-neutral play is optimal, tournament players should be risk-averse. A coin flip for your entire stack is -$EV even though it&rsquo;s neutral in chips.</li>
+      <li><strong>Calling all-ins requires a bigger edge:</strong> Near the bubble or at final tables with significant pay jumps, you need more than 50% equity to profitably call an all-in. The &ldquo;ICM tax&rdquo; on calling can be substantial.</li>
+      <li><strong>Survival has inherent value:</strong> Even if you never play a hand, other players busting out increases your equity. This &ldquo;free equity&rdquo; from survival has no cash game analog.</li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">The Asymmetry in Action</div>
+      <p>You have 10,000 chips in a tournament with average stack of 10,000. Your ICM equity is $100.</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem;">
+        <li>If you win a 10,000-chip pot (doubling to 20,000): Your equity rises to ~$150 (gain of $50)</li>
+        <li>If you lose a 10,000-chip pot (busting out): Your equity drops to $0 (loss of $100)</li>
+      </ul>
+      <p>A &ldquo;fair&rdquo; coin flip for your stack costs you $25 in equity: (0.5 &times; $150 + 0.5 &times; $0) = $75, vs $100 current equity.</p>
+      <p>You need approximately <strong>67% chip equity</strong> to break even on this all-in &mdash; not 50%!</p>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 4: The Bubble Effect ===== -->
+  <div class="chapter-section">
+    <h2>The Bubble Effect</h2>
+    <p>The bubble &mdash; the point just before players reach the money &mdash; is where ICM distortions reach their maximum. This creates one of the most strategically rich situations in poker.</p>
+
+    <h3>Why the Bubble Is Special</h3>
+    <p>On the bubble, the difference between busting out (winning nothing) and surviving one more elimination (locking up a minimum cash) is enormous relative to other pay jumps. This makes survival disproportionately valuable:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Short stacks have disproportionate value:</strong> A player with just 2 big blinds has significant equity because they might fold their way into the money. Every other player who busts before them hands them guaranteed prize money.</li>
+      <li><strong>Medium stacks are most constrained:</strong> They have too many chips to freely gamble (they&rsquo;d sacrifice significant survival equity) but not enough to dominate. Medium stacks should play the most conservatively.</li>
+      <li><strong>Large stacks can pressure others:</strong> Since medium stacks can&rsquo;t afford to play back without a premium hand, large stacks can raise liberally, stealing blinds with impunity. The big stack risks relatively little equity by gambling.</li>
+    </ul>
+
+    <div class="definition-box">
+      <div class="def-term">The Bubble Effect</div>
+      <p>The phenomenon near the money bubble where ICM distortions are maximized. Short stacks gain disproportionate equity from survival, medium stacks become strategically paralyzed, and large stacks gain leverage to exploit the situation. The bubble creates the biggest gap between chip-EV strategy and dollar-EV optimal play.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Bubble Dynamics: Who Benefits?</div>
+      <p>A 100-player tournament pays top 15. We&rsquo;re on the bubble with 16 remaining. Consider two players:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem;">
+        <li><strong>Player A:</strong> 50,000 chips (big stack)</li>
+        <li><strong>Player B:</strong> 8,000 chips (medium stack)</li>
+      </ul>
+      <p>Player A raises all-in. Player B has pocket Queens. In a cash game, this is a snap-call against most ranges.</p>
+      <p>But on the bubble, B must consider: calling and losing means going broke, winning nothing. There are several short stacks who might bust soon, gifting B a guaranteed cash. The ICM cost of calling and losing far exceeds the ICM benefit of calling and winning. B might need to fold hands as strong as QQ here.</p>
+      <p>Meanwhile, Player A can make this play with almost any two cards &mdash; they risk minimal equity compared to what they pressure from the medium stacks.</p>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 5: Chip Accumulation vs Survival ===== -->
+  <div class="chapter-section">
+    <h2>Chip Accumulation vs Survival</h2>
+    <p>Tournament poker presents a fundamental tension between two competing goals:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Chip accumulation:</strong> To win the tournament, you need all the chips. This requires taking risks, playing pots, and building your stack.</li>
+      <li><strong>Survival:</strong> Simply lasting longer increases your equity. Each elimination that happens before yours pushes you up the pay ladder.</li>
+    </ul>
+    <p>ICM provides the mathematical framework for finding the correct balance. At every decision point, the question is: does the expected chip gain from this play generate enough additional equity to offset the risk of elimination?</p>
+
+    <h3>When to Prioritize Accumulation</h3>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Early in the tournament (far from the money)</li>
+      <li>When you already have a big stack (your marginal risk is low)</li>
+      <li>When you have a significant skill edge over the table</li>
+      <li>When the pay structure is top-heavy (first place gets a large share)</li>
+    </ul>
+
+    <h3>When to Prioritize Survival</h3>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>Near the bubble (maximum ICM distortion)</li>
+      <li>When shorter stacks are likely to bust soon</li>
+      <li>When pay jumps are large relative to your stack</li>
+      <li>When the pay structure is flat (many spots get similar prizes)</li>
+    </ul>
+  </div>
+
+  <!-- ===== SECTION 6: Doubling Up Math ===== -->
+  <div class="chapter-section">
+    <h2>Doubling Up Math</h2>
+    <p>The chapter&rsquo;s title refers to a counterintuitive result about what doubling your stack actually means in tournament equity. Let&rsquo;s work through it carefully.</p>
+
+    <div class="example-box">
+      <div class="example-title">The Doubling Illusion</div>
+      <p>Suppose the average stack is 10,000 chips and you have 5,000 (half the average). Your equity before the double-up:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem;">
+        <li>In a cash game: exactly half of average equity</li>
+        <li>In a tournament: <strong>more than half</strong> of average equity (due to concave chip utility)</li>
+      </ul>
+      <p>Now you double to 10,000 (the average). Your equity after:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem;">
+        <li>In a cash game: exactly the average equity</li>
+        <li>In a tournament: approximately the average equity</li>
+      </ul>
+      <p>The key insight: you started with <em>more</em> than half the average equity and ended with the average equity. So the gain from doubling is <strong>less than your initial equity</strong>. You risked $X to gain less than $X.</p>
+    </div>
+
+    <div class="math-block">
+      <span class="math-label">The Doubling Paradox</span>
+      Let E(s) = tournament equity as a function of stack size s.
+      <br><br>
+      Because E is concave (diminishing marginal value):
+      <br>
+      E(2s) &lt; 2 &times; E(s)
+      <br><br>
+      Therefore: E(2s) &minus; E(s) &lt; E(s) &minus; E(0) = E(s)
+      <br><br>
+      The equity GAINED from doubling (&Delta;+) is less than
+      <br>
+      the equity LOST from busting (&Delta;&minus; = E(s)).
+    </div>
+
+    <p>This mathematical reality means that early tournament double-ups, while exciting, are worth less than they appear. A player who doubles from 5,000 to 10,000 feels like they&rsquo;ve doubled their chances, but in equity terms the gain is significantly less than 100%.</p>
+    <p>This also explains why top tournament professionals are willing to play conservatively early &mdash; the cost of busting (losing your entire entry equity) outweighs the benefit of a double-up during a stage when average stacks are deep relative to the blinds.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: ICM Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>ICM Calculator</h3>
+    <p>Enter the number of players, their chip stacks, and the prize distribution to calculate each player&rsquo;s tournament equity. Then see how doubling a player&rsquo;s stack changes their equity.</p>
+    <div class="widget-controls">
+      <label>
+        Number of Players:
+        <select id="icmNumPlayers" onchange="updateICMInputs()">
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </label>
+    </div>
+    <div id="icmInputs" class="widget-controls" style="flex-direction: column; gap: 0.5rem;"></div>
+    <div class="widget-controls" style="margin-top: 0.75rem;">
+      <label>
+        Double Player:
+        <select id="icmDoublePlayer"></select>
+      </label>
+      <button class="btn" onclick="calcICM()">Calculate ICM Equity</button>
+    </div>
+    <div class="widget-result" id="icmResult">
+      <div class="result-label">Configure stacks and prizes, then click Calculate</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>In a 3-player SNG, Player A has 8,000 chips, Player B has 1,500 chips, and Player C has 500 chips. Prizes are $50/$30/$20. Players B and C go all-in against each other. Who benefits most from this confrontation?</p>
+    <button class="quiz-option" data-correct="false">Player B &mdash; they are likely to win and eliminate C</button>
+    <button class="quiz-option" data-correct="true">Player A &mdash; they can fold and gain equity regardless of who wins</button>
+    <button class="quiz-option" data-correct="false">Player C &mdash; they can double up and get back in the game</button>
+    <button class="quiz-option" data-correct="false">All players benefit equally from the action</button>
+    <div class="quiz-feedback" data-correct="Correct! Player A benefits the most. Without risking a single chip, A is guaranteed that one of the two short stacks will be eliminated (or severely crippled). This locks in equity for A: if C busts, A is guaranteed at least 2nd place ($30). A gains equity from the confrontation regardless of the outcome &mdash; a pure ICM windfall." data-incorrect="Not quite. Player A benefits the most because they gain equity without risking anything. When B and C go all-in, one will be eliminated or crippled. A moves closer to guaranteed money without putting a single chip at risk. This is a fundamental ICM insight &mdash; the bystander who avoids the confrontation captures free equity."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Conceptual Check</h3>
+    <p>In a tournament, you have exactly the average stack. A coin-flip all-in opportunity arises that would either double you up or eliminate you. In terms of dollar equity, this play is:</p>
+    <button class="quiz-option" data-correct="false">Break-even &mdash; you win or lose the same amount of chips</button>
+    <button class="quiz-option" data-correct="true">Negative &mdash; the equity gained from doubling is less than the equity lost from busting</button>
+    <button class="quiz-option" data-correct="false">Positive &mdash; having a big stack gives you future advantages</button>
+    <button class="quiz-option" data-correct="false">It depends on the number of players remaining</button>
+    <div class="quiz-feedback" data-correct="Correct! Due to the diminishing marginal value of chips, the equity you gain from doubling up is always less than the equity you lose from busting out. A chip-EV neutral gamble (like a true coin flip) is always negative in $EV in tournament play. This is the core ICM insight." data-incorrect="Because of the concave chip utility function in tournaments, doubling your chips gives you less than double the equity. Therefore, a coin flip (chip-EV neutral) is always -$EV. The equity gained from doubling is strictly less than the equity lost from busting."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>In tournaments, chips have <strong>diminishing marginal value</strong> &mdash; doubling your chips does NOT double your equity.</li>
+      <li>The <strong>Independent Chip Model (ICM)</strong> converts chip stacks to dollar equity by computing finishing probabilities weighted by prizes.</li>
+      <li>ICM creates an <strong>asymmetry</strong>: gaining chips is always worth less than the risk of losing the same number of chips.</li>
+      <li><strong>Risk aversion is rational</strong> in tournaments (unlike cash games), because the chip utility function is concave.</li>
+      <li>The <strong>bubble effect</strong> maximizes ICM distortions: short stacks have disproportionate value, big stacks gain leverage, medium stacks are most constrained.</li>
+      <li>Tournament strategy requires balancing <strong>chip accumulation</strong> (needed to win) with <strong>survival</strong> (which generates free equity).</li>
+      <li>Early double-ups are <strong>less valuable than they appear</strong> &mdash; you risk your full equity to gain less than your full equity.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-25.html">&larr; Chapter 25</a>
+    <a href="chapter-27.html">Chapter 27: Chips Aren&rsquo;t Cash &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function updateICMInputs() {
+  const n = parseInt(document.getElementById('icmNumPlayers').value);
+  const inputDiv = document.getElementById('icmInputs');
+  const doubleSelect = document.getElementById('icmDoublePlayer');
+
+  const defaultStacks = {
+    3: [5000, 3000, 2000],
+    4: [5000, 3000, 2000, 1000],
+    5: [5000, 3000, 2000, 1500, 500]
+  };
+  const defaultPrizes = {
+    3: [50, 30, 20],
+    4: [50, 30, 15, 5],
+    5: [50, 25, 15, 7, 3]
+  };
+  const stacks = defaultStacks[n];
+  const prizes = defaultPrizes[n];
+
+  let html = '<div style="display:flex; flex-wrap:wrap; gap:1rem;">';
+  for (let i = 0; i < n; i++) {
+    html += `<div style="display:flex; flex-direction:column; gap:0.25rem;">
+      <strong>Player ${String.fromCharCode(65 + i)}</strong>
+      <label style="font-size:0.85rem;">Chips: <input type="number" id="icmStack${i}" value="${stacks[i]}" min="0" step="500" style="width:80px;"></label>
+      <label style="font-size:0.85rem;">Prize $: <input type="number" id="icmPrize${i}" value="${prizes[i]}" min="0" step="5" style="width:80px;"></label>
+    </div>`;
+  }
+  html += '</div>';
+  inputDiv.innerHTML = html;
+
+  let opts = '';
+  for (let i = 0; i < n; i++) {
+    opts += `<option value="${i}">Player ${String.fromCharCode(65 + i)}</option>`;
+  }
+  doubleSelect.innerHTML = opts;
+}
+
+function icmEquity(stacks, prizes) {
+  const n = stacks.length;
+  const total = stacks.reduce((a, b) => a + b, 0);
+  const equities = new Array(n).fill(0);
+  const paidPlaces = prizes.filter(p => p > 0).length;
+
+  function recurse(remaining, prizeIdx) {
+    if (prizeIdx >= paidPlaces) return;
+    const remTotal = remaining.reduce((a, b) => a + b, 0);
+    if (remTotal <= 0) return;
+
+    for (let i = 0; i < n; i++) {
+      if (remaining[i] <= 0) continue;
+      const prob = remaining[i] / remTotal;
+      equities[i] += prob * prizes[prizeIdx];
+
+      const saved = remaining[i];
+      remaining[i] = 0;
+      recurse(remaining, prizeIdx + 1);
+      remaining[i] = saved;
+    }
+    // Undo the additions from recursive calls — we need a different approach
+  }
+
+  // Proper ICM using permutation-based approach for small N
+  function permuteICM(indices, remaining, depth) {
+    if (depth >= paidPlaces) return;
+    const remTotal = indices.reduce((s, idx) => s + remaining[idx], 0);
+    if (remTotal <= 0) return;
+    for (let j = 0; j < indices.length; j++) {
+      const idx = indices[j];
+      const prob = remaining[idx] / remTotal;
+      equities[idx] += prob * prizes[depth];
+      const newIndices = indices.filter((_, k) => k !== j);
+      const savedStack = remaining[idx];
+      remaining[idx] = 0;
+      permuteICM(newIndices, remaining, depth + 1);
+      remaining[idx] = savedStack;
+    }
+  }
+
+  const allIndices = [];
+  for (let i = 0; i < n; i++) if (stacks[i] > 0) allIndices.push(i);
+  const remStacks = stacks.slice();
+  // Reset equities
+  equities.fill(0);
+  permuteICM(allIndices, remStacks, 0);
+  return equities;
+}
+
+function calcICM() {
+  const n = parseInt(document.getElementById('icmNumPlayers').value);
+  const stacks = [];
+  const prizes = [];
+  for (let i = 0; i < n; i++) {
+    stacks.push(parseFloat(document.getElementById('icmStack' + i).value) || 0);
+    prizes.push(parseFloat(document.getElementById('icmPrize' + i).value) || 0);
+  }
+  const total = stacks.reduce((a, b) => a + b, 0);
+  if (total <= 0) {
+    document.getElementById('icmResult').innerHTML = '<div class="result-label" style="color:var(--accent);">All stacks must be positive.</div>';
+    return;
+  }
+
+  const eqBefore = icmEquity(stacks, prizes);
+
+  // Double selected player's stack (take chips proportionally from others)
+  const dbl = parseInt(document.getElementById('icmDoublePlayer').value);
+  const doubledStacks = stacks.slice();
+  const addChips = stacks[dbl];
+  const othersTotal = total - stacks[dbl];
+  if (othersTotal <= 0) {
+    document.getElementById('icmResult').innerHTML = '<div class="result-label" style="color:var(--accent);">Selected player already has all the chips.</div>';
+    return;
+  }
+  for (let i = 0; i < n; i++) {
+    if (i === dbl) {
+      doubledStacks[i] = stacks[dbl] * 2;
+    } else {
+      doubledStacks[i] = stacks[i] - (stacks[i] / othersTotal) * addChips;
+      if (doubledStacks[i] < 0) doubledStacks[i] = 0;
+    }
+  }
+  const eqAfter = icmEquity(doubledStacks, prizes);
+
+  let html = '<div style="margin-bottom:1rem;"><strong>Current ICM Equity:</strong></div>';
+  html += '<table class="data-table"><tr><th>Player</th><th>Chips</th><th>Chip %</th><th>ICM Equity</th><th>Cash Value</th></tr>';
+  for (let i = 0; i < n; i++) {
+    html += `<tr>
+      <td>Player ${String.fromCharCode(65 + i)}</td>
+      <td>${stacks[i].toLocaleString()}</td>
+      <td>${(stacks[i] / total * 100).toFixed(1)}%</td>
+      <td>$${eqBefore[i].toFixed(2)}</td>
+      <td style="color:var(--muted);">$${(stacks[i] / total * prizes.reduce((a,b)=>a+b,0)).toFixed(2)}</td>
+    </tr>`;
+  }
+  html += '</table>';
+  html += `<div style="font-size:0.85rem; color:var(--muted); margin-top:0.5rem;">Cash Value shows what chips would be worth in a cash game (linear). Compare with ICM Equity to see diminishing value.</div>`;
+
+  const playerName = String.fromCharCode(65 + dbl);
+  html += `<div style="margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1rem;"><strong>After Player ${playerName} doubles up:</strong></div>`;
+  html += '<table class="data-table"><tr><th>Player</th><th>New Chips</th><th>New ICM Equity</th><th>&Delta; Equity</th></tr>';
+  for (let i = 0; i < n; i++) {
+    const delta = eqAfter[i] - eqBefore[i];
+    const color = delta >= 0 ? 'var(--green)' : 'var(--accent)';
+    html += `<tr>
+      <td>Player ${String.fromCharCode(65 + i)}</td>
+      <td>${Math.round(doubledStacks[i]).toLocaleString()}</td>
+      <td>$${eqAfter[i].toFixed(2)}</td>
+      <td style="color:${color}; font-weight:600;">${delta >= 0 ? '+' : ''}$${delta.toFixed(2)}</td>
+    </tr>`;
+  }
+  html += '</table>';
+
+  const dblGain = eqAfter[dbl] - eqBefore[dbl];
+  const dblRisk = eqBefore[dbl];
+  html += `<div style="margin-top:1rem; padding:0.75rem; background:rgba(0,0,0,0.2); border-radius:8px;">
+    <strong>Doubling Up Analysis (Player ${playerName}):</strong><br>
+    <span class="result-label">Equity risked (if busted):</span> <span style="color:var(--accent); font-weight:600;">$${dblRisk.toFixed(2)}</span><br>
+    <span class="result-label">Equity gained (from doubling):</span> <span style="color:var(--green); font-weight:600;">$${dblGain.toFixed(2)}</span><br>
+    <span class="result-label">Ratio (gain/risk):</span> <span class="result-value">${(dblGain / dblRisk).toFixed(3)}</span>
+    <span style="color:var(--muted); font-size:0.85rem;"> &mdash; ${(dblGain / dblRisk) < 1 ? 'Less than 1.0: you risk more than you gain (typical ICM result)' : 'Unusual case'}</span>
+  </div>`;
+
+  document.getElementById('icmResult').innerHTML = html;
+}
+
+// Initialize on load
+updateICMInputs();
+</script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 24: The Kelly Criterion and Rational Game Selection — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part IV &mdash; Chapter 24</span>
+    <h1>Growing Bankrolls: The Kelly Criterion and Rational Game Selection</h1>
+    <p class="chapter-subtitle">How to maximize long-run bankroll growth by choosing the right games and stakes</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-24.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== THE KELLY CRITERION ===== -->
+  <div class="chapter-section">
+    <h2>The Kelly Criterion</h2>
+    <p>The <strong>Kelly Criterion</strong>, developed by John L. Kelly Jr. at Bell Labs in 1956, is a money management strategy that answers a deceptively simple question: given a favorable bet, <em>how much should you wager?</em></p>
+    <p>The answer is the fraction of your bankroll that maximizes the <strong>long-run growth rate</strong> of your wealth. Bet too little, and you leave growth on the table. Bet too much, and you actually <em>decrease</em> your long-run growth rate &mdash; or even go broke.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Kelly Fraction</div>
+      <p>For a simple bet with probability <em>p</em> of winning and odds of <em>b</em> to 1:</p>
+      <div class="math-block">
+        <span class="math-label">Classic Kelly Formula</span>
+        f* = (bp &minus; q) / b = (bp &minus; (1&minus;p)) / b
+      </div>
+      <p>where f* is the optimal fraction of bankroll to wager, <em>p</em> is the probability of winning, <em>q</em> = 1&minus;p is the probability of losing, and <em>b</em> is the net odds received.</p>
+    </div>
+
+    <h3>Kelly for Poker (Simplified)</h3>
+    <p>In poker, the situation is more complex because we don't face discrete win/lose bets. Instead, we have a continuous distribution of outcomes characterized by our win rate (&mu;) and standard deviation (&sigma;). The simplified Kelly criterion for poker becomes:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Poker Kelly Formula</div>
+      <div class="math-block">
+        <span class="math-label">Optimal Stake Level</span>
+        f* = &mu; / &sigma;&sup2;
+      </div>
+      <p>This tells us the fraction of our bankroll that should constitute one "unit" at the table. Equivalently, the optimal number of buy-ins for our bankroll is 1/f* = &sigma;&sup2;/&mu;.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Kelly Bankroll for a Typical Player</div>
+      <p>A $1/$2 NL Hold'em player with &mu; = 5 BB/100 and &sigma; = 80 BB/100:</p>
+      <div class="math-block">
+        f* = 5 / (80&sup2;) = 5 / 6400 = 0.000781<br><br>
+        Required bankroll = 1/f* = 6400/5 = <strong>1,280 BB</strong> = <strong>12.8 buy-ins</strong>
+      </div>
+      <p>This means the Kelly-optimal strategy is to play with roughly 13 buy-ins. However, this is the <em>full Kelly</em> recommendation, which most practitioners consider too aggressive in practice.</p>
+    </div>
+  </div>
+
+  <!-- ===== LOG UTILITY ===== -->
+  <div class="chapter-section">
+    <h2>Log Utility: The Foundation of Kelly</h2>
+    <p>The Kelly Criterion is mathematically equivalent to maximizing the <strong>expected logarithm</strong> of your bankroll. This is not an arbitrary choice &mdash; it has several remarkable properties:</p>
+
+    <h3>Why Logarithmic Utility?</h3>
+    <ul style="margin: 0.5rem 0 1.5rem 1.5rem; line-height: 1.8;">
+      <li><strong>Diminishing marginal value:</strong> The log function captures the intuition that the 100th dollar matters less than the 1st dollar. Doubling your bankroll from $1,000 to $2,000 feels as significant as doubling from $10,000 to $20,000.</li>
+      <li><strong>Ruin avoidance:</strong> Because log(0) = &minus;&infin;, the Kelly bettor will never risk their entire bankroll on a single bet (theoretically), preventing total ruin.</li>
+      <li><strong>Long-run growth maximization:</strong> Kelly maximizes the geometric growth rate. Over time, the Kelly bettor will almost surely end up with more money than any other strategy.</li>
+      <li><strong>Fraction invariance:</strong> The optimal bet is always a <em>fraction</em> of current bankroll, which naturally scales with your wealth.</li>
+    </ul>
+
+    <div class="definition-box">
+      <div class="def-term">Growth Rate Under Kelly</div>
+      <p>The expected log growth rate per period under Kelly betting is:</p>
+      <div class="math-block">
+        <span class="math-label">Kelly Growth Rate</span>
+        G* = &mu;&sup2; / (2&sigma;&sup2;)
+      </div>
+      <p>This is the maximum achievable growth rate. Any other betting fraction yields a lower growth rate.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-title">Growth Rate Comparison</div>
+      <p>For a player with &mu; = 5 BB/100 and &sigma; = 80 BB/100:</p>
+      <div class="math-block">
+        G* = 5&sup2; / (2 &times; 80&sup2;) = 25 / 12,800 = 0.00195 per 100 hands
+      </div>
+      <p>This means the bankroll grows by approximately 0.195% per 100 hands at the Kelly-optimal level. Over 100,000 hands, the bankroll would grow by a factor of e<sup>(0.00195 &times; 1000)</sup> &asymp; e<sup>1.95</sup> &asymp; 7.0 times its initial value.</p>
+    </div>
+  </div>
+
+  <!-- ===== FRACTIONAL KELLY ===== -->
+  <div class="chapter-section">
+    <h2>Fractional Kelly: Trading Growth for Safety</h2>
+    <p>While full Kelly maximizes long-run growth, the ride can be extremely volatile. In practice, most professional players and investors use a <strong>fractional Kelly</strong> approach &mdash; betting some fraction of the Kelly-optimal amount.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Kelly Fraction</th>
+          <th>Growth Rate (% of full Kelly)</th>
+          <th>Variance (% of full Kelly)</th>
+          <th>Practical Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Full Kelly (1.0)</td><td>100%</td><td>100%</td><td>Maximum growth, but very volatile</td></tr>
+        <tr><td>3/4 Kelly (0.75)</td><td>93.75%</td><td>75%</td><td>Slightly conservative; good balance</td></tr>
+        <tr><td>Half Kelly (0.50)</td><td>75%</td><td>50%</td><td>Most popular among professionals</td></tr>
+        <tr><td>Quarter Kelly (0.25)</td><td>43.75%</td><td>25%</td><td>Very conservative; minimal risk</td></tr>
+      </tbody>
+    </table>
+
+    <div class="definition-box">
+      <div class="def-term">The Half-Kelly Trade-off</div>
+      <p>Half Kelly is particularly popular because of a remarkable trade-off:</p>
+      <div class="math-block">
+        <span class="math-label">Half Kelly Properties</span>
+        Growth rate = 75% of full Kelly<br>
+        Variance = 50% of full Kelly<br>
+        Drawdown severity = roughly halved
+      </div>
+      <p>You sacrifice only 25% of your growth rate but reduce your variance by 50%. This is a very favorable trade-off for risk-averse practitioners.</p>
+    </div>
+
+    <p>The relationship between Kelly fraction <em>f</em> (as a proportion of full Kelly) and growth rate <em>G</em> follows a parabolic curve:</p>
+    <div class="math-block">
+      <span class="math-label">Growth Rate as Function of Kelly Fraction</span>
+      G(f) = G* &times; f &times; (2 &minus; f)
+    </div>
+    <p>This formula shows that at f = 1 (full Kelly), G = G*. At f = 2 (double Kelly), G = 0 &mdash; you grow not at all! And beyond f = 2, growth becomes <em>negative</em>.</p>
+  </div>
+
+  <!-- ===== OVER-BETTING KELLY ===== -->
+  <div class="chapter-section">
+    <h2>Over-betting Kelly: The Danger Zone</h2>
+    <p>One of the most important insights from Kelly theory is that <strong>betting more than the Kelly fraction actually decreases your long-run growth rate</strong>. This is counterintuitive: surely more aggressive betting should lead to faster growth?</p>
+
+    <div class="example-box">
+      <div class="example-title">The Parabola of Growth</div>
+      <p>Think of growth rate as a hill. Kelly sits at the peak. Moving in <em>either direction</em> &mdash; betting too little or too much &mdash; reduces growth. But the consequences are asymmetric:</p>
+      <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+        <li><strong>Under-betting (f &lt; 1):</strong> Growth is reduced, but you are still growing. The player is safe but leaving money on the table.</li>
+        <li><strong>Over-betting (1 &lt; f &lt; 2):</strong> Growth is reduced AND variance increases. The player is taking on more risk for less reward. This is strictly dominated.</li>
+        <li><strong>Extreme over-betting (f &gt; 2):</strong> Expected growth rate becomes <em>negative</em>. The player is expected to <em>lose</em> money over time despite having a positive edge!</li>
+      </ul>
+    </div>
+
+    <p>This is why the Kelly Criterion is so important: it identifies the <strong>inflection point</strong> where more aggressive play starts hurting rather than helping. Many aggressive poker players unwittingly over-bet Kelly by playing at stakes too high for their bankroll and edge, destroying their long-run growth rate even though they have a genuine advantage.</p>
+  </div>
+
+  <!-- ===== GAME SELECTION ===== -->
+  <div class="chapter-section">
+    <h2>Application to Poker: Rational Game Selection</h2>
+    <p>The Kelly Criterion provides a rigorous framework for one of poker's most important decisions: <strong>which game should you play?</strong></p>
+
+    <h3>The Kelly Ratio</h3>
+    <p>When comparing games, the key metric is not your win rate alone, nor your variance alone, but the <strong>Kelly ratio</strong>:</p>
+    <div class="math-block">
+      <span class="math-label">Kelly Ratio (Game Quality Metric)</span>
+      Kelly Ratio = &mu; / &sigma;&sup2;
+    </div>
+    <p>The game with the highest Kelly ratio is the best game for maximizing bankroll growth, regardless of the absolute stakes involved.</p>
+
+    <div class="example-box">
+      <div class="example-title">Comparing Two Games</div>
+      <p>Suppose you have access to two games:</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Metric</th><th>Game A ($1/$2)</th><th>Game B ($2/$5)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Win Rate (&mu;)</td><td>3 BB/100</td><td>5 BB/100</td></tr>
+          <tr><td>Std Dev (&sigma;)</td><td>12 BB/100</td><td>25 BB/100</td></tr>
+          <tr><td>&sigma;&sup2;</td><td>144</td><td>625</td></tr>
+          <tr><td><strong>Kelly Ratio</strong></td><td><strong>3/144 = 0.0208</strong></td><td><strong>5/625 = 0.008</strong></td></tr>
+          <tr><td>Optimal Bankroll</td><td>48 BB</td><td>125 BB</td></tr>
+        </tbody>
+      </table>
+      <p>Despite Game B having a higher win rate in BB/100, <strong>Game A has a Kelly ratio 2.6 times higher</strong>. The lower variance of Game A more than compensates for its lower edge. Game A is the superior game for bankroll growth.</p>
+    </div>
+
+    <h3>When Higher Stakes Aren't Better</h3>
+    <p>This analysis reveals an important truth: moving to higher stakes is not always beneficial, even if you have a larger edge in absolute dollar terms. If the higher stakes come with proportionally greater variance (due to tougher opponents, deeper stacks, or higher-variance strategies), the Kelly ratio may actually decrease.</p>
+    <p>Rational game selection requires estimating both your edge and your variance at each available game, then comparing Kelly ratios.</p>
+  </div>
+
+  <!-- ===== CERTAINTY EQUIVALENT ===== -->
+  <div class="chapter-section">
+    <h2>Certainty Equivalent</h2>
+    <p>The <strong>certainty equivalent</strong> is the guaranteed amount of money you would accept instead of playing the uncertain game. For a Kelly bettor, this has a clean mathematical form.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Certainty Equivalent</div>
+      <p>For a Kelly bettor facing a game with win rate &mu; and variance &sigma;&sup2;, the certainty equivalent per unit of play is:</p>
+      <div class="math-block">
+        <span class="math-label">Certainty Equivalent</span>
+        CE = &mu; &minus; &sigma;&sup2; / (2B)
+      </div>
+      <p>where B is the current bankroll. As the bankroll grows, the certainty equivalent approaches the raw expected value &mu;, because the player can better absorb variance.</p>
+    </div>
+
+    <p>The certainty equivalent framework helps explain why a small-bankrolled player might rationally accept a staking deal that sacrifices 50% of their EV &mdash; the certainty equivalent of playing high-variance games on a short bankroll can be very low or even negative.</p>
+  </div>
+
+  <!-- ===== INTERACTIVE: Kelly Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Kelly Criterion Calculator &amp; Game Comparison</h3>
+    <p>Compare two games to see which offers better growth. Enter the parameters for each game below.</p>
+    <div class="widget-controls" style="flex-direction: column; gap: 1rem;">
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:end;">
+        <strong style="color:var(--green); min-width:65px;">Game A:</strong>
+        <label>
+          Win Rate (BB/100):
+          <input type="number" id="kellyMuA" value="3" min="-5" max="30" step="0.5">
+        </label>
+        <label>
+          Std Dev (BB/100):
+          <input type="number" id="kellySigA" value="12" min="1" max="200" step="1">
+        </label>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:end;">
+        <strong style="color:var(--gold); min-width:65px;">Game B:</strong>
+        <label>
+          Win Rate (BB/100):
+          <input type="number" id="kellyMuB" value="5" min="-5" max="30" step="0.5">
+        </label>
+        <label>
+          Std Dev (BB/100):
+          <input type="number" id="kellySigB" value="25" min="1" max="200" step="1">
+        </label>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:end;">
+        <label>
+          Bankroll (BB):
+          <input type="number" id="kellyBankroll" value="5000" min="100" max="100000" step="500">
+        </label>
+        <button class="btn" onclick="calcKelly()">Compare Games</button>
+      </div>
+    </div>
+    <div class="widget-result" id="kellyResult">
+      <div class="result-label">Enter game parameters and click Compare Games</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="kellyChart" width="700" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>Game A has an edge of 3 BB/100 and a standard deviation of 12 BB/100. Game B has an edge of 5 BB/100 and a standard deviation of 25 BB/100. Which game has the better Kelly ratio, and what does this mean?</p>
+    <button class="quiz-option" data-correct="false">Game B (5/25 = 0.20 vs 3/12 = 0.25) &mdash; higher edge wins</button>
+    <button class="quiz-option" data-correct="true">Game A (3/144 = 0.0208 vs 5/625 = 0.008) &mdash; Game A maximizes bankroll growth despite a lower edge</button>
+    <button class="quiz-option" data-correct="false">They are equal because the edge-to-sigma ratios are similar</button>
+    <button class="quiz-option" data-correct="false">Game B, because higher stakes always grow the bankroll faster</button>
+    <div class="quiz-feedback" data-correct="Correct! The Kelly ratio is &mu;/&sigma;&sup2;, not &mu;/&sigma;. Game A: 3/144 = 0.0208. Game B: 5/625 = 0.008. Game A's Kelly ratio is 2.6 times higher, meaning it produces faster bankroll growth despite the lower win rate. The lower variance of Game A is the decisive factor." data-incorrect="Remember, the Kelly ratio is &mu;/&sigma;&sup2; (win rate divided by variance, not standard deviation). Game A: 3/(12&sup2;) = 3/144 = 0.0208. Game B: 5/(25&sup2;) = 5/625 = 0.008. Game A is 2.6x better for bankroll growth."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Conceptual Question</h3>
+    <p>A player bets 2.5 times the Kelly-optimal fraction. What happens to their long-run growth rate?</p>
+    <button class="quiz-option" data-correct="false">It increases by 2.5x compared to Kelly-optimal</button>
+    <button class="quiz-option" data-correct="false">It stays the same but with more variance</button>
+    <button class="quiz-option" data-correct="false">It decreases but remains positive</button>
+    <button class="quiz-option" data-correct="true">It becomes negative &mdash; the player is expected to lose money over time despite having a positive edge</button>
+    <div class="quiz-feedback" data-correct="Correct! Using the formula G(f) = G* &times; f &times; (2 &minus; f), at f = 2.5: G(2.5) = G* &times; 2.5 &times; (2 &minus; 2.5) = G* &times; 2.5 &times; (&minus;0.5) = &minus;1.25 &times; G*. The growth rate is negative! This means the player will go broke in the long run despite having a genuine edge. Betting more than 2x Kelly guarantees negative expected log growth." data-incorrect="At f = 2.5 times Kelly: G(f) = G* &times; f &times; (2 &minus; f) = G* &times; 2.5 &times; (&minus;0.5) = &minus;1.25 &times; G*. The growth rate is negative! Any fraction above 2x Kelly results in negative expected log growth, meaning the player is expected to go broke despite having a genuine edge."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>The <strong>Kelly Criterion</strong> determines the bet size that maximizes long-run bankroll growth rate: f* = &mu;/&sigma;&sup2;.</li>
+      <li>Kelly is equivalent to maximizing the <strong>expected logarithm</strong> of bankroll, which naturally accounts for diminishing marginal value and prevents ruin.</li>
+      <li><strong>Fractional Kelly</strong> (especially half Kelly) sacrifices modest growth for substantial variance reduction &mdash; a trade-off most practitioners favor.</li>
+      <li><strong>Over-betting Kelly</strong> (f &gt; 1) decreases growth rate while increasing variance. Beyond 2x Kelly, expected growth becomes negative.</li>
+      <li>The <strong>Kelly ratio</strong> (&mu;/&sigma;&sup2;) is the correct metric for comparing games &mdash; a lower-variance game can be superior despite a lower win rate.</li>
+      <li>The <strong>certainty equivalent</strong> quantifies the guaranteed amount a player would accept instead of playing, incorporating both edge and risk.</li>
+      <li>Rational <strong>game selection</strong> means choosing the game with the highest Kelly ratio, not necessarily the highest edge or highest stakes.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-23.html">&larr; Chapter 23: Risk of Ruin with Uncertain Win Rates</a>
+    <a href="chapter-25.html">Chapter 25: Portfolio Theory &amp; Backing &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcKelly() {
+  const muA = parseFloat(document.getElementById('kellyMuA').value);
+  const sigA = parseFloat(document.getElementById('kellySigA').value);
+  const muB = parseFloat(document.getElementById('kellyMuB').value);
+  const sigB = parseFloat(document.getElementById('kellySigB').value);
+  const bankroll = parseFloat(document.getElementById('kellyBankroll').value);
+
+  const varA = sigA * sigA;
+  const varB = sigB * sigB;
+
+  const kellyA = muA > 0 ? muA / varA : 0;
+  const kellyB = muB > 0 ? muB / varB : 0;
+
+  const growthA = muA > 0 ? (muA * muA) / (2 * varA) : 0;
+  const growthB = muB > 0 ? (muB * muB) / (2 * varB) : 0;
+
+  const optBankA = muA > 0 ? varA / muA : Infinity;
+  const optBankB = muB > 0 ? varB / muB : Infinity;
+
+  // Half Kelly values
+  const halfGrowthA = growthA * 0.75;
+  const halfGrowthB = growthB * 0.75;
+  const halfBankA = optBankA * 2;
+  const halfBankB = optBankB * 2;
+
+  // Certainty equivalents
+  const ceA = muA - varA / (2 * bankroll);
+  const ceB = muB - varB / (2 * bankroll);
+
+  const better = kellyA > kellyB ? 'A' : kellyA < kellyB ? 'B' : 'tied';
+  const betterColor = better === 'A' ? 'var(--green)' : better === 'B' ? 'var(--gold)' : 'var(--muted)';
+
+  document.getElementById('kellyResult').innerHTML = `
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div>
+        <div style="font-weight:700; color:var(--green); margin-bottom:0.5rem;">Game A</div>
+        <div><span class="result-label">Kelly Ratio:</span> <span class="result-value">${kellyA.toFixed(6)}</span></div>
+        <div style="margin-top:0.3rem"><span class="result-label">Full Kelly Growth:</span> ${growthA.toFixed(6)} per 100 hands</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Half Kelly Growth:</span> ${halfGrowthA.toFixed(6)} per 100 hands</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Optimal Bankroll (Full):</span> ${optBankA.toFixed(0)} BB</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Optimal Bankroll (Half):</span> ${halfBankA.toFixed(0)} BB</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Certainty Equivalent:</span> ${ceA.toFixed(3)} BB/100</div>
+      </div>
+      <div>
+        <div style="font-weight:700; color:var(--gold); margin-bottom:0.5rem;">Game B</div>
+        <div><span class="result-label">Kelly Ratio:</span> <span class="result-value">${kellyB.toFixed(6)}</span></div>
+        <div style="margin-top:0.3rem"><span class="result-label">Full Kelly Growth:</span> ${growthB.toFixed(6)} per 100 hands</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Half Kelly Growth:</span> ${halfGrowthB.toFixed(6)} per 100 hands</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Optimal Bankroll (Full):</span> ${optBankB.toFixed(0)} BB</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Optimal Bankroll (Half):</span> ${halfBankB.toFixed(0)} BB</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Certainty Equivalent:</span> ${ceB.toFixed(3)} BB/100</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border); text-align:center;">
+      <span class="result-value" style="color:${betterColor}">Game ${better === 'tied' ? 'A and B are tied' : better + ' is superior for bankroll growth'}</span>
+      <div style="color:var(--muted); font-size:0.85rem; margin-top:0.25rem;">
+        Kelly ratio: ${better === 'tied' ? 'equal' : (kellyA > kellyB ? (kellyA/kellyB).toFixed(1) + 'x higher for A' : (kellyB/kellyA).toFixed(1) + 'x higher for B')}
+      </div>
+    </div>
+  `;
+
+  drawKellyChart(muA, sigA, muB, sigB);
+}
+
+function drawKellyChart(muA, sigA, muB, sigB) {
+  const canvas = document.getElementById('kellyChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const pad = { top: 25, right: 20, bottom: 45, left: 70 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#161b22';
+  ctx.fillRect(0, 0, W, H);
+
+  const varA = sigA * sigA, varB = sigB * sigB;
+  const gStarA = muA > 0 ? (muA * muA) / (2 * varA) : 0;
+  const gStarB = muB > 0 ? (muB * muB) / (2 * varB) : 0;
+  const maxG = Math.max(gStarA, gStarB) * 1.3;
+
+  // Growth rate as function of kelly fraction
+  function growthRate(gStar, f) {
+    return gStar * f * (2 - f);
+  }
+
+  // X axis: Kelly fraction from 0 to 3
+  const xMax = 3;
+
+  // Grid lines
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + chartH * i / 4;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    const val = maxG * (1 - i / 4) - maxG * 0.3;
+    ctx.fillText(val.toFixed(5), pad.left - 8, y + 4);
+  }
+
+  // Zero line
+  const zeroY = pad.top + chartH * (maxG / (maxG + maxG * 0.3));
+
+  ctx.strokeStyle = '#8b949e';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, zeroY);
+  ctx.lineTo(W - pad.right, zeroY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw curves
+  function drawCurve(gStar, color) {
+    if (gStar <= 0) return;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let px = 0; px <= chartW; px++) {
+      const f = (px / chartW) * xMax;
+      const g = growthRate(gStar, f);
+      const yNorm = (maxG - g) / (maxG + maxG * 0.3);
+      const y = pad.top + chartH * yNorm;
+      if (px === 0) ctx.moveTo(pad.left + px, y);
+      else ctx.lineTo(pad.left + px, y);
+    }
+    ctx.stroke();
+  }
+
+  drawCurve(gStarA, '#2ea043');
+  drawCurve(gStarB, '#d4a017');
+
+  // Kelly = 1 marker line
+  const kellyPx = pad.left + (1 / xMax) * chartW;
+  ctx.strokeStyle = '#e05347';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 3]);
+  ctx.beginPath();
+  ctx.moveTo(kellyPx, pad.top);
+  ctx.lineTo(kellyPx, H - pad.bottom);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#e05347';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Full Kelly', kellyPx, pad.top - 5);
+
+  // X axis labels
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  for (let f = 0; f <= 3; f += 0.5) {
+    const px = pad.left + (f / xMax) * chartW;
+    ctx.fillText(f.toFixed(1), px, H - pad.bottom + 16);
+  }
+  ctx.fillText('Kelly Fraction (f)', W / 2, H - 5);
+
+  // Title
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Growth Rate vs. Kelly Fraction', W / 2, 15);
+
+  // Legend
+  ctx.font = '11px sans-serif';
+  ctx.fillStyle = '#2ea043';
+  ctx.fillRect(pad.left + 10, pad.top + 10, 12, 3);
+  ctx.fillStyle = '#8b949e';
+  ctx.textAlign = 'left';
+  ctx.fillText('Game A', pad.left + 28, pad.top + 15);
+  ctx.fillStyle = '#d4a017';
+  ctx.fillRect(pad.left + 10, pad.top + 25, 12, 3);
+  ctx.fillStyle = '#8b949e';
+  ctx.fillText('Game B', pad.left + 28, pad.top + 30);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 10: Facing The Nemesis: Game Theory — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part III &mdash; Chapter 10</span>
+    <h1>Facing The Nemesis: Game Theory</h1>
+    <p class="chapter-subtitle">When exploitive play isn't enough &mdash; finding strategies that are fundamentally sound against any opponent</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-10.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== MOTIVATION ===== -->
+  <div class="chapter-section">
+    <h2>Why Exploitive Play Has Limits</h2>
+    <p>In Part II we developed the tools of <strong>exploitive play</strong>: observe an opponent's tendencies, model their strategy, and choose the maximally exploitive counter-strategy. Against weak, predictable opponents this approach is devastatingly effective. But real poker presents situations where pure exploitive play breaks down:</p>
+    <ul style="margin-left:1.5rem; margin-bottom:1rem; line-height:1.8">
+      <li><strong>Strong opponents who exploit back.</strong> If you adapt to them, they adapt to you, creating an infinite regress of adjustments.</li>
+      <li><strong>Unknown opponents.</strong> You have no reads, no history &mdash; what strategy do you default to?</li>
+      <li><strong>Tournament play.</strong> You can't choose your table or your opponents. You need a strategy that holds up against the entire field.</li>
+    </ul>
+    <p>Chen and Ankenman argue that we need strategies that are <strong>"fundamentally sound"</strong> &mdash; strategies that perform well regardless of what our opponent does. This is the domain of <strong>game theory</strong>.</p>
+  </div>
+
+  <!-- ===== THE NEMESIS CONCEPT ===== -->
+  <div class="chapter-section">
+    <h2>The Nemesis Concept</h2>
+    <p>To evaluate how robust a strategy truly is, imagine the worst possible opponent: a <strong>nemesis</strong>. This nemesis knows your exact strategy &mdash; every frequency, every threshold, every tendency &mdash; and plays the maximally exploitive counter-strategy against you.</p>
+
+    <div class="definition-box">
+      <div class="def-term">The Nemesis</div>
+      <p>A theoretical opponent who knows your complete strategy and plays the <strong>best possible response</strong> against it. Your expected value against the nemesis represents the <strong>worst-case scenario</strong> for your strategy.</p>
+    </div>
+
+    <p>Here is the key insight: if you choose a strategy that <em>maximizes your EV against the nemesis</em>, you have found the most robust strategy possible. No matter who you actually face, you cannot do worse than your nemesis EV. This is the foundation of <strong>game theory optimal (GTO)</strong> play.</p>
+
+    <div class="example-box">
+      <div class="example-title">Nemesis in Action</div>
+      <p>Suppose you bet the river with a strategy of bluffing 50% of the time when you miss. Your nemesis, knowing this, will call every time (since you bluff too often for folding to be profitable). Your EV against the nemesis is terrible.</p>
+      <p>Now suppose you never bluff. Your nemesis simply folds every time you bet, denying you any value from your strong hands. Again, poor EV.</p>
+      <p>The GTO solution lies somewhere in between &mdash; a bluffing frequency that makes the nemesis <em>indifferent</em> between calling and folding.</p>
+    </div>
+  </div>
+
+  <!-- ===== MINIMAX THEOREM ===== -->
+  <div class="chapter-section">
+    <h2>The Minimax Theorem</h2>
+    <p>The mathematical foundation for GTO play comes from <strong>John von Neumann's Minimax Theorem</strong> (1928), one of the landmark results in mathematics:</p>
+
+    <div class="definition-box">
+      <div class="def-term">Minimax Theorem (von Neumann, 1928)</div>
+      <p>In any finite, two-player, zero-sum game, there exists a pair of strategies (one for each player) such that neither player can improve their expected value by unilaterally changing their strategy. Furthermore:</p>
+      <div class="math-block">
+        <span class="math-label">The Minimax Equation</span>
+        max<sub>A</sub> min<sub>B</sub> EV(A, B) = min<sub>B</sub> max<sub>A</sub> EV(A, B)
+      </div>
+      <p>The left side reads: "Player A maximizes (over their own strategies) the minimum EV (that Player B can impose)." The right side reads: "Player B minimizes (over their own strategies) the maximum EV (that Player A can achieve)." These two quantities are <strong>equal</strong>, and this common value is called the <strong>value of the game</strong>.</p>
+    </div>
+
+    <p>What this means in poker terms:</p>
+    <ul style="margin-left:1.5rem; margin-bottom:1rem; line-height:1.8">
+      <li>There exists a strategy that <strong>guarantees</strong> you at least a certain EV, no matter what your opponent does.</li>
+      <li>Your opponent also has a strategy that <strong>limits</strong> your EV to that same value.</li>
+      <li>These two strategies meet at the <strong>Nash equilibrium</strong>.</li>
+    </ul>
+
+    <h3>Interpreting max-min and min-max</h3>
+    <p>Think of it this way: if you move first (commit to a strategy) and your opponent gets to see it and respond optimally, the best you can guarantee is max<sub>A</sub> min<sub>B</sub> EV(A,B). If your opponent commits first and you get to respond, the best they can guarantee (for themselves) is min<sub>B</sub> max<sub>A</sub> EV(A,B). The minimax theorem says these are <strong>equal</strong> &mdash; the order doesn't matter. This is remarkable and is precisely what makes the equilibrium concept so powerful.</p>
+  </div>
+
+  <!-- ===== NASH EQUILIBRIUM ===== -->
+  <div class="chapter-section">
+    <h2>Nash Equilibrium Properties</h2>
+
+    <div class="definition-box">
+      <div class="def-term">Nash Equilibrium</div>
+      <p>A strategy profile where <strong>neither player has an incentive to unilaterally deviate</strong>. Each player's strategy is a best response to the other's.</p>
+    </div>
+
+    <p>The Nash equilibrium has several crucial properties for poker players:</p>
+
+    <table class="data-table">
+      <tr><th>Property</th><th>Meaning for Poker</th></tr>
+      <tr>
+        <td><strong>EV Floor</strong></td>
+        <td>Playing the equilibrium strategy guarantees you at least the game value. You <em>cannot</em> do worse than this, regardless of your opponent's strategy.</td>
+      </tr>
+      <tr>
+        <td><strong>No incentive to deviate</strong></td>
+        <td>If both players are at equilibrium, neither gains by changing strategy. The game is "solved."</td>
+      </tr>
+      <tr>
+        <td><strong>Opponent deviations help you</strong></td>
+        <td>If your opponent deviates from equilibrium while you stay at equilibrium, your EV can only <em>increase</em> (or stay the same). You never do worse.</td>
+      </tr>
+      <tr>
+        <td><strong>Safety</strong></td>
+        <td>GTO is the "safe" strategy. It may not maximize against a specific weak opponent, but it never exposes you to exploitation.</td>
+      </tr>
+    </table>
+
+    <div class="example-box">
+      <div class="example-title">The EV Floor in Practice</div>
+      <p>Consider a symmetric poker game where neither player has a positional advantage. At Nash equilibrium, the game value is <strong>0</strong> (since it's symmetric). This means:</p>
+      <ul style="margin-left:1.5rem; line-height:1.8">
+        <li>Playing GTO guarantees you break even in the long run.</li>
+        <li>If your opponent deviates from GTO, you profit.</li>
+        <li>You can never lose money in expectation by playing GTO.</li>
+      </ul>
+      <p>In asymmetric games (like those with positional advantage), the game value may not be zero, but the same principle holds &mdash; GTO sets the floor.</p>
+    </div>
+  </div>
+
+  <!-- ===== INDIFFERENCE PRINCIPLE ===== -->
+  <div class="chapter-section">
+    <h2>The Indifference Principle</h2>
+    <p>Perhaps the most practically useful concept from game theory is the <strong>indifference principle</strong>: at equilibrium, the opponent is <em>indifferent</em> between the options they mix over.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Indifference Principle</div>
+      <p>At a Nash equilibrium, if a player mixes between two or more actions with positive probability, they must be <strong>indifferent</strong> between those actions &mdash; each yields the same expected value. If one action were strictly better, the player would play it 100% of the time, contradicting the mix.</p>
+    </div>
+
+    <p>This principle is incredibly powerful because it lets us <strong>calculate optimal frequencies</strong>. Here is how:</p>
+
+    <div class="example-box">
+      <div class="example-title">Calculating Optimal Bluff Frequency</div>
+      <p>Suppose Player A bets the pot (bet = pot) and can either have a value hand or be bluffing. Player B must decide whether to call or fold.</p>
+      <p><strong>To find A's optimal bluff frequency</strong>, we set B to be indifferent between calling and folding:</p>
+      <p><strong>EV(fold) = 0</strong> (B gives up, losing nothing additional)</p>
+      <p><strong>EV(call)</strong> = P(A is bluffing) &times; (pot + bet) &minus; P(A has value) &times; bet</p>
+      <p>Setting EV(call) = EV(fold) = 0 with a pot-sized bet:</p>
+      <p>P(bluff) &times; (2 &times; pot) &minus; (1 &minus; P(bluff)) &times; pot = 0</p>
+      <p>2 &times; P(bluff) &times; pot &minus; pot + P(bluff) &times; pot = 0</p>
+      <p>3 &times; P(bluff) &times; pot = pot</p>
+      <p><strong>P(bluff) = 1/3</strong></p>
+      <p>So at equilibrium, Player A should bluff <strong>1 out of every 3 bets</strong> (i.e., for every 2 value bets, include 1 bluff). This makes the opponent's call or fold decision completely irrelevant &mdash; both yield EV = 0.</p>
+    </div>
+
+    <p>The beauty of this approach: we don't need to know what our opponent will do. By making them indifferent, we guarantee that <em>no matter how they respond</em>, our EV is the same. The optimal player makes the opponent's decision <strong>irrelevant</strong>.</p>
+  </div>
+
+  <!-- ===== [0,1] GAME PREVIEW ===== -->
+  <div class="chapter-section">
+    <h2>Preview: The [0,1] Game</h2>
+    <p>To study game theory in a tractable way, Chen and Ankenman introduce <strong>toy poker games</strong> where each player is dealt a hand drawn uniformly at random from the continuous interval [0, 1]. Higher numbers beat lower numbers with certainty.</p>
+    <p>These "half-street" and "full-street" [0,1] games strip away the complexity of real poker while preserving the essential strategic features: bluffing, calling, raising, and information asymmetry. They allow us to derive <em>closed-form</em> equilibrium solutions and build deep intuition about optimal play.</p>
+    <p>We will explore these games in detail in the following chapters, but the key takeaway is: game theory doesn't just tell us <em>that</em> we should bluff &mdash; it tells us <em>exactly how often</em> and <em>with which hands</em>.</p>
+  </div>
+
+  <!-- ===== EXPLOITIVE VS GTO ===== -->
+  <div class="chapter-section">
+    <h2>Exploitive vs. GTO: The Trade-off</h2>
+
+    <table class="data-table">
+      <tr><th>Aspect</th><th>Exploitive Play</th><th>GTO Play</th></tr>
+      <tr>
+        <td><strong>Goal</strong></td>
+        <td>Maximize EV against a specific opponent</td>
+        <td>Maximize worst-case EV (against the nemesis)</td>
+      </tr>
+      <tr>
+        <td><strong>Strengths</strong></td>
+        <td>Extracts maximum value from weak opponents</td>
+        <td>Unexploitable; safe baseline; no reads required</td>
+      </tr>
+      <tr>
+        <td><strong>Weaknesses</strong></td>
+        <td>Vulnerable to counter-exploitation; requires accurate reads</td>
+        <td>Leaves value on the table against predictable opponents</td>
+      </tr>
+      <tr>
+        <td><strong>Information needed</strong></td>
+        <td>Detailed opponent model</td>
+        <td>Only the game structure</td>
+      </tr>
+      <tr>
+        <td><strong>Risk</strong></td>
+        <td>High (if reads are wrong, you get exploited)</td>
+        <td>Zero (you can't do worse than game value)</td>
+      </tr>
+    </table>
+
+    <h3>The Recommended Approach</h3>
+    <p>Chen and Ankenman advocate a practical synthesis:</p>
+    <ol style="margin-left:1.5rem; margin-bottom:1rem; line-height:1.8">
+      <li><strong>Start with GTO-like play</strong> as your baseline &mdash; this keeps you safe while you gather information.</li>
+      <li><strong>Identify reliable opponent patterns</strong> through observation. Look for consistent, large deviations from equilibrium.</li>
+      <li><strong>Deviate exploitively</strong> when you have high confidence in your reads. The larger and more consistent the opponent's deviation, the more you should deviate in response.</li>
+      <li><strong>Return to baseline</strong> when facing strong, adaptive opponents or when your reads become uncertain.</li>
+    </ol>
+    <p>This approach treats GTO as the "home base" that you depart from strategically and return to when conditions warrant.</p>
+  </div>
+
+  <!-- ===== WHY STUDY GAME THEORY ===== -->
+  <div class="chapter-section">
+    <h2>Why Study Game Theory for Poker?</h2>
+    <p>Even if you never intend to play a pure GTO strategy, understanding game theory is essential for several reasons:</p>
+    <ul style="margin-left:1.5rem; margin-bottom:1rem; line-height:1.8">
+      <li><strong>Provides a baseline strategy.</strong> GTO gives you a solid default to fall back on in any situation.</li>
+      <li><strong>Reveals correct frequencies.</strong> Game theory tells us the "right" bluffing frequency, calling frequency, and bet sizing in any spot. Without this reference point, you're guessing.</li>
+      <li><strong>Shows which exploitive deviations are most valuable.</strong> By understanding equilibrium, you can identify which opponent mistakes are most costly and prioritize your exploitation accordingly.</li>
+      <li><strong>Identifies opponent deviations.</strong> You can't know your opponent is "calling too much" unless you know what the right calling frequency is. GTO provides that benchmark.</li>
+    </ul>
+  </div>
+
+  <!-- ===== INTERACTIVE: Nemesis Explorer ===== -->
+  <div class="interactive-widget">
+    <h3>Nemesis Explorer</h3>
+    <p>Set your bluff frequency in a simple pot-sized bet scenario. The nemesis knows your strategy and plays the best response. Compare your EV to the GTO solution.</p>
+
+    <div class="widget-controls">
+      <label>
+        Pot size (units):
+        <input type="number" id="potSize" value="100" step="10" min="10" max="1000">
+      </label>
+      <label>
+        Your bluff frequency (%):
+        <input type="range" id="bluffFreq" min="0" max="100" value="33">
+        <span id="bluffFreqLabel" style="color:var(--gold);font-weight:700">33%</span>
+      </label>
+      <label>
+        Your value-bet frequency (%):
+        <input type="number" id="valueBetFreq" value="67" step="1" min="1" max="100">
+      </label>
+    </div>
+    <button class="btn" onclick="calcNemesis()">Analyze vs Nemesis</button>
+
+    <div class="widget-result" id="nemesisResult">
+      <div class="result-label">Set your bluff frequency and click Analyze</div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="nemesisChart" width="600" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Minimax Visualizer ===== -->
+  <div class="interactive-widget">
+    <h3>Minimax Visualizer</h3>
+    <p>This chart shows a simplified 2-player game. Player A chooses a bluff frequency (x-axis) and Player B chooses a calling frequency (y-axis). The color shows Player A's EV. The Nash equilibrium is the saddle point where neither player can improve.</p>
+
+    <div class="widget-controls">
+      <label>
+        Pot size:
+        <input type="number" id="mmPot" value="100" step="10" min="10" max="500">
+      </label>
+      <label>
+        Bet size (% of pot):
+        <input type="number" id="mmBetPct" value="100" step="25" min="25" max="200">
+      </label>
+      <button class="btn" onclick="drawMinimax()">Draw Minimax Grid</button>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="minimaxChart" width="500" height="500"></canvas>
+    </div>
+
+    <div class="widget-result" id="minimaxResult">
+      <div class="result-label">Click "Draw Minimax Grid" to visualize the equilibrium</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ 1 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: The Minimax Theorem</h3>
+    <p>What does the minimax theorem guarantee in a two-player zero-sum game?</p>
+    <button class="quiz-option" data-correct="false">That the first player to act always has an advantage</button>
+    <button class="quiz-option" data-correct="true">That there exists a strategy pair where neither player can improve by unilaterally deviating</button>
+    <button class="quiz-option" data-correct="false">That both players will always break even</button>
+    <button class="quiz-option" data-correct="false">That bluffing is always part of the optimal strategy</button>
+    <div class="quiz-feedback" data-correct="Correct! The minimax theorem guarantees the existence of a Nash equilibrium &mdash; a pair of strategies where neither player benefits from deviating alone. This is the foundation of GTO play." data-incorrect="Not quite. The minimax theorem guarantees that a Nash equilibrium exists: a strategy pair where neither player can improve their EV by unilaterally changing strategy. It doesn't guarantee who has the advantage or that EV is always zero."></div>
+  </div>
+
+  <!-- ===== QUIZ 2 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: Exploitive vs. GTO</h3>
+    <p>If your GTO bluffing frequency in a spot is 25%, and your opponent folds 60% of the time (much too often), should you:</p>
+    <button class="quiz-option" data-correct="true">Bluff more than 25% to exploit their excessive folding</button>
+    <button class="quiz-option" data-correct="false">Stick with exactly 25% because GTO is always optimal</button>
+    <button class="quiz-option" data-correct="false">Bluff less than 25% since they'll eventually adjust</button>
+    <button class="quiz-option" data-correct="false">Stop bluffing entirely and only value bet</button>
+    <div class="quiz-feedback" data-correct="Correct! If your opponent folds too often, increasing your bluff frequency is the exploitive adjustment. GTO is 'safe,' but when you identify a reliable pattern, deviating to exploit it increases your EV. This is the recommended approach: GTO as baseline, exploit when you have reads." data-incorrect="When an opponent folds too frequently, the exploitive response is to bluff more. GTO is a safe baseline, but it leaves money on the table against opponents with identifiable leaks. The whole point of understanding GTO is knowing when and how to deviate from it profitably."></div>
+  </div>
+
+  <!-- ===== QUIZ 3 ===== -->
+  <div class="quiz-box">
+    <h3>Quiz: The Indifference Principle</h3>
+    <p>Why does GTO play make your opponent "indifferent" between their options?</p>
+    <button class="quiz-option" data-correct="false">Because GTO play is random and unpredictable</button>
+    <button class="quiz-option" data-correct="false">Because the opponent doesn't know your cards</button>
+    <button class="quiz-option" data-correct="true">Because if one option were strictly better, your strategy wouldn't be optimal &mdash; the opponent could exploit the imbalance</button>
+    <button class="quiz-option" data-correct="false">Because game theory assumes all players are equally skilled</button>
+    <div class="quiz-feedback" data-correct="Exactly right! If the opponent weren't indifferent &mdash; say calling was strictly better than folding &mdash; they would always call, which means your bluffing frequency is wrong (too low). At the true equilibrium, you bluff at exactly the frequency that makes calling and folding yield the same EV. This is what makes your strategy unexploitable." data-incorrect="The indifference principle states that at equilibrium, the opponent's available options must yield equal EV. If one option were strictly better, the opponent would always choose it, meaning your frequencies aren't balanced correctly. The optimal strategy balances bluffs and value bets so that no response is better than any other."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li><strong>Exploitive play breaks down</strong> against strong opponents who counter-exploit, against unknowns, and in tournaments where you can't choose opponents.</li>
+      <li>The <strong>nemesis</strong> is a theoretical worst-case opponent who knows your exact strategy. Your EV against the nemesis is the floor for your strategy.</li>
+      <li>The <strong>minimax theorem</strong> guarantees that in two-player zero-sum games, an equilibrium exists where max<sub>A</sub> min<sub>B</sub> EV = min<sub>B</sub> max<sub>A</sub> EV.</li>
+      <li>At <strong>Nash equilibrium</strong>, neither player can improve by deviating unilaterally. It sets an EV floor &mdash; opponents who deviate can only help you.</li>
+      <li>The <strong>indifference principle</strong>: at equilibrium, the opponent is indifferent between mixed actions. This lets us calculate optimal bluffing and calling frequencies.</li>
+      <li><strong>GTO play is the safe baseline</strong>; exploitive play extracts more value but requires accurate reads. The best approach is to start GTO and deviate exploitively when patterns are reliable.</li>
+      <li>Understanding game theory reveals <strong>correct frequencies</strong>, identifies opponent deviations, and shows which exploitive adjustments are most profitable.</li>
+    </ul>
+  </div>
+
+  <nav class="chapter-nav">
+    <a href="chapter-09.html">&larr; Chapter 9</a>
+    <a href="chapter-11.html">Chapter 11 &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+// ===== Nemesis Explorer =====
+const bluffSlider = document.getElementById('bluffFreq');
+const bluffLabel = document.getElementById('bluffFreqLabel');
+bluffSlider.addEventListener('input', () => {
+  bluffLabel.textContent = bluffSlider.value + '%';
+});
+
+function calcNemesis() {
+  const pot = parseFloat(document.getElementById('potSize').value);
+  const bet = pot; // pot-sized bet
+  const bluffPct = parseFloat(bluffSlider.value) / 100;
+  const valuePct = parseFloat(document.getElementById('valueBetFreq').value) / 100;
+
+  // Normalize: of all bets, what fraction are bluffs?
+  const totalBetFreq = valuePct + bluffPct;
+  const bluffRatio = totalBetFreq > 0 ? bluffPct / totalBetFreq : 0;
+
+  // GTO bluff ratio for pot-sized bet: bet / (pot + 2*bet) = 1/3
+  const gtoBluffRatio = bet / (pot + 2 * bet);
+
+  // Nemesis response:
+  // If bluffRatio > gtoBluffRatio, nemesis calls every bet (too many bluffs)
+  // If bluffRatio < gtoBluffRatio, nemesis folds every bet (too few bluffs)
+  // If bluffRatio == gtoBluffRatio, nemesis is indifferent
+
+  let nemesisAction, nemesisCallFreq;
+  if (bluffRatio > gtoBluffRatio + 0.005) {
+    nemesisAction = 'CALL (you bluff too much)';
+    nemesisCallFreq = 1.0;
+  } else if (bluffRatio < gtoBluffRatio - 0.005) {
+    nemesisAction = 'FOLD (you bluff too little)';
+    nemesisCallFreq = 0.0;
+  } else {
+    nemesisAction = 'INDIFFERENT (you are at GTO)';
+    // At GTO, call freq = bluff% of hands / (bluff% + value%)... nemesis can do anything
+    nemesisCallFreq = 0.5; // doesn't matter, EV is the same
+  }
+
+  // Calculate EV per hand where we bet
+  // When nemesis calls: EV = valuePct * (pot + bet) - bluffPct * bet
+  // When nemesis folds: EV = (valuePct + bluffPct) * pot
+  // (EV measured as gain beyond checking/giving up)
+
+  let evBetting;
+  if (nemesisCallFreq === 1.0) {
+    // Nemesis calls: we win pot+bet with value hands, lose bet with bluffs
+    evBetting = valuePct * (pot + bet) - bluffPct * bet;
+  } else if (nemesisCallFreq === 0.0) {
+    // Nemesis folds: we win pot with all bets
+    evBetting = (valuePct + bluffPct) * pot;
+  } else {
+    // Indifferent - EV is the same regardless
+    evBetting = valuePct * (pot + bet) - bluffPct * bet; // call EV
+  }
+
+  // GTO EV (for comparison)
+  const gtoValue = valuePct;
+  const gtoBluff = gtoValue * gtoBluffRatio / (1 - gtoBluffRatio);
+  const gtoEV = gtoValue * (pot + bet) - gtoBluff * bet; // same as fold EV
+
+  const resultDiv = document.getElementById('nemesisResult');
+  resultDiv.innerHTML = `
+    <div><span class="result-label">Your bluff ratio (bluffs / total bets):</span> <span class="result-value">${(bluffRatio * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">GTO bluff ratio (pot-sized bet):</span> <span class="result-value">${(gtoBluffRatio * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Nemesis response:</span> <span class="result-value" style="color:var(--accent)">${nemesisAction}</span></div>
+    <div style="margin-top:0.6rem"><span class="result-label">Your EV vs Nemesis (per hand):</span> <span class="result-value">${evBetting.toFixed(2)} units</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Your EV at GTO (per hand):</span> <span class="result-value" style="color:var(--green)">${gtoEV.toFixed(2)} units</span></div>
+    <div style="margin-top:0.6rem;font-size:0.9rem;color:var(--muted)">${
+      Math.abs(bluffRatio - gtoBluffRatio) < 0.006
+        ? 'You are at (or near) the GTO bluff ratio. The nemesis cannot exploit you!'
+        : bluffRatio > gtoBluffRatio
+          ? 'You are bluffing too often. The nemesis calls every time and punishes your excess bluffs.'
+          : 'You are bluffing too little. The nemesis folds every time, denying you value on your strong hands.'
+    }</div>
+  `;
+
+  // Draw comparison chart
+  drawNemesisChart(pot, bet, valuePct);
+}
+
+function drawNemesisChart(pot, bet, valuePct) {
+  const canvas = document.getElementById('nemesisChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const margin = { top: 30, right: 20, bottom: 50, left: 60 };
+  const gw = W - margin.left - margin.right;
+  const gh = H - margin.top - margin.bottom;
+
+  const gtoBluffRatio = bet / (pot + 2 * bet);
+
+  // Plot EV vs bluff ratio (0 to 1)
+  // For each bluff ratio, nemesis picks best response
+  const points = [];
+  const gtoPoints = [];
+  for (let i = 0; i <= 100; i++) {
+    const br = i / 100;
+    const bluffAmt = valuePct * br / (1 - br + 0.0001);
+    let ev;
+    if (br > gtoBluffRatio) {
+      // Nemesis calls
+      ev = valuePct * (pot + bet) - bluffAmt * bet;
+    } else {
+      // Nemesis folds
+      ev = (valuePct + bluffAmt) * pot;
+    }
+    points.push({ x: br, y: ev });
+
+    // GTO line (constant at gto EV)
+    const gtoBluffAmt = valuePct * gtoBluffRatio / (1 - gtoBluffRatio + 0.0001);
+    gtoPoints.push({ x: br, y: valuePct * (pot + bet) - gtoBluffAmt * bet });
+  }
+
+  const allY = points.map(p => p.y);
+  const minY = Math.min(...allY) - 5;
+  const maxY = Math.max(...allY) + 5;
+
+  function tx(v) { return margin.left + v * gw; }
+  function ty(v) { return margin.top + gh - ((v - minY) / (maxY - minY)) * gh; }
+
+  // Axes
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, margin.top + gh);
+  ctx.lineTo(margin.left + gw, margin.top + gh);
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#aaa';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Bluff Ratio (bluffs / total bets)', W / 2, H - 5);
+  for (let i = 0; i <= 10; i++) {
+    const v = i / 10;
+    ctx.fillText((v * 100).toFixed(0) + '%', tx(v), margin.top + gh + 18);
+  }
+
+  ctx.save();
+  ctx.translate(15, margin.top + gh / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('EV vs Nemesis', 0, 0);
+  ctx.restore();
+
+  // GTO line (horizontal)
+  ctx.strokeStyle = 'rgba(46,160,67,0.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(tx(0), ty(gtoPoints[0].y));
+  ctx.lineTo(tx(1), ty(gtoPoints[0].y));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // EV curve
+  ctx.strokeStyle = '#d4a017';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  points.forEach((p, i) => {
+    if (i === 0) ctx.moveTo(tx(p.x), ty(p.y));
+    else ctx.lineTo(tx(p.x), ty(p.y));
+  });
+  ctx.stroke();
+
+  // GTO point
+  const gtoIdx = Math.round(gtoBluffRatio * 100);
+  if (gtoIdx >= 0 && gtoIdx < points.length) {
+    ctx.fillStyle = '#2ea043';
+    ctx.beginPath();
+    ctx.arc(tx(points[gtoIdx].x), ty(points[gtoIdx].y), 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('GTO', tx(points[gtoIdx].x) + 10, ty(points[gtoIdx].y) - 5);
+  }
+
+  // Current position
+  const currentBr = parseFloat(bluffSlider.value) / 100;
+  const totalBet = valuePct + currentBr;
+  const actualBr = totalBet > 0 ? currentBr / totalBet : 0;
+  const curIdx = Math.min(Math.round(actualBr * 100), 100);
+  if (curIdx >= 0 && curIdx < points.length) {
+    ctx.fillStyle = '#c9382a';
+    ctx.beginPath();
+    ctx.arc(tx(points[curIdx].x), ty(points[curIdx].y), 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('You', tx(points[curIdx].x) - 10, ty(points[curIdx].y) - 5);
+  }
+
+  // Title
+  ctx.fillStyle = '#ccc';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('EV vs Nemesis by Bluff Ratio', W / 2, 18);
+}
+
+// ===== Minimax Visualizer =====
+function drawMinimax() {
+  const pot = parseFloat(document.getElementById('mmPot').value);
+  const betPct = parseFloat(document.getElementById('mmBetPct').value) / 100;
+  const bet = pot * betPct;
+
+  const canvas = document.getElementById('minimaxChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const margin = { top: 30, right: 80, bottom: 50, left: 60 };
+  const gw = W - margin.left - margin.right;
+  const gh = H - margin.top - margin.bottom;
+
+  const resolution = 50;
+
+  // GTO bluff ratio: bet / (pot + 2*bet)
+  const gtoBluffRatio = bet / (pot + 2 * bet);
+  // GTO call frequency: pot odds = bet / (pot + bet)
+  // At equilibrium with pot-sized bet, call freq makes bluffer indifferent
+  // EV(bluff) = callFreq * (-bet) + (1-callFreq) * pot = 0
+  // callFreq = pot / (pot + bet)
+  const gtoCallFreq = pot / (pot + bet);
+
+  // Assume value hand freq = 0.5 for simplicity
+  const valueFreq = 0.5;
+
+  // EV for Player A as function of bluff ratio (br) and opponent call frequency (cf)
+  // Betting hands: value(0.5) + bluff(0.5 * br ratio adjustment)
+  // When called: value wins pot+bet, bluff loses bet
+  // When opponent folds: all bets win pot
+  function evA(br, cf) {
+    const bluffAmt = valueFreq * br / (1 - br + 0.001);
+    const totalBets = valueFreq + bluffAmt;
+    const evCall = cf * (valueFreq * (pot + bet) - bluffAmt * bet);
+    const evFold = (1 - cf) * totalBets * pot;
+    return evCall + evFold;
+  }
+
+  // Find EV range for color mapping
+  let minEV = Infinity, maxEV = -Infinity;
+  for (let i = 0; i <= resolution; i++) {
+    for (let j = 0; j <= resolution; j++) {
+      const br = i / resolution;
+      const cf = j / resolution;
+      const ev = evA(br, cf);
+      if (ev < minEV) minEV = ev;
+      if (ev > maxEV) maxEV = ev;
+    }
+  }
+
+  const cellW = gw / resolution;
+  const cellH = gh / resolution;
+
+  // Draw heatmap
+  for (let i = 0; i < resolution; i++) {
+    for (let j = 0; j < resolution; j++) {
+      const br = (i + 0.5) / resolution;
+      const cf = (j + 0.5) / resolution;
+      const ev = evA(br, cf);
+
+      // Map EV to color: red (low) -> yellow (mid) -> green (high)
+      const t = (ev - minEV) / (maxEV - minEV + 0.001);
+      let r, g, b;
+      if (t < 0.5) {
+        r = 200;
+        g = Math.round(t * 2 * 160);
+        b = 40;
+      } else {
+        r = Math.round((1 - (t - 0.5) * 2) * 200);
+        g = 160;
+        b = 40;
+      }
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      // Note: y-axis is inverted (j=0 is bottom = cf=0)
+      ctx.fillRect(
+        margin.left + i * cellW,
+        margin.top + gh - (j + 1) * cellH,
+        cellW + 0.5,
+        cellH + 0.5
+      );
+    }
+  }
+
+  // Mark Nash equilibrium
+  const neX = margin.left + gtoBluffRatio * gw;
+  const neY = margin.top + gh - gtoCallFreq * gh;
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(neX, neY, 10, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(neX - 14, neY);
+  ctx.lineTo(neX + 14, neY);
+  ctx.moveTo(neX, neY - 14);
+  ctx.lineTo(neX, neY + 14);
+  ctx.stroke();
+
+  // Axes
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, margin.top + gh);
+  ctx.lineTo(margin.left + gw, margin.top + gh);
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#ccc';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Player A: Bluff Ratio', margin.left + gw / 2, H - 5);
+  for (let i = 0; i <= 5; i++) {
+    ctx.fillText((i * 20) + '%', margin.left + (i / 5) * gw, margin.top + gh + 18);
+  }
+  ctx.save();
+  ctx.translate(15, margin.top + gh / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('Player B: Call Frequency', 0, 0);
+  ctx.restore();
+  for (let i = 0; i <= 5; i++) {
+    ctx.textAlign = 'right';
+    ctx.fillText((i * 20) + '%', margin.left - 5, margin.top + gh - (i / 5) * gh + 4);
+  }
+
+  // Color bar
+  const barX = W - margin.right + 15;
+  const barW = 15;
+  for (let j = 0; j < gh; j++) {
+    const t = j / gh;
+    let r, g, b;
+    if (t < 0.5) {
+      r = Math.round((1 - t * 2) * 200);
+      g = 160;
+      b = 40;
+    } else {
+      r = 200;
+      g = Math.round((1 - (t - 0.5) * 2) * 160);
+      b = 40;
+    }
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(barX, margin.top + j, barW, 1);
+  }
+  ctx.fillStyle = '#aaa';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('High EV', barX, margin.top - 4);
+  ctx.fillText('Low EV', barX, margin.top + gh + 12);
+
+  // Title
+  ctx.fillStyle = '#ccc';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Player A EV Heatmap (Nash Eq. marked)', margin.left + gw / 2, 18);
+
+  // Results
+  const gtoEV = evA(gtoBluffRatio, gtoCallFreq);
+  document.getElementById('minimaxResult').innerHTML = `
+    <div><span class="result-label">Bet size:</span> <span class="result-value">${bet.toFixed(0)} units (${(betPct * 100).toFixed(0)}% of pot)</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Nash Equilibrium bluff ratio:</span> <span class="result-value">${(gtoBluffRatio * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Nash Equilibrium call frequency:</span> <span class="result-value">${(gtoCallFreq * 100).toFixed(1)}%</span></div>
+    <div style="margin-top:0.4rem"><span class="result-label">Game value (EV at equilibrium):</span> <span class="result-value" style="color:var(--green)">${gtoEV.toFixed(2)} units</span></div>
+    <div style="margin-top:0.6rem;font-size:0.9rem;color:var(--muted)">The crosshair marks the Nash equilibrium &mdash; the saddle point where Player A maximizes their minimum EV and Player B minimizes Player A's maximum EV.</div>
+  `;
+}
+
+// Initialize on load
+drawMinimax();
+</script>
+</body>
+</html>

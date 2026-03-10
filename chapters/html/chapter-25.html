@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 25: Poker Finance — Portfolio Theory and Backing Agreements — Poker Math Course</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/chapter.css">
+</head>
+<body>
+
+<div class="progress-bar"></div>
+
+<header class="site-header">
+  <h1><span class="suit">&spades;</span> The Mathematics of Poker <span class="suit">&hearts;</span></h1>
+  <p class="subtitle">Bill Chen &amp; Jerrod Ankenman</p>
+</header>
+
+<main class="chapter-container">
+
+  <div class="chapter-header">
+    <span class="chapter-number">Part IV &mdash; Chapter 25</span>
+    <h1>Poker Finance: Portfolio Theory and Backing Agreements</h1>
+    <p class="chapter-subtitle">Applying modern finance theory to poker investments, staking, and risk sharing</p>
+    <p style="margin-top: 1rem;"><a href="../chapter-25.pdf" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--muted); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128196; Download Chapter PDF</a></p>
+  </div>
+
+  <!-- ===== POKER AS INVESTMENT ===== -->
+  <div class="chapter-section">
+    <h2>Poker as Investment</h2>
+    <p>In the previous chapters, we analyzed a single player's bankroll management using risk of ruin and the Kelly Criterion. Now we expand the frame: what happens when we treat poker not as a game, but as an <strong>investment asset class</strong>?</p>
+    <p>This perspective opens the door to powerful tools from modern finance theory. A poker player's hourly earn rate is analogous to an investment's expected return. Their variance is analogous to investment risk. And just as investors diversify across assets, poker players can diversify through staking, backing, and swapping arrangements.</p>
+    <p>The mathematics is remarkably similar, and the insights are profound: <strong>risk can be shared, reduced, and optimized</strong> through financial agreements between players.</p>
+  </div>
+
+  <!-- ===== PORTFOLIO THEORY ===== -->
+  <div class="chapter-section">
+    <h2>Portfolio Theory (Markowitz)</h2>
+    <p>Harry Markowitz's Modern Portfolio Theory (MPT), which won the Nobel Prize in Economics, provides the foundation for understanding how diversification reduces risk. The core ideas translate directly to poker.</p>
+
+    <h3>The Power of Diversification</h3>
+    <p>The central insight of MPT is that combining multiple risky assets can produce a portfolio with <strong>less risk than any individual asset</strong>, provided the assets are not perfectly correlated.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Portfolio Variance</div>
+      <p>For a portfolio of two assets with weights w<sub>1</sub> and w<sub>2</sub>, returns with variances &sigma;<sub>1</sub>&sup2; and &sigma;<sub>2</sub>&sup2;, and correlation &rho;:</p>
+      <div class="math-block">
+        <span class="math-label">Two-Asset Portfolio Variance</span>
+        &sigma;<sub>p</sub>&sup2; = w<sub>1</sub>&sup2;&sigma;<sub>1</sub>&sup2; + w<sub>2</sub>&sup2;&sigma;<sub>2</sub>&sup2; + 2w<sub>1</sub>w<sub>2</sub>&rho;&sigma;<sub>1</sub>&sigma;<sub>2</sub>
+      </div>
+      <p>When &rho; &lt; 1 (less than perfect correlation), the portfolio variance is <em>less</em> than the weighted average of individual variances. When &rho; = 0 (uncorrelated), the reduction is maximized for a given set of weights.</p>
+    </div>
+
+    <h3>The Efficient Frontier</h3>
+    <p>For any set of available investments, there exists an <strong>efficient frontier</strong> &mdash; the set of portfolios that offer the maximum expected return for each level of risk. Any portfolio below the efficient frontier is suboptimal: you could get more return for the same risk, or less risk for the same return.</p>
+
+    <div class="example-box">
+      <div class="example-title">Poker Portfolio: Two Uncorrelated Players</div>
+      <p>Consider two players who each have &mu; = 4 BB/100 and &sigma; = 80 BB/100. If a backer invests equally in both (buying 50% of each player's action):</p>
+      <div class="math-block">
+        Portfolio &mu; = 0.5 &times; 4 + 0.5 &times; 4 = 4 BB/100 (unchanged)<br><br>
+        If &rho; = 0 (different games, uncorrelated):<br>
+        &sigma;<sub>p</sub>&sup2; = 0.5&sup2; &times; 80&sup2; + 0.5&sup2; &times; 80&sup2; = 0.25 &times; 6400 + 0.25 &times; 6400 = 3200<br>
+        &sigma;<sub>p</sub> = &radic;3200 = <strong>56.6 BB/100</strong>
+      </div>
+      <p>The expected return stays the same at 4 BB/100, but the standard deviation drops from 80 to 56.6 BB/100 &mdash; a <strong>29% reduction in risk</strong> with no sacrifice in expected return. This is the magic of diversification.</p>
+    </div>
+
+    <p>With more uncorrelated players, the risk reduction compounds. Backing <em>n</em> identical, uncorrelated players reduces portfolio standard deviation by a factor of &radic;n.</p>
+  </div>
+
+  <!-- ===== STAKING AND BACKING ===== -->
+  <div class="chapter-section">
+    <h2>Staking and Backing Agreements</h2>
+    <p>A <strong>backing arrangement</strong> (or "staking deal") is one of the most common financial arrangements in poker. Understanding the mathematics helps both parties evaluate whether a deal is fair and beneficial.</p>
+
+    <h3>The Basic Structure</h3>
+    <div class="definition-box">
+      <div class="def-term">Standard Backing Agreement</div>
+      <p>In a typical backing deal:</p>
+      <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+        <li>The <strong>backer</strong> provides the entire bankroll and absorbs all losses</li>
+        <li>The <strong>player</strong> provides the skill and time at the table</li>
+        <li>Profits are split according to an agreed ratio (commonly 50/50)</li>
+        <li>The player must clear any <strong>makeup</strong> (accumulated losses) before profit splitting resumes</li>
+      </ul>
+    </div>
+
+    <p>This arrangement is essentially an equity investment: the backer is buying a share of the player's future earnings in exchange for providing capital and absorbing downside risk.</p>
+  </div>
+
+  <!-- ===== THE BACKER'S PERSPECTIVE ===== -->
+  <div class="chapter-section">
+    <h2>The Backer's Perspective</h2>
+    <p>For the backer, each player in their stable is an <strong>investment asset</strong>. The backer's goal is to construct a portfolio of players that maximizes their risk-adjusted return.</p>
+
+    <h3>Optimal Player Portfolio</h3>
+    <p>The backer should evaluate each potential player using the Kelly ratio framework from Chapter 24:</p>
+    <div class="math-block">
+      <span class="math-label">Player Quality Metric (from Backer's Perspective)</span>
+      Player Kelly Ratio = (split &times; &mu;) / &sigma;&sup2;
+    </div>
+    <p>Higher Kelly ratios mean better risk-adjusted returns. The backer should prioritize backing players with the highest Kelly ratios, not necessarily the highest raw win rates.</p>
+
+    <h3>Correlation Matters</h3>
+    <p>A critical factor the backer must consider is <strong>correlation between players' results</strong>:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Same table:</strong> Highly correlated (when one wins a big pot, another may lose it). This provides minimal diversification benefit.</li>
+      <li><strong>Same game type, different tables:</strong> Moderately correlated (similar game dynamics, but outcomes are mostly independent).</li>
+      <li><strong>Different game types:</strong> Low correlation (cash vs. tournaments, NLH vs. PLO). Maximum diversification benefit.</li>
+      <li><strong>Different sites/locations:</strong> Very low correlation. Ideal for portfolio construction.</li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">Backer's Portfolio: Correlated vs. Uncorrelated</div>
+      <p>A backer stakes two players at 50/50 split, each with &mu; = 6 BB/100 and &sigma; = 80 BB/100.</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Scenario</th><th>Correlation (&rho;)</th><th>Portfolio &sigma;</th><th>Risk Reduction</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Same table</td><td>0.8</td><td>75.9 BB/100</td><td>5%</td></tr>
+          <tr><td>Same game, different tables</td><td>0.3</td><td>64.5 BB/100</td><td>19%</td></tr>
+          <tr><td>Different game types</td><td>0.0</td><td>56.6 BB/100</td><td>29%</td></tr>
+          <tr><td>Negatively correlated</td><td>&minus;0.3</td><td>46.9 BB/100</td><td>41%</td></tr>
+        </tbody>
+      </table>
+      <p>The backer's expected return is the same in all cases (3 BB/100 after the 50% split), but the risk varies dramatically depending on how correlated the players' results are.</p>
+    </div>
+  </div>
+
+  <!-- ===== THE PLAYER'S PERSPECTIVE ===== -->
+  <div class="chapter-section">
+    <h2>The Player's Perspective</h2>
+    <p>Why would a winning player voluntarily give up 50% of their profits? The answer lies in the <strong>Kelly Criterion</strong> and the concept of <strong>utility</strong>.</p>
+
+    <h3>Risk of Ruin: Eliminated</h3>
+    <p>The most immediate benefit of being backed is that your personal risk of ruin drops to <strong>zero</strong>. The backer absorbs all losses. Even in the worst downswing of your career, you cannot go personally broke (assuming you are not investing your own money alongside).</p>
+
+    <h3>Access to Higher Stakes</h3>
+    <p>This is the primary financial argument for being backed. Consider this analysis:</p>
+
+    <div class="example-box">
+      <div class="example-title">Self-Funded vs. Backed: A Comparison</div>
+      <p>A player has $10,000 in personal bankroll. They can beat $1/$2 (200BB buy-in) for 5 BB/100, and they estimate they could beat $5/$10 (200BB buy-in) for 4 BB/100.</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Scenario</th><th>Effective Earn Rate</th><th>Annual Income (30 hrs/wk)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Self-funded at $1/$2</td>
+            <td>5 BB/100 &times; $2 = $10/100 hands</td>
+            <td>~$23,400</td>
+          </tr>
+          <tr>
+            <td>Backed at $5/$10 (50/50 split)</td>
+            <td>4 BB/100 &times; $10 &times; 50% = $20/100 hands</td>
+            <td>~$46,800</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Despite giving up 50% of profits, the backed player earns <strong>twice as much</strong> because they can play at stakes 5x higher. The backer provides the bankroll that makes this possible.</p>
+    </div>
+
+    <h3>When Being Backed Makes Sense</h3>
+    <p>Being backed is rational when:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>You are <strong>underbankrolled</strong> for the games where your edge is largest</li>
+      <li>The <strong>certainty equivalent</strong> of playing self-funded is lower than your backed earn rate</li>
+      <li>You value the <strong>elimination of ruin risk</strong> highly (risk-averse players)</li>
+      <li>You are trying to <strong>build a bankroll</strong> for eventual self-funding at higher stakes</li>
+    </ul>
+
+    <h3>When Being Backed Does NOT Make Sense</h3>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li>You are already <strong>well-bankrolled</strong> for the games you want to play</li>
+      <li>The <strong>split is unfavorable</strong> (e.g., 60/40 in backer's favor at low stakes)</li>
+      <li>You are a <strong>high-volume, proven winner</strong> with enough data to be confident in your edge</li>
+    </ul>
+  </div>
+
+  <!-- ===== SWAPPING PERCENTAGES ===== -->
+  <div class="chapter-section">
+    <h2>Swapping Percentages</h2>
+    <p>Another common arrangement is <strong>percentage swapping</strong>, where two players exchange portions of their action. For example, Player A sells 10% of their action to Player B, and Player B sells 10% to Player A.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Percentage Swap</div>
+      <p>When Player A and Player B swap <em>s</em>% of each other's action:</p>
+      <div class="math-block">
+        <span class="math-label">Post-Swap Returns</span>
+        Player A's result = (1&minus;s) &times; A_result + s &times; B_result<br>
+        Player B's result = s &times; A_result + (1&minus;s) &times; B_result
+      </div>
+      <p>Each player's expected value changes (up or down) depending on the relative win rates, but the variance of each player's results decreases as long as &rho; &lt; 1.</p>
+    </div>
+
+    <h3>When Swaps Are Beneficial</h3>
+    <p>Swaps are most beneficial when:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Players have similar edges:</strong> If win rates are comparable, neither player sacrifices much EV.</li>
+      <li><strong>Results are uncorrelated:</strong> Different game types or locations maximize the diversification benefit.</li>
+      <li><strong>Both players are variance-sensitive:</strong> Players on shorter bankrolls benefit more from variance reduction.</li>
+    </ul>
+
+    <div class="example-box">
+      <div class="example-title">The Math of a 10% Swap</div>
+      <p>Two players, each with &mu; = 5 BB/100 and &sigma; = 80 BB/100, swap 10% of their action. Their results are uncorrelated (&rho; = 0).</p>
+      <div class="math-block">
+        Each player's new expected value = 0.9 &times; 5 + 0.1 &times; 5 = 5 BB/100 (unchanged)<br><br>
+        Each player's new variance:<br>
+        &sigma;<sub>new</sub>&sup2; = 0.9&sup2; &times; 80&sup2; + 0.1&sup2; &times; 80&sup2; = 0.81 &times; 6400 + 0.01 &times; 6400<br>
+        = 5184 + 64 = 5248<br>
+        &sigma;<sub>new</sub> = &radic;5248 = <strong>72.4 BB/100</strong>
+      </div>
+      <p>A 10% swap with an equal player reduces standard deviation from 80 to 72.4 BB/100 &mdash; a 9.5% reduction in risk with zero sacrifice in expected value.</p>
+    </div>
+
+    <h3>Beware of Unequal Swaps</h3>
+    <p>If you swap with a player whose win rate is significantly lower than yours, you are effectively <strong>subsidizing their variance reduction</strong> at the cost of your own expected value. A swap is only fair when the players have reasonably similar edges, or when the better player receives compensation (a smaller swap percentage or cash payment).</p>
+  </div>
+
+  <!-- ===== MAKEUP AND OBLIGATIONS ===== -->
+  <div class="chapter-section">
+    <h2>Makeup and Obligations</h2>
+    <p>One of the most important (and often misunderstood) aspects of backing agreements is the concept of <strong>makeup</strong>.</p>
+
+    <div class="definition-box">
+      <div class="def-term">Makeup</div>
+      <p><strong>Makeup</strong> is the accumulated deficit that a backed player owes before profit splitting resumes. If a player loses $5,000 of the backer's money, they are "$5,000 in makeup." They must win back that $5,000 before any subsequent profits are split.</p>
+    </div>
+
+    <h3>The Makeup Trap</h3>
+    <p>Makeup creates a significant psychological and mathematical burden on the player:</p>
+    <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 1.8;">
+      <li><strong>Effective earn rate drops:</strong> While in makeup, the player earns $0/hour since all profits go to clearing the deficit. This can persist for hundreds of hours.</li>
+      <li><strong>Tilt risk increases:</strong> The psychological weight of a large makeup balance can affect play quality.</li>
+      <li><strong>Quitting incentive:</strong> A player deep in makeup may rationally prefer to walk away from the deal, since the expected time to clear makeup may be very long.</li>
+    </ul>
+
+    <h3>Makeup from a Financial Perspective</h3>
+    <p>Mathematically, makeup is equivalent to a <strong>call option</strong> on the player's future results. The backer has given the player the right to play with the backer's money. The player's position is like a long call: unlimited upside (after clearing makeup), zero downside (the backer absorbs losses).</p>
+    <p>The backer's position is like selling a call: they capture losses, but their profit is limited to their split percentage. This asymmetry explains why backers demand a significant share of profits.</p>
+
+    <div class="example-box">
+      <div class="example-title">The Expected Duration of Makeup</div>
+      <p>A player is $10,000 in makeup. Their earn rate at the current stake is $20/hr. The expected time to clear makeup is:</p>
+      <div class="math-block">
+        Expected hours = $10,000 / $20/hr = <strong>500 hours</strong>
+      </div>
+      <p>At 30 hours per week, that's roughly <strong>4 months</strong> of working for free before the player sees any income. However, due to variance, the actual time could be significantly shorter or longer. There's also a meaningful probability the makeup grows larger before it is cleared.</p>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE: Backing Agreement Calculator ===== -->
+  <div class="interactive-widget">
+    <h3>Backing Agreement Calculator</h3>
+    <p>Compare your expected growth rate self-funded vs. backed at different stakes. See how backing agreements affect your bottom line.</p>
+    <div class="widget-controls" style="flex-direction: column; gap: 1rem;">
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:end;">
+        <strong style="color:var(--green); min-width:100px;">Self-Funded:</strong>
+        <label>
+          Win Rate (BB/100):
+          <input type="number" id="selfMu" value="5" min="0" max="20" step="0.5">
+        </label>
+        <label>
+          Std Dev (BB/100):
+          <input type="number" id="selfSigma" value="80" min="10" max="200" step="5">
+        </label>
+        <label>
+          BB Value ($):
+          <input type="number" id="selfBBVal" value="2" min="0.5" max="100" step="0.5">
+        </label>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:end;">
+        <strong style="color:var(--gold); min-width:100px;">Backed:</strong>
+        <label>
+          Win Rate (BB/100):
+          <input type="number" id="backedMu" value="4" min="0" max="20" step="0.5">
+        </label>
+        <label>
+          Std Dev (BB/100):
+          <input type="number" id="backedSigma" value="85" min="10" max="200" step="5">
+        </label>
+        <label>
+          BB Value ($):
+          <input type="number" id="backedBBVal" value="10" min="0.5" max="100" step="0.5">
+        </label>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:end;">
+        <label>
+          Backer's Split (%):
+          <input type="number" id="backerSplit" value="50" min="10" max="80" step="5">
+        </label>
+        <label>
+          Personal Bankroll ($):
+          <input type="number" id="personalBR" value="10000" min="1000" max="500000" step="1000">
+        </label>
+        <button class="btn" onclick="calcBacking()">Compare</button>
+      </div>
+    </div>
+    <div class="widget-result" id="backingResult">
+      <div class="result-label">Enter parameters and click Compare</div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="quiz-box">
+    <h3>Test Your Understanding</h3>
+    <p>Why might a winning poker player choose to be backed at a 50/50 split, sacrificing half their profits?</p>
+    <button class="quiz-option" data-correct="false">Because they don't believe they are actually a winning player</button>
+    <button class="quiz-option" data-correct="false">Because the backer provides coaching and mentorship that is worth 50%</button>
+    <button class="quiz-option" data-correct="true">If underbankrolled, being backed allows playing higher-stakes games where total edge &times; 50% exceeds what they could earn self-funded</button>
+    <button class="quiz-option" data-correct="false">Because all professional players need backing to manage variance</button>
+    <div class="quiz-feedback" data-correct="Correct! The key insight is that playing higher stakes with backing can produce more absolute dollars despite the split. If a player earns $10/hr self-funded at $1/$2 but could earn $40/hr at $5/$10, a 50/50 backing deal at $5/$10 yields $20/hr &mdash; double the self-funded income. The backer provides the bankroll that makes the higher stakes accessible." data-incorrect="The primary reason is economic: being backed allows access to higher stakes. If the player's earn rate at higher stakes (after the split) exceeds their earn rate self-funded at lower stakes, the backing deal is profitable for both parties. The player earns more despite the split, and the backer earns a return on their capital."></div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>Portfolio Theory Question</h3>
+    <p>A backer is considering staking two players. Player X plays $5/$10 NLH online. Player Y plays $5/$10 PLO live. Which arrangement provides better diversification for the backer?</p>
+    <button class="quiz-option" data-correct="false">Staking both at the same site/location for easier monitoring</button>
+    <button class="quiz-option" data-correct="true">The current arrangement (different games, different venues) because it minimizes correlation between their results</button>
+    <button class="quiz-option" data-correct="false">Having both players play NLH to standardize the evaluation process</button>
+    <button class="quiz-option" data-correct="false">Diversification doesn't matter as long as both players have positive edges</button>
+    <div class="quiz-feedback" data-correct="Correct! Players in different game types (NLH vs. PLO) at different venues (online vs. live) will have nearly zero correlation in their results. This maximizes the diversification benefit for the backer &mdash; the portfolio variance is minimized. If both played the same game at the same site, their results would be more correlated, providing less risk reduction." data-incorrect="The key is correlation. Different game types at different venues produce nearly uncorrelated results, which maximizes the portfolio diversification benefit. Same-game, same-venue play creates correlated results that reduce the diversification advantage. From portfolio theory, lower correlation means more risk reduction for the same expected return."></div>
+  </div>
+
+  <!-- ===== KEY CONCEPTS ===== -->
+  <div class="key-concepts">
+    <h2>Key Concepts</h2>
+    <ul>
+      <li>Poker earnings can be analyzed using <strong>Modern Portfolio Theory</strong> &mdash; treating each player or game as an investment asset with expected return and variance.</li>
+      <li><strong>Diversification</strong> reduces risk without sacrificing expected return, provided the assets (players) are not perfectly correlated.</li>
+      <li>A <strong>backing arrangement</strong> is an equity investment: the backer provides capital and absorbs risk; the player provides skill; profits are split.</li>
+      <li>The backer should construct a <strong>portfolio of players</strong> with high Kelly ratios and low correlation to maximize risk-adjusted returns.</li>
+      <li>Being backed is rational when the player is <strong>underbankrolled</strong> and the backed earn rate (after split) exceeds the self-funded earn rate.</li>
+      <li><strong>Percentage swaps</strong> between players with similar edges reduce individual variance through mutual diversification.</li>
+      <li><strong>Makeup</strong> is the accumulated deficit in a backing deal; it functions like a call option and creates significant financial and psychological pressure on the player.</li>
+      <li>The <strong>efficient frontier</strong> represents the optimal trade-off between risk and return across all possible portfolio allocations.</li>
+    </ul>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="chapter-nav">
+    <a href="chapter-24.html">&larr; Chapter 24: The Kelly Criterion</a>
+    <a href="chapter-26.html">Chapter 26: Opponent Modeling &rarr;</a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>&copy; Course materials based on <em>The Mathematics of Poker</em> by Bill Chen &amp; Jerrod Ankenman.</p>
+</footer>
+
+<script src="../../js/chapter.js"></script>
+<script>
+function calcBacking() {
+  const selfMu = parseFloat(document.getElementById('selfMu').value);
+  const selfSigma = parseFloat(document.getElementById('selfSigma').value);
+  const selfBBVal = parseFloat(document.getElementById('selfBBVal').value);
+  const backedMu = parseFloat(document.getElementById('backedMu').value);
+  const backedSigma = parseFloat(document.getElementById('backedSigma').value);
+  const backedBBVal = parseFloat(document.getElementById('backedBBVal').value);
+  const backerSplit = parseFloat(document.getElementById('backerSplit').value) / 100;
+  const personalBR = parseFloat(document.getElementById('personalBR').value);
+
+  // Self-funded analysis
+  const selfBuyIn = 100; // 100 BB buy-in
+  const selfBankrollBB = personalBR / selfBBVal;
+  const selfEarnPer100 = selfMu * selfBBVal; // $/100 hands
+  const selfEarnPerHour = selfEarnPer100 * 0.75; // ~75 hands/hr
+  const selfKellyRatio = selfMu / (selfSigma * selfSigma);
+  const selfOptimalBR = (selfSigma * selfSigma) / selfMu;
+  const selfRoR = selfMu > 0 ? Math.exp(-2 * selfMu * selfBankrollBB / (selfSigma * selfSigma)) : 1;
+
+  // Backed analysis
+  const playerSplit = 1 - backerSplit;
+  const backedEarnPer100 = backedMu * backedBBVal * playerSplit; // $/100 hands after split
+  const backedEarnPerHour = backedEarnPer100 * 0.75;
+  const backedKellyRatio = backedMu / (backedSigma * backedSigma);
+  const backedRoR = 0; // Backer absorbs all risk
+
+  // Annual projections (30 hrs/wk, 50 weeks)
+  const hoursPerYear = 1500;
+  const handsPerYear = hoursPerYear * 75;
+  const selfAnnual = selfEarnPerHour * hoursPerYear;
+  const backedAnnual = backedEarnPerHour * hoursPerYear;
+
+  const better = backedAnnual > selfAnnual ? 'backed' : 'self-funded';
+  const betterColor = better === 'backed' ? 'var(--gold)' : 'var(--green)';
+
+  document.getElementById('backingResult').innerHTML = `
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+      <div>
+        <div style="font-weight:700; color:var(--green); margin-bottom:0.75rem;">Self-Funded at $${selfBBVal/2}/$${selfBBVal}</div>
+        <div><span class="result-label">Bankroll:</span> ${selfBankrollBB.toFixed(0)} BB (${(selfBankrollBB/selfBuyIn).toFixed(1)} buy-ins)</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Win Rate:</span> ${selfMu} BB/100 = $${selfEarnPer100.toFixed(2)}/100 hands</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Hourly Rate:</span> <span class="result-value">$${selfEarnPerHour.toFixed(2)}/hr</span></div>
+        <div style="margin-top:0.3rem"><span class="result-label">Risk of Ruin:</span> <span style="color:${selfRoR > 0.05 ? 'var(--accent)' : 'var(--green)'}">${(selfRoR*100).toFixed(2)}%</span></div>
+        <div style="margin-top:0.3rem"><span class="result-label">Kelly Optimal BR:</span> ${selfOptimalBR.toFixed(0)} BB (you have ${selfBankrollBB >= selfOptimalBR ? 'enough' : 'NOT enough'})</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Annual Income:</span> <span class="result-value">$${selfAnnual.toLocaleString('en-US', {maximumFractionDigits:0})}</span></div>
+      </div>
+      <div>
+        <div style="font-weight:700; color:var(--gold); margin-bottom:0.75rem;">Backed at $${backedBBVal/2}/$${backedBBVal} (${(playerSplit*100).toFixed(0)}/${(backerSplit*100).toFixed(0)} split)</div>
+        <div><span class="result-label">Bankroll:</span> Provided by backer</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Win Rate:</span> ${backedMu} BB/100 &times; ${(playerSplit*100).toFixed(0)}% = $${backedEarnPer100.toFixed(2)}/100 hands</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Hourly Rate:</span> <span class="result-value">$${backedEarnPerHour.toFixed(2)}/hr</span></div>
+        <div style="margin-top:0.3rem"><span class="result-label">Risk of Ruin:</span> <span style="color:var(--green)">0.00%</span> (backer absorbs losses)</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Player's Kelly Ratio:</span> ${backedKellyRatio.toFixed(6)}</div>
+        <div style="margin-top:0.3rem"><span class="result-label">Annual Income:</span> <span class="result-value">$${backedAnnual.toLocaleString('en-US', {maximumFractionDigits:0})}</span></div>
+      </div>
+    </div>
+    <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border); text-align:center;">
+      <span class="result-value" style="color:${betterColor}">Being ${better} is better by $${Math.abs(backedAnnual - selfAnnual).toLocaleString('en-US', {maximumFractionDigits:0})}/year</span>
+      <div style="color:var(--muted); font-size:0.85rem; margin-top:0.25rem;">
+        ${better === 'backed'
+          ? 'The higher stakes more than compensate for the profit split.'
+          : 'Your personal bankroll supports profitable self-funded play at these stakes.'}
+      </div>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
